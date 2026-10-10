@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.life.dao.LedgerStatDao">
+
+    <!-- 区间收支合计 -->
+    <select id="sumRange" resultType="map">
+        SELECT
+          COALESCE(SUM(CASE WHEN c.type = 2 THEN r.amount ELSE 0 END), 0) AS totalIncome,
+          COALESCE(SUM(CASE WHEN c.type = 1 THEN r.amount ELSE 0 END), 0) AS totalExpense
+        FROM ledger_record r
+        JOIN ledger_category c ON r.category_id = c.id AND c.deleted = 0
+        WHERE r.user_id = #{userId} AND r.deleted = 0
+          AND r.record_time &gt;= #{start} AND r.record_time &lt; #{end}
+    </select>
+
+    <!-- 按分类聚合（分类占比），type 从分类带出 -->
+    <select id="statByCategory" resultType="com.life.domain.vo.CategoryStatVO">
+        SELECT c.id      AS categoryId,
+               c.name    AS categoryName,
+               c.type    AS type,
+               SUM(r.amount) AS amount
+        FROM ledger_record r
+        JOIN ledger_category c ON r.category_id = c.id AND c.deleted = 0
+        WHERE r.user_id = #{userId} AND r.deleted = 0
+          AND r.record_time &gt;= #{start} AND r.record_time &lt; #{end}
+        GROUP BY c.id, c.name, c.type
+        ORDER BY amount DESC
+    </select>
+
+    <!-- 月度趋势 -->
+    <select id="statTrend" resultType="com.life.domain.vo.TrendStatVO">
+        SELECT DATE_FORMAT(r.record_time, '%Y-%m') AS month,
+               COALESCE(SUM(CASE WHEN c.type = 2 THEN r.amount ELSE 0 END), 0) AS income,
+               COALESCE(SUM(CASE WHEN c.type = 1 THEN r.amount ELSE 0 END), 0) AS expense
+        FROM ledger_record r
+        JOIN ledger_category c ON r.category_id = c.id AND c.deleted = 0
+        WHERE r.user_id = #{userId} AND r.deleted = 0
+          AND r.record_time &gt;= #{start}
+        GROUP BY DATE_FORMAT(r.record_time, '%Y-%m')
+        ORDER BY month ASC
+    </select>
+
+</mapper>

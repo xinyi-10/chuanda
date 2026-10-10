@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.life.dao.ReceiptImageDao">
+
+    <resultMap id="BaseResultMap" type="com.life.domain.ReceiptImage">
+        <id     column="id"           property="id"/>
+        <result column="user_id"      property="userId"/>
+        <result column="category_id"  property="categoryId"/>
+        <result column="file_name"    property="fileName"/>
+        <result column="file_path"    property="filePath"/>
+        <result column="file_size"    property="fileSize"/>
+        <result column="md5"          property="md5"/>
+        <result column="phash"        property="phash"/>
+        <result column="audit_status" property="auditStatus"/>
+        <result column="audit_msg"    property="auditMsg"/>
+        <result column="pay_amount"   property="payAmount"/>
+        <result column="pay_time"     property="payTime"/>
+        <result column="time_source"  property="timeSource"/>
+        <result column="remark"       property="remark"/>
+        <result column="create_time"  property="createTime"/>
+        <result column="update_time"  property="updateTime"/>
+        <result column="deleted"      property="deleted"/>
+        <result column="category_name" property="categoryName"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        r.id, r.user_id, r.category_id, r.file_name, r.file_path, r.file_size,
+        r.md5, r.phash, r.audit_status, r.audit_msg, r.pay_amount, r.pay_time,
+        r.time_source, r.remark, r.create_time, r.update_time, r.deleted
+    </sql>
+
+    <select id="selectByMd5" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM receipt_image r
+        WHERE r.user_id = #{userId} AND r.md5 = #{md5} AND r.deleted = 0
+        LIMIT 1
+    </select>
+
+    <select id="listFingerprints" resultMap="BaseResultMap">
+        SELECT r.id, r.user_id, r.file_name, r.phash, r.create_time, r.deleted
+        FROM receipt_image r
+        WHERE r.user_id = #{userId} AND r.deleted = 0 AND r.phash IS NOT NULL
+    </select>
+
+    <select id="listByPage" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>, c.name AS category_name
+        FROM receipt_image r
+        LEFT JOIN receipt_category c ON r.category_id = c.id
+        <where>
+            r.user_id = #{userId} AND r.deleted = 0
+            <if test="categoryId != null">
+                AND r.category_id = #{categoryId}
+            </if>
+            <if test="auditStatus != null">
+                AND r.audit_status = #{auditStatus}
+            </if>
+        </where>
+        ORDER BY r.id DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countByCondition" resultType="long">
+        SELECT COUNT(*)
+        FROM receipt_image r
+        <where>
+            r.user_id = #{userId} AND r.deleted = 0
+            <if test="categoryId != null">
+                AND r.category_id = #{categoryId}
+            </if>
+            <if test="auditStatus != null">
+                AND r.audit_status = #{auditStatus}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>, c.name AS category_name
+        FROM receipt_image r
+        LEFT JOIN receipt_category c ON r.category_id = c.id
+        WHERE r.id = #{id} AND r.user_id = #{userId} AND r.deleted = 0
+    </select>
+
+    <insert id="insert" parameterType="com.life.domain.ReceiptImage"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO receipt_image
+            (user_id, category_id, file_name, file_path, file_size, md5, phash,
+             audit_status, audit_msg, pay_amount, pay_time, time_source, remark,
+             create_time, update_time, deleted)
+        VALUES
+            (#{userId}, #{categoryId}, #{fileName}, #{filePath}, #{fileSize}, #{md5}, #{phash},
+             #{auditStatus}, #{auditMsg}, #{payAmount}, #{payTime}, #{timeSource}, #{remark},
+             NOW(), NOW(), 0)
+    </insert>
+
+    <update id="updateTimeAndAmount" parameterType="com.life.domain.ReceiptImage">
+        UPDATE receipt_image
+        SET pay_amount   = #{payAmount},
+            pay_time     = #{payTime},
+            time_source  = #{timeSource},
+            remark       = #{remark},
+            audit_status = 1,
+            audit_msg    = '人工确认通过：金额与时间已补充',
+            update_time  = NOW()
+        WHERE id = #{id} AND user_id = #{userId} AND deleted = 0
+    </update>
+
+    <update id="updateCategory">
+        UPDATE receipt_image
+        SET category_id = #{categoryId}, update_time = NOW()
+        WHERE id = #{id} AND user_id = #{userId} AND deleted = 0
+    </update>
+
+    <update id="logicDelete">
+        UPDATE receipt_image
+        SET deleted = 1, update_time = NOW()
+        WHERE id = #{id} AND user_id = #{userId}
+    </update>
+
+</mapper>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.life.dao.LedgerRecordDao">
+
+    <resultMap id="BaseResultMap" type="com.life.domain.LedgerRecord">
+        <id     column="id"            property="id"/>
+        <result column="user_id"       property="userId"/>
+        <result column="category_id"   property="categoryId"/>
+        <result column="amount"        property="amount"/>
+        <result column="record_time"   property="recordTime"/>
+        <result column="remark"        property="remark"/>
+        <result column="source_type"   property="sourceType"/>
+        <result column="source_id"     property="sourceId"/>
+        <result column="create_time"   property="createTime"/>
+        <result column="update_time"   property="updateTime"/>
+        <result column="deleted"       property="deleted"/>
+        <result column="category_name" property="categoryName"/>
+        <result column="type"          property="type"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        r.id, r.user_id, r.category_id, r.amount, r.record_time, r.remark,
+        r.source_type, r.source_id,
+        r.create_time, r.update_time, r.deleted
+    </sql>
+
+    <!-- 条件：始终带 user_id；type 来自分类（H6，流水表不存 type） -->
+    <sql id="Condition">
+        <where>
+            r.user_id = #{userId} AND r.deleted = 0
+            <if test="type != null">
+                AND c.type = #{type}
+            </if>
+            <if test="categoryId != null">
+                AND r.category_id = #{categoryId}
+            </if>
+            <if test="start != null">
+                AND r.record_time &gt;= #{start}
+            </if>
+            <if test="end != null">
+                AND r.record_time &lt; #{end}
+            </if>
+        </where>
+    </sql>
+
+    <select id="listByPage" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>, c.name AS category_name, c.type AS type
+        FROM ledger_record r
+        LEFT JOIN ledger_category c ON r.category_id = c.id
+        <include refid="Condition"/>
+        ORDER BY r.record_time DESC, r.id DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countByCondition" resultType="long">
+        SELECT COUNT(*)
+        FROM ledger_record r
+        LEFT JOIN ledger_category c ON r.category_id = c.id
+        <include refid="Condition"/>
+    </select>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>, c.name AS category_name, c.type AS type
+        FROM ledger_record r
+        LEFT JOIN ledger_category c ON r.category_id = c.id
+        WHERE r.id = #{id} AND r.user_id = #{userId} AND r.deleted = 0
+    </select>
+
+    <select id="selectBySource" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>, c.name AS category_name, c.type AS type
+        FROM ledger_record r
+        LEFT JOIN ledger_category c ON r.category_id = c.id
+        WHERE r.user_id = #{userId} AND r.deleted = 0
+          AND r.source_type = #{sourceType}
+          AND r.source_id = #{sourceId}
+        LIMIT 1
+    </select>
+
+    <insert id="insert" parameterType="com.life.domain.LedgerRecord"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO ledger_record
+            (user_id, category_id, amount, record_time, remark, source_type, source_id,
+             create_time, update_time, deleted)
+        VALUES
+            (#{userId}, #{categoryId}, #{amount}, #{recordTime}, #{remark},
+             #{sourceType}, #{sourceId}, NOW(), NOW(), 0)
+    </insert>
+
+    <update id="update" parameterType="com.life.domain.LedgerRecord">
+        UPDATE ledger_record
+        SET category_id = #{categoryId},
+            amount      = #{amount},
+            record_time = #{recordTime},
+            remark      = #{remark},
+            update_time = NOW()
+        WHERE id = #{id} AND user_id = #{userId} AND deleted = 0
+    </update>
+
+    <update id="logicDelete">
+        UPDATE ledger_record
+        SET deleted = 1, update_time = NOW()
+        WHERE id = #{id} AND user_id = #{userId}
+    </update>
+
+</mapper>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.life.dao.NoteCategoryDao">
+
+    <resultMap id="BaseResultMap" type="com.life.domain.NoteCategory">
+        <id     column="id"           property="id"/>
+        <result column="user_id"      property="userId"/>
+        <result column="name"         property="name"/>
+        <result column="sort"         property="sort"/>
+        <result column="create_time"  property="createTime"/>
+        <result column="update_time"  property="updateTime"/>
+        <result column="deleted"      property="deleted"/>
+        <result column="note_count"   property="noteCount"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, user_id, name, sort, create_time, update_time, deleted
+    </sql>
+
+    <!-- 列出本人分类，并统计每个分类下的有效笔记数 -->
+    <select id="listByUser" resultMap="BaseResultMap">
+        SELECT c.id, c.user_id, c.name, c.sort,
+               c.create_time, c.update_time, c.deleted,
+               (SELECT COUNT(*) FROM note n
+                 WHERE n.category_id = c.id AND n.user_id = c.user_id AND n.deleted = 0) AS note_count
+        FROM note_category c
+        WHERE c.user_id = #{userId} AND c.deleted = 0
+        ORDER BY c.sort ASC, c.id ASC
+    </select>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM note_category
+        WHERE id = #{id} AND user_id = #{userId} AND deleted = 0
+    </select>
+
+    <select id="selectByName" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM note_category
+        WHERE user_id = #{userId} AND name = #{name} AND deleted = 0
+        LIMIT 1
+    </select>
+
+    <insert id="insert" parameterType="com.life.domain.NoteCategory"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO note_category (user_id, name, sort, create_time, update_time, deleted)
+        VALUES (#{userId}, #{name}, #{sort}, NOW(), NOW(), 0)
+    </insert>
+
+    <update id="update" parameterType="com.life.domain.NoteCategory">
+        UPDATE note_category
+        SET name = #{name}, sort = #{sort}, update_time = NOW()
+        WHERE id = #{id} AND user_id = #{userId} AND deleted = 0
+    </update>
+
+    <update id="logicDelete">
+        UPDATE note_category
+        SET deleted = 1, update_time = NOW()
+        WHERE id = #{id} AND user_id = #{userId}
+    </update>
+
+</mapper>

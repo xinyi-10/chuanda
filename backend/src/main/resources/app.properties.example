@@ -1,0 +1,33 @@
+# ===== 应用级配置（模板） =====
+# 使用说明：复制本文件为 app.properties，再填写真实值。
+# 真实 app.properties 已被 .gitignore 排除，避免 key 泄露。
+
+# 上传文件（支付凭证图片）存储根目录
+# 绝对路径优先；若为相对路径，则相对应用运行目录解析
+app.upload.dir=D:/AI/workbuddy/ChuanDa/uploads
+
+# 单文件大小上限（字节），与 spring-mvc.xml 的 multipartResolver 保持一致
+app.upload.max-size=10485760
+
+# 感知哈希近似判重阈值：汉明距离 <= 该值视为「疑似重复」
+app.upload.phash-threshold=5
+
+# ===== 对象存储（RustFS / S3 兼容） =====
+# 存储类型：local=本地磁盘；rustfs=S3 兼容对象存储
+storage.type=rustfs
+# S3 endpoint（RustFS 默认 9000 为 S3 API）
+storage.endpoint=http://127.0.0.1:9000
+storage.access-key=rustfsadmin
+storage.secret-key=你的RustFS密钥
+# 凭证/头像统一存放的 bucket
+storage.bucket=chuanda
+# 启动时自动创建 bucket（不存在时）
+storage.auto-create-bucket=true
+
+# ===== MiniMax 生图（穿搭效果图） =====
+# API Key：MiniMax 开放平台（platform.minimaxi.com）申请
+minimax.api-key=你的MiniMax API Key
+# 国内直连端点（默认 https://api.minimaxi.com）
+minimax.base-url=https://api.minimaxi.com
+# 生图模型（image-01）
+minimax.image-model=image-01

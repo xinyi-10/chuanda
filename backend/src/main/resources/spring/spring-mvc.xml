@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/mvc
+                           http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <!-- ===== 1. 扫描 controller ===== -->
+    <context:component-scan base-package="com.life.controller" use-default-filters="true"/>
+
+    <!-- 全局异常处理器所在包（@RestControllerAdvice）-->
+    <context:component-scan base-package="com.life.common"/>
+
+    <!-- ===== 2. 开启注解驱动（JSON 消息转换、参数绑定等） ===== -->
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                <property name="objectMapper" ref="jacksonObjectMapper"/>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <!--
+        全局 ObjectMapper。
+
+        1) 必须注册 JavaTimeModule，否则实体里 LocalDateTime/LocalDate 序列化报
+           InvalidDefinitionException: Java 8 date/time type not supported by default。
+        2) 必须注册 BigDecimalModule（P0 铁律 H5）：金额 BigDecimal 统一序列化为
+           **字符串**，禁止以浮点数出参，避免 JSON 层丢精度（0.1 变 0.0999999）。
+           金额链路三处一致：库 DECIMAL(12,2) + Java BigDecimal + JSON 字符串。
+
+        为何用 Jackson2ObjectMapperFactoryBean：
+           ObjectMapper.getModules() 返回不可变集合且无 setter，直接 <property name="modules">
+           会报 NotWritablePropertyException；FactoryBean 的 modulesToInstall/modules 专治此问题。
+    -->
+    <bean id="jacksonObjectMapper"
+          class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean">
+        <property name="dateFormat">
+            <bean class="java.text.SimpleDateFormat">
+                <constructor-arg value="yyyy-MM-dd HH:mm:ss"/>
+            </bean>
+        </property>
+        <property name="serializationInclusion" value="NON_NULL"/>
+        <property name="modulesToInstall">
+            <list>
+                <value>com.fasterxml.jackson.datatype.jsr310.JavaTimeModule</value>
+            </list>
+        </property>
+        <property name="modules">
+            <list>
+                <bean class="com.life.config.BigDecimalModule"/>
+            </list>
+        </property>
+    </bean>
+
+    <!-- ===== 2.5 文件上传解析器（凭证图片上传） ===== -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="defaultEncoding" value="UTF-8"/>
+        <!-- 单文件上限 10MB -->
+        <property name="maxUploadSizePerFile" value="10485760"/>
+        <property name="maxInMemorySize" value="40960"/>
+    </bean>
+
+    <!-- ===== 3. 静态资源放行 ===== -->
+    <mvc:default-servlet-handler/>
+
+    <!-- ===== 4. 拦截器：登录校验 ===== -->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <!-- 放行：登录/注册/健康检查/错误页/静态资源 -->
+            <mvc:exclude-mapping path="/auth/login"/>
+            <mvc:exclude-mapping path="/auth/register"/>
+            <mvc:exclude-mapping path="/health"/>
+            <!-- 凭证图片访问：img 标签无法携带 Authorization 头，改为在 Controller 内用 token 参数手动鉴权 -->
+            <mvc:exclude-mapping path="/receipt/file/**"/>
+            <!-- 头像图片同理 -->
+            <mvc:exclude-mapping path="/auth/avatar/file"/>
+            <!-- 衣物图片：只放行「带 id 的读取」，上传接口仍需鉴权（注意用 * 而非 **） -->
+            <mvc:exclude-mapping path="/outfit/clothing/image/*"/>
+            <!-- 穿搭效果图：img 标签带不了 Authorization 头，Controller 内用 token 参数手动鉴权 -->
+            <mvc:exclude-mapping path="/outfit/image/file/*"/>
+            <mvc:exclude-mapping path="/error/**"/>
+            <mvc:exclude-mapping path="/static/**"/>
+            <mvc:exclude-mapping path="/*.html"/>
+            <mvc:exclude-mapping path="/favicon.ico"/>
+            <bean class="com.life.interceptor.LoginInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+    <!-- ===== 5. 视图解析器（前后端分离，仅兜底备用） ===== -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/views/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+</beans>

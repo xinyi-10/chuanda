@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="keNnxK7Lgzu1lHoQt03oQB">
+<head data-page-node-id="fB2PRUWsxZfCyjGC26eNZk">
+<meta charset="UTF-8" data-page-node-id="VAV7szhHDyq08lFELHCgCg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="gxMOiynvDJ0tG8KAiXxyPt">
+<title>个人生活管理软件 —— 开发方案审核报告</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --panel: #171a21;
+    --panel-2: #1e222b;
+    --border: #2a2f3a;
+    --text: #e6e8ec;
+    --text-dim: #9aa1ad;
+    --accent: #4da3ff;
+    --high: #ff5c5c;
+    --mid: #ffb84d;
+    --low: #4dc98a;
+    --high-bg: rgba(255,92,92,.12);
+    --mid-bg: rgba(255,184,77,.12);
+    --low-bg: rgba(77,201,138,.12);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+    line-height: 1.75;
+    font-size: 15px;
+  }
+  .container { max-width: 980px; margin: 0 auto; padding: 40px 24px 80px; }
+  h1 {
+    font-size: 28px; margin: 0 0 8px; letter-spacing: .5px;
+    border-bottom: 2px solid var(--accent); padding-bottom: 14px;
+  }
+  h2 {
+    font-size: 21px; margin: 44px 0 16px; padding-left: 12px;
+    border-left: 4px solid var(--accent);
+  }
+  h3 { font-size: 17px; margin: 28px 0 10px; color: var(--accent); }
+  .meta {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 8px; padding: 16px 20px; margin: 16px 0 8px;
+    color: var(--text-dim); font-size: 14px;
+  }
+  .meta strong { color: var(--text); }
+  p { margin: 10px 0; }
+  blockquote {
+    margin: 14px 0; padding: 10px 16px;
+    background: var(--panel-2); border-left: 3px solid var(--accent);
+    border-radius: 0 6px 6px 0; color: var(--text-dim);
+  }
+  table {
+    width: 100%; border-collapse: collapse; margin: 14px 0;
+    font-size: 14px; background: var(--panel);
+  }
+  th, td {
+    border: 1px solid var(--border); padding: 10px 12px;
+    text-align: left; vertical-align: top;
+  }
+  th { background: var(--panel-2); color: var(--text); font-weight: 600; white-space: nowrap; }
+  td code, li code, p code {
+    background: var(--panel-2); padding: 1px 6px; border-radius: 4px;
+    font-family: "JetBrains Mono", Consolas, monospace; font-size: 13px; color: #ffd479;
+  }
+  .sev { font-weight: 700; white-space: nowrap; }
+  .sev-high { color: var(--high); background: var(--high-bg); padding: 2px 8px; border-radius: 4px; }
+  .sev-mid { color: var(--mid); background: var(--mid-bg); padding: 2px 8px; border-radius: 4px; }
+  .sev-low { color: var(--low); background: var(--low-bg); padding: 2px 8px; border-radius: 4px; }
+  .cat { color: var(--text-dim); white-space: nowrap; }
+  .id { font-family: Consolas, monospace; color: var(--accent); font-weight: 600; }
+  ul { padding-left: 24px; }
+  li { margin: 6px 0; }
+  .conclusion-box {
+    background: linear-gradient(135deg, var(--panel), var(--panel-2));
+    border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px;
+    margin: 16px 0;
+  }
+  .footer { margin-top: 48px; color: var(--text-dim); font-size: 13px; text-align: center; }
+  @media (max-width: 720px) {
+    .container { padding: 24px 12px 60px; }
+    table { font-size: 12.5px; }
+    th, td { padding: 8px 6px; }
+  }
+</style>
+</head>
+<body data-page-node-id="RFwnVfd25Yyu6GqA1LgBD0">
+<div class="container" data-page-node-id="qzyByaGTynFfHHQKaMVV1X">
+
+  <h1 data-page-node-id="U9n9ZTL9kYLveO38Gopk7R">个人生活管理软件 —— 开发方案审核报告</h1>
+  <div class="meta" data-page-node-id="Y98sbjLMQWu0IxvbgivBM5">
+    <strong data-page-node-id="xx8seM1TqKZz45lJWpGDbI">审核对象</strong>：docs/个人生活管理软件-开发方案.md（V1.0）<br data-page-node-id="2X7UoziOIXLRRZcjQTgS8y">
+    <strong data-page-node-id="SU8lxgeMgUJZQyVvZUHhjI">审核视角</strong>：资深项目审核员<br data-page-node-id="qHlHtpuTBQ8hYZ9uh37g3L">
+    <strong data-page-node-id="BUgAF0y7jScgiEFa2h1s5F">审核维度</strong>：架构设计、安全性、可维护性、性能、测试覆盖、数据一致性
+  </div>
+
+  <h2 data-page-node-id="GAshZk22y5gZwJI6TbbEfE">一、审核结论</h2>
+  <p data-page-node-id="7joBY81YGvzUOdXmOBLEWH">这份方案在<strong data-page-node-id="Fnp74ulXHGZVpJ7LXsfumn">选型纠错（Element UI → Element Plus）、金额精度、异步兜底、数据隔离</strong>等关键点上写得相当扎实，架构骨架、分层职责划分也清晰到位，能直接拿去拆任务排期。但正因为细节到位，反而有几处「看起来对、实际埋雷」的地方更值得警惕。</p>
+  <p data-page-node-id="peg5eFIip65y7ipKG8I0Dp">真正的短板集中在两处：</p>
+  <ul data-page-node-id="YkYC2FxBfD0IwdDEnVBCMm">
+    <li data-page-node-id="5ZQsD66bREfrHOG5uvuQXK"><strong data-page-node-id="o8XH9D9NC7nXOu3T9h455j">安全全靠「约定」</strong> —— 数据隔离、Token 管理、Prompt 注入都没有强制机制。这是隐私类应用最不能靠自觉的地方。</li>
+    <li data-page-node-id="Gisf8IiuHA4lRyNLrTIKix"><strong data-page-node-id="N4jW0SZPHPCrdP2DyM0Yp6">异步与一致性只有「正常路径」</strong> —— 超时补偿、任务状态机终态、金额序列化、type 冗余校验等「异常路径」没有落地细节，而生产故障往往就出在这些边角。</li>
+  </ul>
+  <div class="conclusion-box" data-page-node-id="W0Jf8jRVKnvyG42koVYS2J">
+    <p style="margin:0" data-page-node-id="NAntoDBvA34IfvNJPKstYi">若下一步进入编码阶段，建议优先在 <strong data-page-node-id="HfnOTiH2z8RT5BObCGD7X2">M1 骨架期</strong>钉死三件事（成本最低、收益最大）：</p>
+    <ul style="margin-bottom:0" data-page-node-id="hQTi2AyMhpmyRtH0Ccz276">
+      <li data-page-node-id="jba5fKWYyaC6hHEMJwT2tw"><span class="id" data-page-node-id="Vjy7H6j8uacXFpkujaOxOy">H2</span> 数据隔离插件（MyBatis 拦截器自动注入 <code data-page-node-id="w5R5MencMyVV7E8iFaccVj">user_id</code>）</li>
+      <li data-page-node-id="bP9PR7cyC1M3v2cbwTV7Ip"><span class="id" data-page-node-id="kGpcPuwajztAUJ3YyeIRiC">H4</span> 异步任务超时补偿</li>
+      <li data-page-node-id="kw2IzbcFSNvycflDlEgCGn"><span class="id" data-page-node-id="IM37sASFPvr6C0nYDxP2H0">H5</span> BigDecimal 序列化防护</li>
+    </ul>
+  </div>
+
+  <h2 data-page-node-id="h1HwfwaquMfr7hjSA1CIxV">二、高风险问题<span style="font-size:14px;color:var(--text-dim)" data-page-node-id="HpE6DluQMj1Me4bjyt9NXQ">（会直接导致上线故障 / 安全事故）</span></h2>
+  <table data-page-node-id="ELg5xXHlNPrxH99P5YaAtC">
+    <thead data-page-node-id="fpzLSOBYjOEW23ZwyXL7fD">
+      <tr data-page-node-id="fji6K0E4lEpx4LbeP8TB73"><th data-page-node-id="hDyokUUkgY2WMcFkjLxW1F">#</th><th data-page-node-id="ELsc9c2CXkd7bzRaPpA8dl">类别</th><th data-page-node-id="FEYG29uU7rFoqxG1ZK2vqf">严重度</th><th data-page-node-id="PwxSHq498hMGtBgFGqgruX">问题</th><th data-page-node-id="PWFJKBL57OJxKLxe9926Zu">改进方向</th></tr>
+    </thead>
+    <tbody data-page-node-id="wWPitvFNb2cSzIn3YW9DJL">
+      <tr data-page-node-id="qfGaUGW6V6CojfcRQrEJCW"><td class="id" data-page-node-id="kAcHUCL0TBS42dVKFnW8hu">H1</td><td class="cat" data-page-node-id="pvVG3IdcNhPxnckxCtfFIz">安全性</td><td class="sev sev-high" data-page-node-id="O7chOEQfVSlPUqeGhCJrTp">高</td><td data-page-node-id="O1sn0akACvI6SvKMiRFSTE"><strong data-page-node-id="4wlFDeyfCJqmDqqTNW4lvo">JWT/Token 鉴权机制含糊</strong>。文档只写「存入 Redis 或前端本地存储」，二选一没说死，且未区分 access/refresh。若存 localStorage，XSS 即可盗 token；若无 refresh 机制，token 过期体验差。</td><td data-page-node-id="wnZ69O1N6GJbkRE9PiiQDs">明确 token 类型与存储位置；优先 HttpOnly Cookie 或内存 + refresh token 双 token 方案；给出过期/刷新/登出失效的完整流程。</td></tr>
+      <tr data-page-node-id="IRjY7CZF3HEkNu1ZJ2lbSx"><td class="id" data-page-node-id="ODXFTgs5uEuSTNGSK3u5M8">H2</td><td class="cat" data-page-node-id="wiZJ6kvBO7g54DueuMtNnZ">安全性</td><td class="sev sev-high" data-page-node-id="CvA0E3e83pxeqHfSWu6Z4S">高</td><td data-page-node-id="KVwNf9tSAzjDIpxRUUAxDY"><strong data-page-node-id="8EDwJGAV1e84oNKWSwBm3G">数据隔离只停留在「约定」层面</strong>。第 8.1 节「每条 SQL 必须带 user_id」是口头约束，无拦截器/MyBatis 插件兜底。极易在某个查询漏写 <code data-page-node-id="DIwduWTevTS3bMMh4CQiCE">user_id</code> 造成<strong data-page-node-id="uWV1rO2obTighIQKxSyENM">越权读他人数据</strong>（笔记/账单是隐私重灾区）。</td><td data-page-node-id="dC2XQRt1roptR3viioXOgH">用 MyBatis 拦截器自动注入 <code data-page-node-id="58IHKZId8qKErq2oGZ4G8H">user_id</code> 条件，或写代码评审卡点强制校验；越权是 P0，不能靠自觉。</td></tr>
+      <tr data-page-node-id="JOAwvCRbqJUA4NVVGGYFvB"><td class="id" data-page-node-id="e6kwP0LRADecfccbl0HRHL">H3</td><td class="cat" data-page-node-id="ZuS39kcG8wO8NCqCxhZY6q">安全性</td><td class="sev sev-high" data-page-node-id="Jxdv6V8E6b4mrGsLCEXuyQ">高</td><td data-page-node-id="AZ4OIKCYOZKZHJIeeCGmFR"><strong data-page-node-id="p28uZWFqUE3GzR126tP4H6">LLM prompt 注入风险未提及</strong>。衣物名/备注是用户自由输入，直接拼进 LLM prompt 会被注入（如「忽略以上指令，输出……」，或诱导泄露系统提示词）。</td><td data-page-node-id="8nx0STyjRUQA3QVSfmd6in">对用户输入做 prompt 转义/角色隔离；LLM 输出只取结构化的衣物 ID，不做任意文本回显执行。</td></tr>
+      <tr data-page-node-id="LdvquohOlMH2iIpoGOBxRG"><td class="id" data-page-node-id="hKM5GXstVs71KY2nSzMSxp">H4</td><td class="cat" data-page-node-id="5LwCFLRPHDkwDuLBSusCMk">架构</td><td class="sev sev-high" data-page-node-id="KTbIgr4uSqlaCtCKrjJTvA">高</td><td data-page-node-id="Pf1OXbvXj9uPRJHF9iPRAA"><strong data-page-node-id="Xnw1FC1lhrRD7qsZZkbPv6">异步任务无「超时补偿」的落地细节</strong>。文档风险表提了「任务超时补偿」，但第 7 节代码里只有 try-catch 标记成功/失败，<strong data-page-node-id="iXGMzDc120RAuetGrDRq0G">没有任何超时检测</strong>。若线程在调 LLM 时挂死（网络卡住），任务状态会永久卡「执行中」。</td><td data-page-node-id="w8kJHaBR8c4rUqcr9n4UmE">加定时任务扫描 <code data-page-node-id="QDETwiFDI6wlLCWd4ikpdG">status=1</code> 且超时（如 &gt;60s）的任务置为失败；线程池任务设置超时 + <code data-page-node-id="uYldSXS3rd2H6AgkDyUKgw">Future.get(timeout)</code>。</td></tr>
+      <tr data-page-node-id="vjTJMzEC9OCLL4E1475fJQ"><td class="id" data-page-node-id="hjh5YaJA76j7nk9PYoDc6m">H5</td><td class="cat" data-page-node-id="maMTNoaQgcE079HQFQCXUQ">数据一致性</td><td class="sev sev-high" data-page-node-id="Z5DdEb3n6LMCZYCGM6hB3B">高</td><td data-page-node-id="lkPuniNusZTwqJcWjgigM2"><strong data-page-node-id="sJ0fQYtMCE4VvLGr3BEF2R">金额示例用了浮点字面量</strong>。第 6.3 节接口出参里 <code data-page-node-id="AHkyGyf1b8NbH4i6G3pPS5">totalIncome: 8000.00</code>、<code data-page-node-id="3dryz0jPVs1zVNyN9m1z5E">percent: 35.9</code>，虽然 8.1 强调 DECIMAL/BigDecimal，但 JSON 序列化时 BigDecimal 若配错会转 double 丢精度。</td><td data-page-node-id="nnHovlc1R6dh5JWkzkhsxa">明确 Jackson 序列化 BigDecimal 输出字符串或 <code data-page-node-id="iTRJDkukYdmlqIeGRq2SXl">@JsonSerialize</code>，禁止浮点出现在金额链路任何一环。</td></tr>
+      <tr data-page-node-id="7eNPpMsSSqud6UxQGHAhzT"><td class="id" data-page-node-id="rJNrTjwoHj3m1IykcoUyRJ">H6</td><td class="cat" data-page-node-id="6x5zccEum6wKUahYEltG3Q">数据一致性</td><td class="sev sev-high" data-page-node-id="PgJlFPC6x34nB1M9dWqkNL">高</td><td data-page-node-id="aG7qdxbejxaL7Wan4LTQIl"><strong data-page-node-id="pTwfHvBtVtXTcpminrRGha">记账 <code data-page-node-id="iyJvaNLCAHQjOpMsZ4Ymvl">type</code> 字段双重冗余 + 无约束</strong>。<code data-page-node-id="58zWOupfguCpk73uIPWQFD">ledger_record.type</code> 和 <code data-page-node-id="tQEx1DxauVFmfI943bVT7h">ledger_category.type</code> 都存收支类型，两者可被写得不一致（收入流水挂到支出分类），且无外键/CHECK 约束。</td><td data-page-node-id="KOGASbUBaaiIdPUCM4aAL2">流水只冗余 category，<code data-page-node-id="djPx03bAXQNW1SAF1gMLsJ">type</code> 从分类派生；或加应用层强校验「流水 type 必须等于分类 type」。</td></tr>
+    </tbody>
+  </table>
+
+  <h2 data-page-node-id="nsT9J814O0K97Xk7J6QXoe">三、中风险问题<span style="font-size:14px;color:var(--text-dim)" data-page-node-id="mPNnUqiajbuXxUp5mVaKsu">（影响可维护性 / 潜在性能 / 体验）</span></h2>
+  <table data-page-node-id="h1fSIMB1DQDOJ8DEp9xRwS">
+    <thead data-page-node-id="ACV3oBvy8DXnjJ0dbyUEwl">
+      <tr data-page-node-id="zECMufl4AGnQvWDXPyHFZ4"><th data-page-node-id="B65B6i6ZI22HwDFATuFOVA">#</th><th data-page-node-id="ZtGs6kjleQbNdqUU3SHwgz">类别</th><th data-page-node-id="N1herXVNqHMO79f36pVJNg">严重度</th><th data-page-node-id="Ks9ZwXOARyEZThbvSZZCM1">问题</th><th data-page-node-id="98rDJwsUVoXIXhsWdA154n">改进方向</th></tr>
+    </thead>
+    <tbody data-page-node-id="8UBHtYHJy11Zv4DUHUTksr">
+      <tr data-page-node-id="9JnHziUsp2bGZiiSV3DYRf"><td class="id" data-page-node-id="bc3EmbqGNBItjpLHi6LdXr">M1</td><td class="cat" data-page-node-id="UEBOb8AeNqFu3HuajpZdSH">性能</td><td class="sev sev-mid" data-page-node-id="BohETl3NAxyfxSsNvDdzLq">中</td><td data-page-node-id="GTcSVvS7ta5YFzgznCLcFu"><strong data-page-node-id="7JNjyKZiDJLrlYxBjDHzub">笔记搜索用 <code data-page-node-id="vf8FvZdCx0v4OBpz2fHLCX">title LIKE '%kw%'</code> + 正文 <code data-page-node-id="Ad6E9DEVAq57dGD7RKi96E">LIKE</code></strong>。前后通配符无法走索引，数据一多全表扫描。文档虽提了 FULLTEXT 但只当「后续可加」，未定触发阈值。</td><td data-page-node-id="Qz26ZSknYQBQNLu0HaG2XC">明确数据量阈值，超过即切 FULLTEXT（中文需 <code data-page-node-id="TMcPZLq9Jdr1AvNG0uEudx">ngram</code> parser）或 ES；搜索加最小长度限制。</td></tr>
+      <tr data-page-node-id="oqKLXZmCex4Y01Bp0SY8Fh"><td class="id" data-page-node-id="M9JEQxr0mCrtvKk3vhGBFS">M2</td><td class="cat" data-page-node-id="hdZHZZp877FyxMEj2Wqe4F">性能</td><td class="sev sev-mid" data-page-node-id="QgGtIaE7efZXo8h0sroOIu">中</td><td data-page-node-id="wwj2ufKQlC3IH7gC5eFPqc"><strong data-page-node-id="hrOmJCfLfGJ7CoegdpBfrq">前端轮询 1s×30 次</strong>做异步查询，并发推荐时对 DB 造成无效压力，且 30s 上限若 LLM 超 30s 会误报失败。</td><td data-page-node-id="RgGG8uzdXuaQepKqO6geaC">首版可用但给轮询加<strong data-page-node-id="eGGAW3zL11SsEsKIsDTWHP">指数退避</strong>；结果查询走缓存/内存态，别每 1s 打 DB；上限与后端超时对齐。</td></tr>
+      <tr data-page-node-id="ZwdWkzru3TfCtGzuXbHmtV"><td class="id" data-page-node-id="owDSHetawrToASj5TRvCZv">M3</td><td class="cat" data-page-node-id="4cnhdQNUFPugyYB2Karfnl">可维护性</td><td class="sev sev-mid" data-page-node-id="fmIVle1Q4pfQrtSQ3WAYDr">中</td><td data-page-node-id="DDu6jah7WMooL7LZSx7Dj9"><strong data-page-node-id="iMxZk9yTx8lWZZ89ADoWuG"><code data-page-node-id="SMvae5EBX2rMGb4BoG43lQ">items_json</code> 存 JSON/TEXT 关联衣物</strong>，衣物删除后推荐记录里是「死 ID」，历史记录无法还原衣服名。</td><td data-page-node-id="Ba1R3sFL6slbqAlRNuHYzh">存快照（id+name+category 冗余）而非纯 ID；或衣物删除做软删保证可追溯。</td></tr>
+      <tr data-page-node-id="UdQfwPF3a1dCOBB116w1Wq"><td class="id" data-page-node-id="NQRguWbvtdk5moJaJJMjz4">M4</td><td class="cat" data-page-node-id="l8nZ3TdRmafkDmwhRpNWIU">可维护性</td><td class="sev sev-mid" data-page-node-id="d3fgj6v2XPyfrpN9clE15d">中</td><td data-page-node-id="CDz7bGVq0OOgGGdx4sxSLk"><strong data-page-node-id="sPo9AyTZ2mLeKqHMi3BB8I">缺少「统一错误码字典」的实际内容</strong>。第 8.3 说「维护错误码表」，但全文没给出 code 定义，前端差异化提示无从落地。</td><td data-page-node-id="8TzCs2JAsFEX9DGqujoUgE">附录补一份错误码枚举（业务码段规划），避免后期前后端各写各的。</td></tr>
+      <tr data-page-node-id="EE9PVcVgp7C0MocasFgjTb"><td class="id" data-page-node-id="Tjr2XVIZRgXsqTSAKAduHC">M5</td><td class="cat" data-page-node-id="YkbFlActKH81HfGD2LEPgB">架构</td><td class="sev sev-mid" data-page-node-id="mY0yISLrjxOYlIpSetx5IW">中</td><td data-page-node-id="q538bzEk9SUuszwTAmp9XE"><strong data-page-node-id="5c4GjsfDLvXTs5TrLhwH2y">SSM 非 Boot，用 Knife4j/Swagger 的配置成本被低估</strong>。springfox 对 Spring 5.3 + JDK 17 兼容性差、已基本停更，容易踩坑。</td><td data-page-node-id="PYCCbEQKSosWC7Yc3UWaO7">明确用 springdoc-openapi 或 YApi/Apifox 手动维护契约，别在 SSM 上死磕 swagger。</td></tr>
+      <tr data-page-node-id="gNQrxufV1TBnsDlq8dymx8"><td class="id" data-page-node-id="cwahhlT1lCbeAk0FKurCd7">M6</td><td class="cat" data-page-node-id="57JhNF4e0WfVbKSZeGSKW8">架构</td><td class="sev sev-mid" data-page-node-id="MjVzubgbxFIhll0bTZeO29">中</td><td data-page-node-id="ABLMBg3YETMiVXKhmx9BbK"><strong data-page-node-id="He0RtLeNAPFE2udg5T8WlC">外部依赖（天气/LLM）无「熔断 + 限流」设计</strong>。只有缓存和兜底，没有对 API 超时、重试、熔断、并发上限的明确配置，可能打爆免费额度或拖垮线程池。</td><td data-page-node-id="DceaP9SssA6kC9hcTUqGGG">给外部调用配超时、重试（最多 1-2 次）、熔断器；天气/LLM 各配独立线程池 + 信号量限流。</td></tr>
+      <tr data-page-node-id="5kZydz6qdrP2fA6k2RwnVu"><td class="id" data-page-node-id="dpCCmChkdOiAt6HxsBTwEL">M7</td><td class="cat" data-page-node-id="gIwSkgLPOCNFKzuzMCcTiS">安全性</td><td class="sev sev-mid" data-page-node-id="agZbm4leanMcZNPkGY2ETV">中</td><td data-page-node-id="7KP1WET44DE2WYTRjpLKHJ"><strong data-page-node-id="SHnPDuwmDYkHrrVBDviXuw">统一响应里 <code data-page-node-id="OX4NA6TSl5XZ0dceCGI0pv">timestamp</code> 与 <code data-page-node-id="XzZa3IM1625xLDapqaSKIh">code</code> 语义混乱</strong>。<code data-page-node-id="UgbmB8DJcCwzDyY8EloW9Q">timestamp</code> 示例写死作演示可理解，但未说明用服务器时间戳；<code data-page-node-id="ocM0AAmegw8hgyjDzC0tIY">code</code> 复用 HTTP 语义码与 HTTP 状态码混用易混淆。</td><td data-page-node-id="lgoXS0fywPe7m03y8DHsAz">明确业务 code 与 HTTP status 的分工；timestamp 由后端生成，前端用它做时区对齐。</td></tr>
+      <tr data-page-node-id="BmMk0XngACp74MR3WrAmvZ"><td class="id" data-page-node-id="w1jnYYmQJyUHZFhKT6C5SD">M8</td><td class="cat" data-page-node-id="9IcN3ED22NAHDGtKsQ46BC">数据一致性</td><td class="sev sev-mid" data-page-node-id="ZKCY5dGm7tnCSSXGShwQLD">中</td><td data-page-node-id="DeY8Q11xWA570UG8Yzo2Ap"><strong data-page-node-id="jQ8hr9LRXtZhpxDyqmShQU"><code data-page-node-id="mp3ZY7l8DY0sQxuNIUM6qH">deleted</code> 逻辑删除 + 唯一约束缺失</strong>。若分类名需唯一，逻辑删除会让「已删同名」占位导致无法重建。</td><td data-page-node-id="hsCjQlk9Fv3hCuS3jH7czH">唯一索引用 <code data-page-node-id="H38dnsR3eGEGR5loPj57aC">user_id + name + deleted</code> 复合，或 <code data-page-node-id="L19gzb1CDCR14jdGYTLGZc">deleted</code> 存删除时间戳而非 0/1。</td></tr>
+    </tbody>
+  </table>
+
+  <h2 data-page-node-id="oeKimTUCLm2k9Su0A3mJoM">四、低风险问题<span style="font-size:14px;color:var(--text-dim)" data-page-node-id="u7hKxIk0cCUbLd1XUdzTCN">（打磨项 / 完整度）</span></h2>
+  <table data-page-node-id="EoAI8hA82UwkA6YeQoKnTi">
+    <thead data-page-node-id="0xfIx0xQRRQo8trlLzQnd0">
+      <tr data-page-node-id="TgPpn78FAtPgJNG4Xb5lWg"><th data-page-node-id="eLtrpqHkqDnPpAJG489k9n">#</th><th data-page-node-id="DfRW9FQC4H69tEPxmasOWF">类别</th><th data-page-node-id="gR8KX2voSMQMV8IUVckSuC">严重度</th><th data-page-node-id="PBPl1x1FfcSvEyQ1SDxrWr">问题</th><th data-page-node-id="MmYg6uLxhT48kfbhVAGNhF">改进方向</th></tr>
+    </thead>
+    <tbody data-page-node-id="zoaPgdAVlYL5VhqcRm69Y2">
+      <tr data-page-node-id="BHAb2qejbmzojLCdj6262r"><td class="id" data-page-node-id="yFEJ8uSTTgIYBt1DpkTjx6">L1</td><td class="cat" data-page-node-id="E7zAwTd7MkmaJbOTtsmdkC">测试覆盖</td><td class="sev sev-low" data-page-node-id="xCgAC2dDVlcfUYnWNYWX3r">低</td><td data-page-node-id="e1Fj8GYbTmWse1nyHJUkKZ"><strong data-page-node-id="jKwBPzZeR1lFpSqkUAqauC">全文无任何测试策略</strong>。单元测试（金额计算、规则引擎兜底）、集成测试（异步链路）、安全测试（越权）全部缺失。</td><td data-page-node-id="BJ8MM4HiR2NS4hPCcbWMOD">补测试章节：金额/规则引擎必测，越权用例必测，异步任务状态机必测。</td></tr>
+      <tr data-page-node-id="kXqBQJ8A7ZweWQHc1ZVGDU"><td class="id" data-page-node-id="RGN0cVCpEEdNYMKoelgtHJ">L2</td><td class="cat" data-page-node-id="B6VruvRodeZUZjtPXoerSk">安全性</td><td class="sev sev-low" data-page-node-id="AhKQW4yrlSupNjaPRAoM3D">低</td><td data-page-node-id="mIgakNbX3Cls6BwpQsruG1"><strong data-page-node-id="J3uhCnFNGMjV6NVd3dCI2z">CORS 配置描述不精确</strong>。<code data-page-node-id="1CRl2dC9T4oxm5EjfWEwLm">CorsFilter</code> 在鉴权前，且开发期开后端 CORS、生产走 Nginx——但没写白名单/是否 <code data-page-node-id="gdxlLaMHrhb3sIYKUqbt0w">allowCredentials</code>。</td><td data-page-node-id="v23NBkpGLI6rKU64pzjXwA">明确允许的 origin 白名单，禁止 <code data-page-node-id="kGPQxVyDtrSrA50vwPIYFs">*</code> + credentials 同开。</td></tr>
+      <tr data-page-node-id="swPq03ahapGF82GydUwmH9"><td class="id" data-page-node-id="7kKNEXussIkmxMtN4YWqCn">L3</td><td class="cat" data-page-node-id="sCEDp12gsleGtr9KkR7yZa">架构</td><td class="sev sev-low" data-page-node-id="NBdIH5SbBJjd8yJEZ2A9AV">低</td><td data-page-node-id="U74ZQIwKSiHt1nveA5NHaO"><strong data-page-node-id="Ce8yAAO7wLapJ79hwQClEG">Nginx 负载均衡/多实例与单机 Tomcat 部署的冲突</strong>。架构图写了「负载均衡」，但异步任务、本地 Caffeine 缓存在多实例下会不一致。</td><td data-page-node-id="rPFab8jfqPaSuQXvaDb3lm">首版明确单实例即可，多实例时缓存换 Redis、任务表保证幂等。</td></tr>
+      <tr data-page-node-id="K3IMWrP2LbTm9Asdddd2ro"><td class="id" data-page-node-id="QOrD94II2CFEXdJIUD44Cm">L4</td><td class="cat" data-page-node-id="vS71dY3UgEb7Wz8o3fL66N">数据一致性</td><td class="sev sev-low" data-page-node-id="tNen8zLZUXj3IS2Izltud5">低</td><td data-page-node-id="6kiKDdT2NET5sBT6QaANCy"><strong data-page-node-id="Cp4mF9FVDtKeJBmKZRHdHA"><code data-page-node-id="x3NBDaTBLt1BABrPrCR974">async_task</code> 与 <code data-page-node-id="7fDEfcPTf9tEXrtSZrrsls">outfit_record</code> 用 <code data-page-node-id="TaUdd9IyYT6fsaKFx33EjT">result_ref</code> 弱关联</strong>，无外键约束，<code data-page-node-id="ifZawofDvBcB7RajJWC8or">finish_time</code> 未覆盖「超时/取消」终态。</td><td data-page-node-id="5aH7AmAgDfPxHrlg1pJC2R">状态机补「超时」「取消」终态；明确 result_ref 写入时序。</td></tr>
+      <tr data-page-node-id="eCmXuMa6Nx6OXbdVzGVlDt"><td class="id" data-page-node-id="FVWPjFoi4vzHBJZimn4LRh">L5</td><td class="cat" data-page-node-id="NrQYDElnaVhp3WImXuqxVu">可维护性</td><td class="sev sev-low" data-page-node-id="JzILKnjeSue7fcOHVwoPlD">低</td><td data-page-node-id="tx5DMEG9CEXYTwlGU2UwfJ"><strong data-page-node-id="EB3nXs9Sxqi2H8aMtkKiaU"><code data-page-node-id="w47BExvXweqq3D3TteAiNL">season</code>/<code data-page-node-id="YMign0uMdM2BwIAFG9CJ7d">category</code>/<code data-page-node-id="Xl3rHVFdxXNrDa5p5xC7PF">style</code> 用 <code data-page-node-id="mVOhDSHmfOHhoWMhjDumLi">VARCHAR</code> 存枚举</strong>，衣物标签散落自由文本，规则引擎匹配会因「夏」vs「夏季」不一致失效。</td><td data-page-node-id="xUT8VtCkV3lRzX2nTlcm6z">用字典表或枚举 + 约束，保证规则引擎可精确匹配。</td></tr>
+      <tr data-page-node-id="9DFuTtTIhHs6BNUOBlL1DX"><td class="id" data-page-node-id="4skTabTm3ElbjZPCvSeAER">L6</td><td class="cat" data-page-node-id="UNAKHujFg0ZcYJF5O5DbIC">性能</td><td class="sev sev-low" data-page-node-id="Sig5CfoFHFaH8Bg62ufzqS">低</td><td data-page-node-id="11k65xCdRKV2gilqwqYwON"><strong data-page-node-id="T0FY1ZJItNKGvk0U2Ush7A">统计 <code data-page-node-id="jMQsk6KatrRqLeeHw1V0RY">percent</code> 由后端算但没定保留位数</strong>，且 <code data-page-node-id="2Scu2IIVFPfI3D4aKS0ohN">GROUP BY category_id, type</code> 的 <code data-page-node-id="zcaajpNPSnMpVDz2kEz67X">type</code> 在 <code data-page-node-id="5Nr5OCtPb86ZDmwAsHChXo">ledger_record</code> 里，与 H6 的分类派生方案需统一。</td><td data-page-node-id="M5T2AiyvUVWhewMPzRT3x4">统一 type 来源；percent 保留 1 位小数 + 总和校验为 100%。</td></tr>
+    </tbody>
+  </table>
+
+  <h2 data-page-node-id="wCy8PZWQleffEDB9uA9Cy8">五、问题统计</h2>
+  <table data-page-node-id="lDfZzdGlqwsims1MBkxywK">
+    <thead data-page-node-id="ZGEH9zl7eEVwTe7neCCSfm">
+      <tr data-page-node-id="0JOUuzszdPgXUgmMqm8g4u"><th data-page-node-id="SlrO5D6VsfbVmIPEuWLMhL">严重度</th><th data-page-node-id="SCGRwGnFB7WDAS7iEBmq9B">数量</th><th data-page-node-id="ptPPSG0ZWg8zVh2bWkIeeP">编号</th></tr>
+    </thead>
+    <tbody data-page-node-id="71TQzTx3fTUbXrQg1w70S7">
+      <tr data-page-node-id="vO503DTWcYg3pu9vd4sexy"><td class="sev sev-high" data-page-node-id="cH1HTdo4MkjAHTbElG49C9">高</td><td data-page-node-id="7HK1FgnEPg6l2vy7AwipI1">6</td><td data-page-node-id="weOGmK3XxF1eKHI1d8CpkI">H1 ~ H6</td></tr>
+      <tr data-page-node-id="QQ5pOyDaT8RO8lH5z3fQuQ"><td class="sev sev-mid" data-page-node-id="ChAE3TZSJFEtQE26D8GEFs">中</td><td data-page-node-id="uVtFynANAi2RbjfdzGreUG">8</td><td data-page-node-id="HGha2KJPeitZIZHrQmL2Jt">M1 ~ M8</td></tr>
+      <tr data-page-node-id="wtDpittPJkwOhNaOzICihh"><td class="sev sev-low" data-page-node-id="ero5JRCE733zk8ayIjTf2s">低</td><td data-page-node-id="MBMDCN2XAxN5hSIE3ef2V5">6</td><td data-page-node-id="WFsHmUTnRhjq4smi1JBlON">L1 ~ L6</td></tr>
+    </tbody>
+  </table>
+  <p data-page-node-id="GOFzTiHo8bJaJgfogd4DbS">合计 <strong data-page-node-id="DYajMED5EpBB9I3ALatQzx">20 项</strong>。</p>
+
+  <h2 data-page-node-id="bySnC8WZQbWgc3TwfETXfs">六、改进优先级建议</h2>
+  <table data-page-node-id="v0szfnRFHcM97SbauRzMAa">
+    <thead data-page-node-id="tNNI9jCCl9SGaKFEcJ5Cin">
+      <tr data-page-node-id="k75qEHUgX36T3ewxdxA471"><th data-page-node-id="08BOhwNPuhcxndF84ihm70">优先级</th><th data-page-node-id="s8ilnEoklZlnXza8hMBcbW">编号</th><th data-page-node-id="EidKjQdc9wEaMAigxhYVA4">行动</th><th data-page-node-id="Xyl61grmcPv4HbhpMBenKH">建议落地阶段</th></tr>
+    </thead>
+    <tbody data-page-node-id="CK3eiNBpghZGiH7QSUY4PM">
+      <tr data-page-node-id="0lQBEGeIVFqyC5Ke18Ag6s"><td class="sev sev-high" data-page-node-id="BpYzqALR5Kd3JAJGzee2rP">P0</td><td data-page-node-id="dLlq5ypFOxw4wBMuCmGf8j">H2 / H4 / H5</td><td data-page-node-id="RHO77yVqbZUjPrMyOiYQ5E">数据隔离插件、超时补偿、BigDecimal 序列化</td><td data-page-node-id="7GWqqCRY51l1cEQGHaGlEr">M1 骨架期钉死</td></tr>
+      <tr data-page-node-id="AblCL2cXDz0QnqTBO1MA20"><td class="sev sev-mid" data-page-node-id="KIY8s5cVoLxnUrXAXDVLwg">P1</td><td data-page-node-id="7iyXpWidebD4gv0lS9dK4m">H1 / H3 / H6</td><td data-page-node-id="Q11I0UBMZPT2QTLRTSLTn9">Token 双机制、Prompt 注入防护、type 约束</td><td data-page-node-id="sfBcJgucGHNGq78R7J4cW9">M2 ~ M4 随模块落地</td></tr>
+      <tr data-page-node-id="ogqKEcipdmXXVDb86JbIwT"><td class="sev sev-mid" data-page-node-id="3OFw41dHG2stfJBIa2FZxn">P2</td><td data-page-node-id="XCn0U64IXsjw9saAHEs1dN">M1 / M3 / M6</td><td data-page-node-id="gY6xqElyyRMMLwLsNUzdvi">搜索索引阈值、衣物快照、外部调用熔断限流</td><td data-page-node-id="VS9iybLvBBcT5uhJJPjM3d">M4 ~ M5 打磨</td></tr>
+      <tr data-page-node-id="KuAaTYcSHBsoAAD7eGnp8e"><td class="sev sev-low" data-page-node-id="CcECVgPh3K3AFDhAd7eebI">P3</td><td data-page-node-id="m4T1kEtwb7oLiSFc3Ar6kj">L1 ~ L6</td><td data-page-node-id="HCotAzsavua5EyEVgDyQOu">测试策略、CORS 白名单、枚举字典等</td><td data-page-node-id="md1MPkE0HqPrLxmI67TUJr">M5 上线前补齐</td></tr>
+    </tbody>
+  </table>
+
+  <div class="footer" data-page-node-id="Dpccic1H7qUN1esQRDQpyr">报告由资深项目审核员输出 · 覆盖架构 / 安全 / 可维护性 / 性能 / 测试 / 一致性 六维度</div>
+
+</div>
+</body>
+</html>

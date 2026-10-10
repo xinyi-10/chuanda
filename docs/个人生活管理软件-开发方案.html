@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="oBonLdIoQq7jCeaq1ohDfv">
+<head data-page-node-id="eHmSHuaqZnGzOD8tb2BSuO">
+<meta charset="UTF-8" data-page-node-id="jp5XH0J2Fle5BSxJScccBO">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="vBULXRoCcCiEF8tHCi7uwl">
+<title>个人生活管理软件 · 开发方案 V1.0</title>
+<style>
+  :root{
+    --bg:#0d1117; --bg2:#161b22; --bg3:#1c2128; --border:#30363d;
+    --txt:#e6edf3; --txt2:#8b949e; --blue:#58a6ff; --green:#7ee787;
+    --orange:#ffa657; --purple:#d2a8ff; --red:#ff7b72; --cyan:#79c0ff;
+    --pink:#f778ba; --yellow:#e3b341;
+    --radius:12px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);color:var(--txt);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    line-height:1.7;font-size:15px;
+  }
+  a{color:var(--blue);text-decoration:none}
+  code{font-family:"JetBrains Mono","Cascadia Code",Consolas,monospace;font-size:.86em;
+    background:rgba(110,118,129,.25);padding:2px 6px;border-radius:5px;color:var(--cyan)}
+  .layout{display:flex;max-width:1400px;margin:0 auto;gap:32px;padding:0 24px}
+
+  /* ---------- 侧栏 ---------- */
+  aside{
+    width:236px;flex-shrink:0;position:sticky;top:0;height:100vh;
+    padding:28px 0;overflow-y:auto;
+  }
+  aside::-webkit-scrollbar{width:6px}
+  aside::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+  .brand{display:flex;align-items:center;gap:10px;margin-bottom:6px;padding:0 10px}
+  .brand .dot{width:11px;height:11px;border-radius:50%;
+    background:linear-gradient(135deg,var(--blue),var(--purple));box-shadow:0 0 12px var(--blue)}
+  .brand b{font-size:15px;letter-spacing:.3px}
+  .brand small{display:block;color:var(--txt2);font-size:11.5px;font-weight:400;margin-top:1px}
+  nav{margin-top:20px}
+  nav a{
+    display:block;padding:7px 12px;color:var(--txt2);font-size:13.5px;
+    border-left:2px solid transparent;border-radius:0 6px 6px 0;transition:.18s;
+  }
+  nav a:hover{color:var(--txt);background:var(--bg2)}
+  nav a.active{color:var(--blue);border-left-color:var(--blue);background:rgba(88,166,255,.08)}
+  nav .grp{font-size:11px;color:#6e7681;letter-spacing:1.5px;
+    margin:16px 0 4px;padding:0 12px;text-transform:uppercase}
+
+  /* ---------- 主区 ---------- */
+  main{flex:1;min-width:0;padding:28px 0 100px}
+  section{margin-bottom:52px;scroll-margin-top:20px}
+  h2{font-size:22px;display:flex;align-items:center;gap:12px;margin-bottom:18px;
+    padding-bottom:12px;border-bottom:1px solid var(--border)}
+  h2 .num{
+    font-size:13px;font-weight:700;color:var(--bg);background:var(--blue);
+    width:26px;height:26px;border-radius:7px;display:grid;place-items:center;flex-shrink:0}
+  h3{font-size:16.5px;margin:26px 0 12px;color:var(--txt);display:flex;align-items:center;gap:8px}
+  h3::before{content:"";width:4px;height:15px;background:var(--purple);border-radius:2px}
+  h4{font-size:14px;margin:18px 0 8px;color:var(--txt2)}
+  p{margin-bottom:12px;color:#c9d1d9}
+  ul,ol{margin:0 0 14px 20px;color:#c9d1d9}
+  li{margin-bottom:6px}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    background:linear-gradient(150deg,#161b22 0%,#1a2233 55%,#20283a 100%);
+    border:1px solid var(--border);border-radius:16px;padding:34px 34px 30px;
+    position:relative;overflow:hidden;margin-bottom:40px;
+  }
+  .hero::after{content:"";position:absolute;width:340px;height:340px;right:-90px;top:-140px;
+    background:radial-gradient(circle,rgba(88,166,255,.22),transparent 68%);border-radius:50%}
+  .hero::before{content:"";position:absolute;width:260px;height:260px;right:120px;bottom:-190px;
+    background:radial-gradient(circle,rgba(210,168,255,.16),transparent 68%);border-radius:50%}
+  .hero .badge{display:inline-block;font-size:12px;color:var(--green);
+    background:rgba(126,231,135,.1);border:1px solid rgba(126,231,135,.3);
+    padding:3px 11px;border-radius:20px;margin-bottom:14px}
+  .hero h1{font-size:30px;line-height:1.3;position:relative;z-index:1}
+  .hero h1 span{background:linear-gradient(90deg,var(--blue),var(--purple));
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .hero .sub{color:var(--txt2);margin:12px 0 20px;font-size:14.5px;max-width:660px;position:relative;z-index:1}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;position:relative;z-index:1}
+  .chip{font-size:12.5px;padding:5px 13px;border-radius:20px;background:var(--bg3);
+    border:1px solid var(--border);color:#c9d1d9}
+  .chip b{color:var(--blue)}
+
+  /* ---------- 表格 ---------- */
+  .tw{overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius);margin:14px 0}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:520px}
+  th{background:var(--bg3);color:var(--txt);text-align:left;padding:11px 14px;
+    font-weight:600;border-bottom:1px solid var(--border);white-space:nowrap}
+  td{padding:10px 14px;border-bottom:1px solid #21262d;color:#c9d1d9;vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  tbody tr:hover{background:rgba(88,166,255,.05)}
+  td code{white-space:nowrap}
+
+  /* ---------- 卡片网格 ---------- */
+  .grid{display:grid;gap:14px}
+  .g2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+    padding:18px;transition:.2s}
+  .card:hover{border-color:rgba(88,166,255,.5);transform:translateY(-2px)}
+  .card .ic{font-size:20px;margin-bottom:8px}
+  .card h4{color:var(--txt);font-size:14.5px;margin:0 0 6px;font-weight:600}
+  .card p{font-size:13px;color:var(--txt2);margin:0}
+  .card .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:5px;
+    margin:8px 4px 0 0;background:rgba(88,166,255,.12);color:var(--cyan)}
+  .card.p0{border-top:3px solid var(--green)}
+  .card.p1{border-top:3px solid var(--orange)}
+
+  /* ---------- 架构图 ---------- */
+  .arch{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+    padding:22px;margin:18px 0}
+  .layer{border:1px solid var(--border);border-radius:10px;padding:14px 18px;
+    background:var(--bg3);position:relative}
+  .layer .lt{font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px}
+  .layer .lt em{font-style:normal;font-size:11px;color:var(--txt2);font-weight:400}
+  .layer .ld{font-size:12.5px;color:var(--txt2);margin-top:6px}
+  .arrow{text-align:center;color:var(--blue);font-size:15px;line-height:1;padding:5px 0;
+    letter-spacing:2px}
+  .l-front{border-left:3px solid var(--purple)}
+  .l-gate{border-left:3px solid var(--yellow)}
+  .l-ctrl{border-left:3px solid var(--blue)}
+  .l-svc{border-left:3px solid var(--green)}
+  .l-dao{border-left:3px solid var(--orange)}
+  .l-db{border-left:3px solid var(--pink)}
+
+  /* ---------- 代码块 ---------- */
+  pre{background:#010409;border:1px solid var(--border);border-radius:var(--radius);
+    padding:16px 18px;overflow-x:auto;font-size:12.5px;line-height:1.65;margin:14px 0;
+    font-family:"JetBrains Mono","Cascadia Code",Consolas,monospace;color:#c9d1d9}
+  pre .k{color:var(--red)}      /* 关键字 */
+  pre .s{color:var(--green)}    /* 字符串 */
+  pre .c{color:#6e7681;font-style:italic} /* 注释 */
+  pre .t{color:var(--orange)}   /* 类型 */
+  pre .m{color:var(--purple)}   /* 方法/注解 */
+  pre::-webkit-scrollbar{height:8px}
+  pre::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+
+  /* ---------- 提示条 ---------- */
+  .note{border-radius:10px;padding:14px 18px;margin:16px 0;font-size:13.5px;
+    border-left:3px solid;display:flex;gap:12px;align-items:flex-start}
+  .note .ni{font-size:16px;flex-shrink:0;line-height:1.5}
+  .note.warn{background:rgba(255,166,87,.08);border-color:var(--orange)}
+  .note.info{background:rgba(88,166,255,.08);border-color:var(--blue)}
+  .note.ok{background:rgba(126,231,135,.08);border-color:var(--green)}
+  .note b{color:var(--txt)}
+  .note p{margin:0;color:#c9d1d9}
+
+  /* ---------- 接口卡片 ---------- */
+  .api{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);
+    margin:16px 0;overflow:hidden}
+  .api .hd{display:flex;align-items:center;gap:10px;padding:12px 16px;
+    background:var(--bg3);border-bottom:1px solid var(--border);flex-wrap:wrap}
+  .verb{font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:6px;
+    font-family:monospace;letter-spacing:.5px}
+  .v-post{background:rgba(126,231,135,.16);color:var(--green)}
+  .v-get{background:rgba(88,166,255,.16);color:var(--blue)}
+  .v-put{background:rgba(255,166,87,.16);color:var(--orange)}
+  .v-del{background:rgba(255,123,114,.16);color:var(--red)}
+  .api .path{font-family:monospace;font-size:13px;color:var(--txt)}
+  .api .body{padding:16px}
+  .star{color:var(--yellow);font-size:12px}
+
+  /* ---------- 时间线 ---------- */
+  .tl{position:relative;margin-left:8px;padding-left:26px;border-left:2px solid var(--border)}
+  .tl-item{position:relative;padding-bottom:22px}
+  .tl-item:last-child{padding-bottom:0}
+  .tl-item::before{content:"";position:absolute;left:-34px;top:5px;width:14px;height:14px;
+    border-radius:50%;background:var(--bg);border:3px solid var(--blue)}
+  .tl-item .tt{font-weight:700;font-size:14.5px;color:var(--txt)}
+  .tl-item .tt span{font-size:11.5px;color:var(--bg);background:var(--blue);
+    padding:1px 8px;border-radius:10px;margin-left:8px;font-weight:700}
+  .tl-item .td{font-size:13px;color:var(--txt2);margin-top:4px}
+
+  footer{text-align:center;color:var(--txt2);font-size:12.5px;
+    padding:30px 0;border-top:1px solid var(--border);margin-top:20px}
+
+  @media(max-width:900px){
+    aside{display:none}
+    .layout{padding:0 16px}
+    .hero h1{font-size:23px}
+  }
+</style>
+</head>
+<body data-page-node-id="6yafVLaZu3rTOdUj6DrOV0">
+<div class="layout" data-page-node-id="APyzTKASxLESHlIZWCFi0L">
+  <!-- ============ 侧栏 ============ -->
+  <aside data-page-node-id="OARGaoLQ3GhN2f6FcU5xhr">
+    <div class="brand" data-page-node-id="mtY4O8CqmyGU3UFzFGPfau">
+      <span class="dot" data-page-node-id="7MGE4hwnHyuT6z4vr8XBZj"></span>
+      <div data-page-node-id="faf1uRNlXxH08CFw0TNWBp"><b data-page-node-id="fdSyyMqGA7lYyNICluwEB9">LifeManager</b><small data-page-node-id="tWi5ihRLoGoSVK7zH5Wb5z">开发方案 · V1.0</small></div>
+    </div>
+    <nav id="nav" data-page-node-id="5CUg31uD0Sty10DTzeI2Wz">
+      <div class="grp" data-page-node-id="L7VM4iGrq7A8dGipq9yTCL">概览</div>
+      <a href="#s1" data-page-node-id="TYLVZh711jJHAUFd1YBVCY">1 · 项目概述</a>
+      <a href="#s2" data-page-node-id="lFCWZCY0WsYiY14nDNJJ0S">2 · 技术选型</a>
+      <div class="grp" data-page-node-id="9KHGBG9dcJUGcfCl5oDG7R">设计</div>
+      <a href="#s3" data-page-node-id="bI3AOQZeCO6VJQC9HZPEC2">3 · 整体架构</a>
+      <a href="#s4" data-page-node-id="Mu1jDyCWDICP71Inw0K1qm">4 · 模块职责</a>
+      <a href="#s5" data-page-node-id="vqBbWgXca1GoCW4onLrzXP">5 · 数据库设计</a>
+      <a href="#s6" data-page-node-id="SIHCVR6OMT89Yqbp5IZpHA">6 · 接口设计</a>
+      <div class="grp" data-page-node-id="lbwW5Ce6W1IrOlGIYbVn2U">关键实现</div>
+      <a href="#s7" data-page-node-id="QvA9OA6piOjYnsq0U9JcI0">7 · 异步处理</a>
+      <a href="#s8" data-page-node-id="o3giIqA1he5Stf9wqvBb2e">8 · 注意点</a>
+      <div class="grp" data-page-node-id="H4I0XSOt1BEga2bAQrEguF">交付</div>
+      <a href="#s9" data-page-node-id="68mUL7DS9ipk7Ocexkx1E0">9 · 里程碑</a>
+      <a href="#s10" data-page-node-id="XC7evvlmyfXFCvxb50pYeN">10 · 风险对策</a>
+    </nav>
+  </aside>
+
+  <!-- ============ 主内容 ============ -->
+  <main data-page-node-id="EKCsqg461SklE2CRz0DNPb">
+    <div class="hero" data-page-node-id="fkcPOXmNAw7XHO1z4IVQ3s">
+      <span class="badge" data-page-node-id="fO47gBCXjNxJREU5WzqsYO">● 开发组 PM · 技术方案已就绪</span>
+      <h1 data-page-node-id="f8pD01mJMLMNwgS9J0dziE">个人生活管理软件<br data-page-node-id="ZnCM7280xrDFtUIERY8GlU"><span data-page-node-id="W6AosSKSuOeEUABXEeF0GM">开发方案 V1.0</span></h1>
+      <p class="sub" data-page-node-id="WMtoFq8K3rj61GUPtT9WQa">笔记 · 记账 · AI 穿搭推荐 —— 一站式个人事务管理工具。
+      基于 SSM 分层架构与 Vue3 前后端分离方案，覆盖架构、模块、接口、异步与落地要点。</p>
+      <div class="chips" data-page-node-id="28GIpAim7mVl243ZfgOuKG">
+        <span class="chip" data-page-node-id="DvFsigkfEiGPSr3KX2qitw">后端 <b data-page-node-id="5fjVe9ojwu8tVf6orgwxV5">Java · SSM</b></span>
+        <span class="chip" data-page-node-id="KxFTU1EcCGuNO7EnxX449c">数据库 <b data-page-node-id="cpI8gs4J9OFdIueTGWK7tb">MySQL 8</b></span>
+        <span class="chip" data-page-node-id="jTRCSygg4soN3FjiaYGqPH">前端 <b data-page-node-id="z5WFlTewNXatVtRZjtIEmk">Vue3 · Element Plus</b></span>
+        <span class="chip" data-page-node-id="st7BdzWr9XJsvFbEnNPJ3X">异步 <b data-page-node-id="fHwDDilI6kU19vAboqyNZU">@Async · 线程池</b></span>
+        <span class="chip" data-page-node-id="BASAU7fBrxGWkWlvd3XBXO">智能 <b data-page-node-id="LFiKpejhm19DBTDrgrC7RI">LLM + 天气 API</b></span>
+      </div>
+    </div>
+
+    <!-- ================= 1 ================= -->
+    <section id="s1" data-page-node-id="B235qwCFMZ11FaE9z9gWll">
+      <h2 data-page-node-id="KsTvY3lcCcL424VVfIp6XA"><span class="num" data-page-node-id="28qXknpVEfCgWbFTMaCUMO">1</span>项目概述</h2>
+      <p data-page-node-id="AuC7CvfItzoppaQPqhcGY7">把「记笔记 / 记账 / 穿什么」三件高频小事收敛到一个入口，核心体验是<strong data-page-node-id="zPtRFYtEN2iGjyFRD1mRvR">打开就能记、记完有反馈</strong>。</p>
+
+      <div class="grid g3" data-page-node-id="Klh057eVrMkEHFihq0sMw4">
+        <div class="card" data-page-node-id="GEEYtiAKXDszOVWgdL7QcS"><div class="ic" data-page-node-id="vAnWqepwJBbCZ67x2b7e9j">🎯</div><h4 data-page-node-id="Nx1JqFr93fVnnsJsPWxvGW">目标用户</h4><p data-page-node-id="LfKJEJ63fdKMJiNM4ujWD6">学生 / 年轻上班族，注重事务整理、经济自律与形象管理</p></div>
+        <div class="card" data-page-node-id="scxFf4k0Z7cOVNTd0Qzjus"><div class="ic" data-page-node-id="mFBFUI5ocfCGxHPMwyIUmw">💎</div><h4 data-page-node-id="gJfurwrNYyayFEiSXSUrDK">核心价值</h4><p data-page-node-id="HPk810rukWMb2ByOZk3Vp1">一站式免切换 · 数据私有可自部署 · AI 智能推荐</p></div>
+        <div class="card" data-page-node-id="pC4fG00ZgdoCyyIcOJVJoI"><div class="ic" data-page-node-id="1EQS99MDGfHOSKtRiAfGD9">⏱️</div><h4 data-page-node-id="WGXy5dAD52hEVHXekGR2cv">使用频率</h4><p data-page-node-id="PQmCoB4n9S7yu7vbj60LBw">笔记/记账每日多次；穿搭推荐每日 1 次（早间）</p></div>
+      </div>
+
+      <h3 data-page-node-id="VVGLmHu7OMmox7VwvXcKKQ">功能矩阵</h3>
+      <div class="tw" data-page-node-id="fZKDZ1hY4Ruymtnr7E9w0R"><table data-page-node-id="7z1tV0T8ZRt9SQ8bUOrcRu">
+        <thead data-page-node-id="OUtCvAVJKXOJZJgCNQuwNx"><tr data-page-node-id="uqvr1DuTDP4qTgUDKVAKAT"><th data-page-node-id="hYPvjzhGWHqBaTrNqTdiDY">模块</th><th data-page-node-id="NJPQgGZVKbVahRNPtstaTp">子功能</th><th data-page-node-id="XfLLGssEGHMoBS9Ssp0Fc6">优先级</th><th data-page-node-id="BjU9mSpdMgowDHunMRdYfm">备注</th></tr></thead>
+        <tbody data-page-node-id="tW553BE7HUa0jTdUq11ZYW">
+          <tr data-page-node-id="9qNUEPCSx7urvboqOEkuFo"><td data-page-node-id="ENo5GNNuVJHu92MbfKpWTn">笔记</td><td data-page-node-id="cioDTJx1ccNX30mE3eMcqb">创建 / 编辑 / 删除</td><td data-page-node-id="cB2RvombS7F2upDevqpRpz"><span class="tag" style="background:rgba(126,231,135,.15);color:var(--green)" data-page-node-id="lXJybFE7GCjg0RVgToAVOp">P0</span></td><td data-page-node-id="cV5sWuZUC8kDH3IUb5VZBe">基础 CRUD</td></tr>
+          <tr data-page-node-id="a6MOb8anbormBNrsJhzTtf"><td data-page-node-id="PRxpruFktz2HLBzhwDvaxt">笔记</td><td data-page-node-id="OvmSrSMbDkPK8UmDuFtVXf">分类</td><td data-page-node-id="v9m5lYOkFaf8lJRCsNTDdw"><span class="tag" style="background:rgba(126,231,135,.15);color:var(--green)" data-page-node-id="g1mrnJVylqFrdQmPPqcNx0">P0</span></td><td data-page-node-id="RToS4AWksSlJdzE3xTNdtA">单级起步，预留多级</td></tr>
+          <tr data-page-node-id="ZY4Svk7ZKGEslonyIxlAvP"><td data-page-node-id="ROlDWHtVGfGTKHEdjzXlEb">笔记</td><td data-page-node-id="N8PMDU0SWmwFOv2MknEZOh">搜索（标题 + 正文）</td><td data-page-node-id="gEzpFBXG7fue6UzXbzQp9k"><span class="tag" style="background:rgba(126,231,135,.15);color:var(--green)" data-page-node-id="Ect1jGrsqluAgPSgedeqsC">P0</span></td><td data-page-node-id="rAYXDsbaPyH2GbpGTQEc87">模糊检索 → 可升级全文索引</td></tr>
+          <tr data-page-node-id="aJz26QGxTvN017AzZhBUIY"><td data-page-node-id="8spzGN7njbHxKg1qp0lbuz">记账</td><td data-page-node-id="yzpebrCO3wD8fuA3gxD7Ov">收入 / 支出流水</td><td data-page-node-id="EOcoMrTsSAgZwks98A5ML6"><span class="tag" style="background:rgba(126,231,135,.15);color:var(--green)" data-page-node-id="7ozwQRuls12zMEVMkkhIZ7">P0</span></td><td data-page-node-id="QDMlbQDbOExU9Oleo1NB6p">金额、时间、分类三要素</td></tr>
+          <tr data-page-node-id="hCBqCuD2Uy3QTvC6tjClpI"><td data-page-node-id="GC5sAjru8iCP9FcjoJ9lFS">记账</td><td data-page-node-id="vlr0zKAtoOCMBacDZJ8c7L">统计汇总</td><td data-page-node-id="Z4d6Lye8xIFE62EBc2OdDg"><span class="tag" style="background:rgba(126,231,135,.15);color:var(--green)" data-page-node-id="hAHVktTBJGASLzRM9S66Hb">P0</span></td><td data-page-node-id="fpxfy1E8kuTUckwuYmblgB">月度收支、分类占比</td></tr>
+          <tr data-page-node-id="3EhBaJCVuxKuwMXxmquuIr"><td data-page-node-id="3leIIQFWTCSJM0p1MZ7e1k">穿搭</td><td data-page-node-id="gmSBkl3Y428UhiHUrMLgkk">衣物库维护</td><td data-page-node-id="hzBASAAZ62n9WQmhswTKWu"><span class="tag" style="background:rgba(255,166,87,.15);color:var(--orange)" data-page-node-id="ihvrdu0ToiEhHhGwRT4pL5">P1</span></td><td data-page-node-id="4FSywQFB9hiAIC9hGgqjVy">推荐的前提数据</td></tr>
+          <tr data-page-node-id="0kWmXxgOFH7V77K9hQjDaR"><td data-page-node-id="PK3I65EEVxHUEDwvUPOUlT">穿搭</td><td data-page-node-id="b5ZyG9ZAitR9pD2aXihXXP">AI 智能推荐</td><td data-page-node-id="FOyXDe8IXAp7PA9GrRK30N"><span class="tag" style="background:rgba(255,166,87,.15);color:var(--orange)" data-page-node-id="kF5Kv9pWI73owIdbXBM17V">P1</span></td><td data-page-node-id="rdiqDTBAIYBV4jj9QX0p1v">依赖天气 + LLM API</td></tr>
+        </tbody>
+      </table></div>
+      <div class="note info" data-page-node-id="j0fGCCk0A7Lneo7LMB1gdv"><span class="ni" data-page-node-id="szAPtN8dqgHEQywMVFAQpA">📌</span><p data-page-node-id="dQWQn2IBuUyMwtl9Bg9lQp"><b data-page-node-id="v8zoCgbVr9ulvB1q9ra8II">PM 建议：</b>P0 三大件（笔记、记账）是必须先跑通的骨架，穿搭推荐放第二个迭代，避免首版战线过长。</p></div>
+    </section>
+
+    <!-- ================= 2 ================= -->
+    <section id="s2" data-page-node-id="bC7LMfCSgrGBHhPbAK3NnO">
+      <h2 data-page-node-id="EjPliiGuP88axvvEhWolbi"><span class="num" data-page-node-id="68Ck6l5AwSNpPl6sHQ6ZjQ">2</span>技术选型</h2>
+      <div class="tw" data-page-node-id="sMLOgDR8pF0IZ9MEl6vJwl"><table data-page-node-id="5y81HxEjGtxsFb0TC9NAeT">
+        <thead data-page-node-id="7ij98VPSPMy85PkT8jtGXK"><tr data-page-node-id="bIuvFBtiMECjCWEuEK8tk0"><th data-page-node-id="c6jPne8sS7Ht7CwwBjYCqQ">层次</th><th data-page-node-id="CPf9tPds8r9BAPELuEXjSu">技术</th><th data-page-node-id="AlZXJz4au3XReI20uNNVae">版本建议</th><th data-page-node-id="cXNTW7hyMfhXrHiE0A4gO5">说明</th></tr></thead>
+        <tbody data-page-node-id="unObXN0QggRRjtXDMFna8p">
+          <tr data-page-node-id="Q7Vq42O4PL7hLUNGo4h4TJ"><td data-page-node-id="FdDsU5GEWonRJQRWWWnUei">后端语言</td><td data-page-node-id="R4TUXdImmbeTaMZpK2YOqv">Java</td><td data-page-node-id="tEQWmHArvg53JnR00l9VTo">JDK 17</td><td data-page-node-id="2YE70TZxYJmABpzPa2txpV">与现有环境一致</td></tr>
+          <tr data-page-node-id="OmompEqNVT8cZs5Ao0zey9"><td data-page-node-id="gR2hHiV4GWz0qOjxMMyqhV">核心框架</td><td data-page-node-id="6DF7lzvBTd8NKvVMzsUNtk">Spring</td><td data-page-node-id="CWIAGwkhbIHqChRa1FoWmg">5.3.x</td><td data-page-node-id="4KQCqIBa4KGh73pYfsEWGF">IoC / AOP / 事务 / 异步</td></tr>
+          <tr data-page-node-id="Jt3M6wGq0CijkBSVpK3B7O"><td data-page-node-id="RnVL8qPRPLRZ0K6gDNaGvK">Web 层</td><td data-page-node-id="TXFG52mnd0TBbl7uYhinch">Spring MVC</td><td data-page-node-id="EfJHDC3Sih8meBBjTY4A16">5.3.x</td><td data-page-node-id="BOVz2eJlSKlcsS00yMJ30M">RESTful 接口</td></tr>
+          <tr data-page-node-id="DObzFeoFgr1rzqPgHFt1Wh"><td data-page-node-id="sPMSl6zFOjuN1A4sJ3MTFD">持久层</td><td data-page-node-id="UPFHMVvIcWOVkFZzin859Y">MyBatis</td><td data-page-node-id="gexyyq4xXsgC089AtXOJHt">3.5.x</td><td data-page-node-id="71wDktILPPwIIkBnHAdBEd">XML 映射 + 动态 SQL</td></tr>
+          <tr data-page-node-id="Z0bHSeF83qxnciN69DZ9kP"><td data-page-node-id="5aWhprGQG202ObHG0LNKHK">数据库</td><td data-page-node-id="fqtrBuP6v2FbDE98BsRilW">MySQL</td><td data-page-node-id="xCfo8sXAmKg6iK2NDrcG5p">8.0.x</td><td data-page-node-id="fGCDEEsiDJDmuCYage5YdQ">utf8mb4，支持窗口函数</td></tr>
+          <tr data-page-node-id="cG5YujSvfiZUwUaOPEEEKk"><td data-page-node-id="yLudC9lHMO8OLJK3CTgom9">前端框架</td><td data-page-node-id="FMUk4RseYeei88eEikXvT0">Vue3</td><td data-page-node-id="PNfn465pUQdH7k1jGmrIc7">3.4+</td><td data-page-node-id="E3v8xMsiID9BjlL47HsrP6">Composition API</td></tr>
+          <tr data-page-node-id="pvgB8e8l2FqF0m98XGHgjV"><td data-page-node-id="akX45GxU17aC8R25bRDUWC">UI 组件库</td><td data-page-node-id="mCtpuXYqEJDUT1EJSRgAy2"><b style="color:var(--orange)" data-page-node-id="khM8HpgJmfqtHBu7TiONmK">Element Plus</b></td><td data-page-node-id="nPsqpkUfQkd3gCNDfVPYtc">2.x</td><td data-page-node-id="YNZHtZOIVAgGeGyEsmlHUa">见下方修正说明</td></tr>
+          <tr data-page-node-id="6gyKpS0vtJz6G51nn9xXxT"><td data-page-node-id="2f4MnfrYfPYa6CQowX73o8">构建 / 状态</td><td data-page-node-id="EP5beU8F5dPIxbZFKmbGAW">Vite / Pinia</td><td data-page-node-id="ChKSQDnKoipQ7dExbETizf">5.x / 2.x</td><td data-page-node-id="bac5CdgZE0qTrswgKK56YC">开发打包 / 状态管理</td></tr>
+          <tr data-page-node-id="x1Y08DkUkUjbOg6SoAebO0"><td data-page-node-id="xBL4JqJwGhVSqGA9XVguLC">HTTP</td><td data-page-node-id="qRBbVkCVhNMzBG2eyokWVn">Axios</td><td data-page-node-id="AlznDaod9a1aXjy1d7KcCh">1.x</td><td data-page-node-id="1Pt2Ct2XQWtmXAdgzu2BAY">统一拦截器封装</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="note warn" data-page-node-id="pwVSGDVxmXicI3B24C0dnw"><span class="ni" data-page-node-id="MJbsCI0WDgZaxE1MGYkwao">⚠️</span><p data-page-node-id="3Gi8wiv9JI2P2AomIOATA3"><b data-page-node-id="Q0KAxrS0bQh3ef0CDVvooA">选型修正（重要）：</b>需求里写的「Element UI + Vue3」存在版本冲突 —— Element UI 是面向 <b data-page-node-id="5AdN7McerFBrrKx7mOD1CK">Vue2</b> 的组件库，无法在 Vue3 上运行。正确组合是 <b data-page-node-id="mR3q71eofaUCOWTV8dbJC3">Vue3 + Element Plus</b>（官方 Vue3 版本，饿了么团队出品，API 风格一脉相承）。若已锁定 Element UI，则前端需降级 Vue2，二选一，不能混用。</p></div>
+
+      <h3 data-page-node-id="KPZ3LeTaHP7nt3HExA3U3W">外部依赖与降级策略</h3>
+      <div class="grid g2" data-page-node-id="oxOt3br4vVRLS4VezO8HWN">
+        <div class="card" data-page-node-id="ER3RTUBbYY4HfNc06Qdmvu"><div class="ic" data-page-node-id="yy5iJcy56H3vDQ4rDGVbTw">🌤️</div><h4 data-page-node-id="urrS2oPFCa4wIhPV6MDyTX">天气 API</h4><p data-page-node-id="pH748TUy1JglgVJ0bYZnlE">和风 / 高德 / 心知天气</p>
+          <span class="tag" data-page-node-id="PVkGuuMYpjfsrYa4EZoDCJ">失败 → 城市季节默认策略</span></div>
+        <div class="card" data-page-node-id="1oobDiBzOBBpB1MTAqpaGo"><div class="ic" data-page-node-id="2SnaBNn7DrYMa7xF22SmYW">🤖</div><h4 data-page-node-id="y5i3MHDPkLrKcOs3d6SmOS">LLM API</h4><p data-page-node-id="BovjQN8l4uEj3es12olnrn">通义千问 / DeepSeek / GLM</p>
+          <span class="tag" data-page-node-id="06uiY3zWZCjKBosXY8MBi8">失败 → 本地规则引擎兜底</span></div>
+      </div>
+    </section>
+
+    <!-- ================= 3 ================= -->
+    <section id="s3" data-page-node-id="wN2TxObVVtNUdYOtEWGjYx">
+      <h2 data-page-node-id="IFC77M4h6Zp94gErDJ1DO3"><span class="num" data-page-node-id="gcdeBTiEMFM8xAZ1s6mVYc">3</span>整体架构设计</h2>
+      <p data-page-node-id="17Z2ZMnNi7zEQBy4llcFEc">标准前后端分离 + 经典 SSM 五层分层，请求自顶向下逐层穿透：</p>
+
+      <div class="arch" data-page-node-id="MPzqD33KZBzrqbJe0AdkMx">
+        <div class="layer l-front" data-page-node-id="ykbudZ6biuB8EhEq59l3bH">
+          <div class="lt" data-page-node-id="6TIyxCftUUvZh2yJDgcKZ8">🎨 表现层 <em data-page-node-id="ASM03Cw89SJSV70o412xLL">Vue3 SPA</em></div>
+          <div class="ld" data-page-node-id="WmQZElgdwxl24ye3zlYiXq">Element Plus 组件 · Pinia 状态 · Axios 拦截器 · Vue Router 守卫 · Vite 构建</div>
+        </div>
+        <div class="arrow" data-page-node-id="ZuXUbDgIxYiW3UHkpLbjGI">▼　HTTP / JSON（RESTful）　▼</div>
+        <div class="layer l-gate" data-page-node-id="MXwhSa31TylY3ihI5Hlj0g">
+          <div class="lt" data-page-node-id="zOHUkGsgkSlJGallnHQkaQ">🚪 接入层 <em data-page-node-id="6P3sgTQ5gokJRtEw1zFnZu">Nginx</em></div>
+          <div class="ld" data-page-node-id="4TvYwRvqdCWnMe2vBou9Pc">静态资源托管 · 反向代理 /api · 负载均衡 · Gzip</div>
+        </div>
+        <div class="arrow" data-page-node-id="F1P1Hbe2sRCTLSIaSKcPWA">▼</div>
+        <div class="layer l-ctrl" data-page-node-id="pmWzxHR3ksOLQ0weDkfQBP">
+          <div class="lt" data-page-node-id="mNK0jocqnNH9iw62Lt3XQQ">🎛️ 控制层 <em data-page-node-id="AGDflKImOSIr8FYCoflQuW">Spring MVC @RestController</em></div>
+          <div class="ld" data-page-node-id="uD9pL5cGj6QpXpWpGxGKHE">参数校验(Validation) · 统一响应封装 · 全局异常处理 · 登录鉴权拦截器</div>
+        </div>
+        <div class="arrow" data-page-node-id="LMRhO4BlyI3uEF4s2AST7O">▼</div>
+        <div class="layer l-svc" data-page-node-id="utwxSw7D0HU76j0jtyB00p">
+          <div class="lt" data-page-node-id="cx87EWLx23rAiEMgCborjr">⚙️ 服务层 <em data-page-node-id="dS3sKWuI3cqCVfqpFGDhbQ">Spring Service</em></div>
+          <div class="ld" data-page-node-id="g7JxwvJDU1kfxLrtXvvFCK">业务编排 · 事务边界(@Transactional) · 缓存读写 · 异步调度(@Async)</div>
+        </div>
+        <div class="arrow" data-page-node-id="Iu0BMvoy1nG6LtHa8gz5ZE">▼</div>
+        <div class="layer l-dao" data-page-node-id="ccVshuU3PC2arciBy4KOko">
+          <div class="lt" data-page-node-id="oPI6FSBVR7WDXS8CWgYYmm">🗄️ 持久层 <em data-page-node-id="fnTn2hnYvn0FBvTxMoDpHa">MyBatis Mapper</em></div>
+          <div class="ld" data-page-node-id="NHBbLzDtnhDjxFmm50DBzX">Mapper 接口 · XML 动态 SQL · ResultMap 映射 · 分页插件</div>
+        </div>
+        <div class="arrow" data-page-node-id="FmLbSUzSTiQ08176ufuvTk">▼</div>
+        <div class="layer l-db" data-page-node-id="vMujD6BgK8XsP7xK1NqZaW">
+          <div class="lt" data-page-node-id="GflkDZjcRA9xPG0zvdsKp4">💾 数据层 <em data-page-node-id="FTfrRHvUPnuCvc14xzmRDJ">MySQL 8 + Redis(可选)</em></div>
+          <div class="ld" data-page-node-id="Ww2MEnX06fcGhAwenITUum">utf8mb4 · 联合索引 · 逻辑删除 · 缓存天气/分类热点数据</div>
+        </div>
+      </div>
+
+      <h3 data-page-node-id="0TJE8rUfjHDbU608KgIbef">架构要点</h3>
+      <div class="tw" data-page-node-id="DbxxXEA0zcCuleoX28ieJy"><table data-page-node-id="MDnVCTxgebtXIUm3uqHLSe">
+        <thead data-page-node-id="jFhyUmU3VdiWBD6OjXEu37"><tr data-page-node-id="etxz88OcEhgoEB73cRArPy"><th data-page-node-id="F2v1URyDiYPnRmyznojAmo">关注点</th><th data-page-node-id="n8G8qZYpywDiCc6V4FG8Y1">设计</th></tr></thead>
+        <tbody data-page-node-id="D8O6Z03LnlPM3q5nJCGEfH">
+          <tr data-page-node-id="RqevDNZGRwqyLLAYbiBYCZ"><td data-page-node-id="WJV0dWpbiCfuLicCqvCE4w">前后端分离</td><td data-page-node-id="fiaodOqSc5MZJ1X5ha6LLn">前端独立部署，后端只出 JSON，Nginx 反代 <code data-page-node-id="gNwOAeI9ktvyeXmYeZkBjd">/api</code> 打通</td></tr>
+          <tr data-page-node-id="QCGv67Ir0AsNT5I2YWP00M"><td data-page-node-id="09pfzhszbysbfuYLQlCSpn">统一响应</td><td data-page-node-id="BEbZvHfjsO0MYcAH6OOFWM"><code data-page-node-id="7jaB4J5hNxGBIoZU3c2ULs">{ code, msg, data, timestamp }</code>（沿用现有 zcgl_study 约定，前端零改造）</td></tr>
+          <tr data-page-node-id="yf2athHhhHG04GLkjSAM5Y"><td data-page-node-id="eXhDuL9ec9ltStea6xkArR">无状态鉴权</td><td data-page-node-id="Sy19v34c9MN0cyHgZNpSK7">登录签发 Token/JWT，存 Redis 或本地存储，拦截器校验</td></tr>
+          <tr data-page-node-id="cKXZyaZ2EWetZ3lfDRdD5v"><td data-page-node-id="EhvFMJPNZDhfQrXckhY9eR">异步解耦</td><td data-page-node-id="pho8ZhbilMwG5dggVWqHBX">长耗时任务（AI 推荐、批量统计）走线程池，不阻塞请求线程</td></tr>
+          <tr data-page-node-id="vrzq9CLcb1ZIYry6KyFz8e"><td data-page-node-id="owF4yAaLsj2w9tFvNlruRO">可观测</td><td data-page-node-id="PUpBslF2X0rbPQ2SOc0sFH">Logback 日志 · 慢 SQL 监控 · 全局异常兜底</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3 data-page-node-id="5e9bkmuHGDOpC5YsMorLLc">一次请求的完整链路（AI 穿搭推荐）</h3>
+<pre data-page-node-id="HjiSi7hfswL39TkAYQCb1N"><span class="c" data-page-node-id="mrTZ3Oc1ogbgrOXkpMnalx">// 浏览器 → Nginx → CorsFilter → 鉴权拦截器 → OutfitController</span>
+<span class="m" data-page-node-id="y1IHueMnI0Ii7OPn9qgbZl">OutfitController</span>.recommend()
+  └─▶ <span class="m" data-page-node-id="IHBLvdujtq8FHMQv9CXjjh">OutfitService</span>.recommend()
+        ├─ ① 生成 async_task(status=<span class="t" data-page-node-id="oGUwcfHr6fArlEkgSzVht6">0</span>)，<span class="k" data-page-node-id="5yTxSU62TvHDYoDrXF5QWC">立即返回</span> taskId
+        └─ ② 提交线程池 <span class="m" data-page-node-id="fXjyEDOpDs3nNrG32Tpkzj">@Async</span> recommendAsync(taskId, req)
+              ├─ <span class="m" data-page-node-id="jcoVZkgQFSfzIRlnd5ieeP">WeatherClient</span>.get(city)      <span class="c" data-page-node-id="SKkCud8CEjfRA09sBbbgOe">← 天气 API（带缓存）</span>
+              ├─ <span class="m" data-page-node-id="IqsQmp5gXe00LAi1CVvIdq">ClothingMapper</span>.listByUser()   <span class="c" data-page-node-id="uH44Qqs6QHoz4IOYx31W49">← 查衣物库</span>
+              ├─ <span class="m" data-page-node-id="mTM5Fw2ZaZs2dBUBeKj6nL">LlmClient</span>.chat(prompt)        <span class="c" data-page-node-id="NJgS6ppVqQAcOocEnFIGri">← LLM API（失败→规则兜底）</span>
+              └─ 写入 outfit_record + 更新 task(status=<span class="t" data-page-node-id="G7bQBN9UB4nvSYiy5nqpQE">2</span>/<span class="t" data-page-node-id="KxNvyceF7txHJTeFcXxmbR">3</span>)
+<span class="c" data-page-node-id="KD2ce0ZBpJxJZ82BIpMgFN">// 前端：POST 拿 taskId → 轮询 result（1s 间隔，最多 30 次）</span></pre>
+    </section>
+
+    <!-- ================= 4 ================= -->
+    <section id="s4" data-page-node-id="ScOqaVnaRzKgMzcDHC27MA">
+      <h2 data-page-node-id="c1SNjFWWpgvtlL1YDl5nHf"><span class="num" data-page-node-id="3tCHMJZ841OFiElDIpPUFM">4</span>模块划分与职责</h2>
+
+      <h3 data-page-node-id="IzFtxiOdOFSWGIsqKbTdMT">后端模块（按包划分）</h3>
+      <div class="tw" data-page-node-id="76UNia9n33muSR5Kps7ZeZ"><table data-page-node-id="m3pEiGjPx76XWPXMhL9KJf">
+        <thead data-page-node-id="CGtpkWptMcmODCqBg3lD60"><tr data-page-node-id="MJRWlrd9jisDoFtiowK67x"><th data-page-node-id="CAitvqS3yixeVw1tHxwpNN">模块</th><th data-page-node-id="yX72w4RpTzLs73T8ZLfuVc">包名</th><th data-page-node-id="DIuHBWOwldZ9V6GvGVYQGx">职责</th><th data-page-node-id="tkLfWzwBd74pCutMXIvlRo">关键类</th></tr></thead>
+        <tbody data-page-node-id="KGYO2ZpolFHqHxfB71LWst">
+          <tr data-page-node-id="Q9yOPAM8C5k84FJjgepoDm"><td data-page-node-id="Fobh2ASuOp0ye6uS8ZVYly">通用基础</td><td data-page-node-id="jPTjIXLizpDOnGgx27Z0ER"><code data-page-node-id="3DExWwuASTMCyPdZfjEqKe">common</code></td><td data-page-node-id="krnu433QDlKWyyGzkHh58z">统一响应、异常、常量、工具</td><td data-page-node-id="guRtCIvEonXeuAUEGsYdwX"><code data-page-node-id="ctKpX2MbJnoc0szxOIiIpE">Result</code> · <code data-page-node-id="m3t27BxBWxmzD0EQc12jQE">GlobalExceptionHandler</code></td></tr>
+          <tr data-page-node-id="Ri0QUuxtgnXjK6RTJhYCkT"><td data-page-node-id="dIPiH2T0kE8H2PVwxMPcjJ">鉴权</td><td data-page-node-id="vKq88Y8h3CVEC5EexuhvkR"><code data-page-node-id="CpRGUBembL2hgvGqKfslSm">auth</code></td><td data-page-node-id="soNZDgq2wfSJdhKnxMw2R6">登录注册、Token 校验</td><td data-page-node-id="E07P4n0jT8hz2d7QJJkUq3"><code data-page-node-id="DAoB2iBSHQVSagNdbK9O8V">AuthController</code> · <code data-page-node-id="fhuJ9ALiMATN3uDSBMdrxo">AuthInterceptor</code></td></tr>
+          <tr data-page-node-id="sYxUpaqHpxzryvNuQUXlax"><td data-page-node-id="Tf7roHsZwKXDLHPFei1uxP">笔记</td><td data-page-node-id="nq1kDi4Q31QyLJxrw1d0Lz"><code data-page-node-id="kHYu5lyMvUFqvvlvzqmaFX">note</code></td><td data-page-node-id="3UpCahY2GY5GMLmfuFWcze">笔记 CRUD + 分类 + 搜索</td><td data-page-node-id="53eDWJcEgENAK978Ra6iXP"><code data-page-node-id="gsVCAGweqTgnOoBhYs1YxU">NoteService</code> · <code data-page-node-id="4IL0ZzFupPolfrRTaENVUj">NoteMapper</code></td></tr>
+          <tr data-page-node-id="uxbCxc18aQArdVQXTj6XWV"><td data-page-node-id="etrneO21slAYN9glwNjkGX">记账</td><td data-page-node-id="29VM8HobLKU7bGrUjVVGui"><code data-page-node-id="H2jhIMxI7hUZEslaCTUvkV">ledger</code></td><td data-page-node-id="tfdXmD8ASQAFHjh577Icb6">流水 CRUD + 统计</td><td data-page-node-id="M5YbCD9gqQ8LQyaWPS930g"><code data-page-node-id="JHFr9mJGSJwnbT7bqWw2b8">LedgerService</code> · <code data-page-node-id="3OE5jJEaL1rywdOmQ0xJ0I">LedgerMapper</code></td></tr>
+          <tr data-page-node-id="pOOieXEOA4yRaER9Azsitx"><td data-page-node-id="1BlqatgOy5jaJAVKiVXHUm">穿搭</td><td data-page-node-id="GYnUa1yZr7PPPgPXraM7UI"><code data-page-node-id="LEJFFZ6YWJ1MDf4hSK72Lm">outfit</code></td><td data-page-node-id="QzY0P247aLhc023XrBlerG">衣物库 + 推荐编排</td><td data-page-node-id="1Hy96IxKRRkXWMnGnrnhLg"><code data-page-node-id="3MdSJ6DCPs9CsWHWfFUI8Q">OutfitService</code> · <code data-page-node-id="RODcjCJdRbvEtBWdIqG092">ClothingMapper</code></td></tr>
+          <tr data-page-node-id="CBMJE8M1SswAwNHbXFIueG"><td data-page-node-id="8NciI9uEmiz5SxqxsoX49B">外部集成</td><td data-page-node-id="YmgUPKvDBeqYHypXCqZLeX"><code data-page-node-id="Z0VXUKU0QcHeqgfcJpvxM0">integration</code></td><td data-page-node-id="qtlksR3BTrV0oZm3zx5Ono">天气 / LLM 适配封装</td><td data-page-node-id="Bcu136jDmoE8qhbeC25676"><code data-page-node-id="3Ds5eKfdCNSvEOOASvUvLb">WeatherClient</code> · <code data-page-node-id="zylLUHMJ0cwsp54k0ZFmF7">LlmClient</code></td></tr>
+          <tr data-page-node-id="5KVkXqYCHIDZWJSKae3vHa"><td data-page-node-id="sO4feXRJ4dcel6oXHuUWJ3">异步任务</td><td data-page-node-id="RPIkLy1TWBRFhdFctF6qjj"><code data-page-node-id="RpA7DrR5mmzgPx3izWSCfm">async</code></td><td data-page-node-id="aA5eK5LEdDdCtbPWFagsi0">线程池配置、任务状态</td><td data-page-node-id="r84v1a9rlYAsFGAoKHpJjZ"><code data-page-node-id="N8vNI0p4uUdnybFTvlHrRk">AsyncConfig</code> · <code data-page-node-id="pZfCoGChnNqMX15WBZf673">TaskService</code></td></tr>
+        </tbody>
+      </table></div>
+
+      <h3 data-page-node-id="QcIjEFh3VmFRK4koWIxSEI">职责边界（谁不该干什么）</h3>
+      <div class="grid g2" data-page-node-id="O2cYequeinyRYAxdBrqNdN">
+        <div class="card" data-page-node-id="AQLnxfxjAGfq3lZN0KK6ri"><h4 data-page-node-id="KxygdPFsgGquN9vwA49ygQ">Controller</h4><p data-page-node-id="RLyTBAEq3DpDEDav4TL25y">只做参数校验 → 调 Service → 返回。禁止写业务逻辑</p></div>
+        <div class="card" data-page-node-id="9RGePTHiP9udfOB1THXhRV"><h4 data-page-node-id="e6cztiEG056I88S5EKE54Z">Service</h4><p data-page-node-id="4tjY05PLqFcIjNR3lxeCC2">业务规则、事务边界、外部编排。禁止直接碰 HttpServletRequest</p></div>
+        <div class="card" data-page-node-id="DDEBzahdsS5h2NYWIrgx0d"><h4 data-page-node-id="QcvOxRCIwYYVclIyQCL600">Mapper</h4><p data-page-node-id="169JIa0wgeZbKBDB7i3nWR">只负责 SQL 映射。禁止在 XML 里做业务判断</p></div>
+        <div class="card" data-page-node-id="Y6Hpv4ViytDL7nWvA0w2lw"><h4 data-page-node-id="hUIiovj5IBgMTFJIH5gawU">异步任务</h4><p data-page-node-id="8KyVFIqPImA810o3cNl4nP">只处理可延后、耗时长逻辑，不承担强一致主流程</p></div>
+      </div>
+
+      <h3 data-page-node-id="YfeLGlt8MfN3hcasTicEzt">前端模块（按目录划分）</h3>
+      <div class="tw" data-page-node-id="f50yE7PiUHXvUAmO5eE7pU"><table data-page-node-id="3YhBEWq77hzFsmSSQe6GrQ">
+        <thead data-page-node-id="rXJQ1C85aXcbAfB1xpMUOz"><tr data-page-node-id="n2LqkJEQ3ttnSkbkckWR6h"><th data-page-node-id="UuKEEeiTcVMjePqyp546rb">目录</th><th data-page-node-id="zkLWE0d5dgUWZAogt9auqK">职责</th></tr></thead>
+        <tbody data-page-node-id="5gjbGPFt6mnw9ETYWHbs6d">
+          <tr data-page-node-id="dIY7tAdeqIEIDiWwDZRkJH"><td data-page-node-id="i2ivBvhp9HD1j7crAH5wbt"><code data-page-node-id="TJCS9Ka83RJvihaVQlTNL2">src/api/</code></td><td data-page-node-id="TEiIoNRMKCaKl3XJLRDCYA">按模块封装接口（note.js / ledger.js / outfit.js）</td></tr>
+          <tr data-page-node-id="fLklUTyFi42y0J7EjvYRTk"><td data-page-node-id="1ZLzjJSFVsYLlvkQS9MYHB"><code data-page-node-id="9qSD45YB65mR9DEdv43nU6">src/views/</code></td><td data-page-node-id="YQg007ISwETmxjCeiC4xLt">页面：笔记列表、记账看板、穿搭推荐</td></tr>
+          <tr data-page-node-id="Nm1aq4S2HlD4TpxxP2hTfF"><td data-page-node-id="S7GQ4k73AUPuEv3LWKZQ86"><code data-page-node-id="eZgymPad1sLvJXTKoIUmGq">src/components/</code></td><td data-page-node-id="HCdKRD8z8zgF4jD8t4jYbT">复用组件：分类选择器、金额输入、图表卡片</td></tr>
+          <tr data-page-node-id="gRFWR9uugGDM9jsdUWCBiN"><td data-page-node-id="fDrFVOs32hMtdwgTvX1pP1"><code data-page-node-id="MIR0lRwYLVn9HGUNxbDgBV">src/store/</code></td><td data-page-node-id="MP4tZPsPifJrTqVr9O6MEs">Pinia：用户态、分类缓存、主题</td></tr>
+          <tr data-page-node-id="86UPsdNZa1BdX5Kc3yeIGt"><td data-page-node-id="UlBAi64Deazd7z98As7RrD"><code data-page-node-id="Rhwr4v9DRwtjVyH1khOpoO">src/router/</code></td><td data-page-node-id="a3zIek61lCmA63GLcSer0M">路由 + 登录守卫</td></tr>
+          <tr data-page-node-id="oUPLoQDkYcMq7S7kg16oQo"><td data-page-node-id="pvNOI7FxrdDaMcsYWEXj5t"><code data-page-node-id="0CysaFjIlVrSoOC0znygTP">src/utils/</code></td><td data-page-node-id="yOAKo6D0j3fAtrB9vGPJ33">Axios 实例、拦截器、日期/金额格式化</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <!-- ================= 5 ================= -->
+    <section id="s5" data-page-node-id="rdt4GXTEI8TQapvX9kCBVn">
+      <h2 data-page-node-id="upIKpGMFLCCFv3fwFLeXUI"><span class="num" data-page-node-id="9JhOBiGTbLNyiBPHlWH1gg">5</span>数据库设计</h2>
+      <div class="note ok" data-page-node-id="XSouZBNekk7GPIRKJUqQNl"><span class="ni" data-page-node-id="FPeg9BGIbWktRC3oCprnO4">📐</span><p data-page-node-id="9URuxrIyKFHKc3PgzYyGJH"><b data-page-node-id="GzFvsUT7ItNo8AWpk4hKTd">统一约定：</b>主键 <code data-page-node-id="YzOUAAjEtdbIF9kEAVumxs">id BIGINT AUTO_INCREMENT</code>，所有表带 <code data-page-node-id="tyyhuvApqXDz0lqdAzwq8g">user_id</code>（数据隔离）、<code data-page-node-id="FnaM09uNVEKTit7LAJY2VS">create_time</code>、<code data-page-node-id="6ZnsB7VV7AZfpImEdGTCcT">update_time</code>、<code data-page-node-id="LL333SQ1QExIwzt0WrbKLv">deleted</code>（逻辑删除 0/1）。字符集 <code data-page-node-id="pecHhUhSYCTvmAYFAkqmLL">utf8mb4</code>。</p></div>
+
+      <h3 data-page-node-id="KjbOqjG9HZzu2wcgREqyVv">5.1 笔记模块</h3>
+      <div class="tw" data-page-node-id="BAzJUBS64A9NwpyV8hZCKy"><table data-page-node-id="XXa7ktqaTJrNc4tAS98fOa">
+        <thead data-page-node-id="4nspwn3JMUmYzoynKuBde9"><tr data-page-node-id="EkLHc3eaXFtq4oYW2KDUIc"><th data-page-node-id="R78tucEskjRwoWa51D4yMN">表</th><th data-page-node-id="EjMF6QMZF5vQSUez2vcnVJ">字段</th><th data-page-node-id="AJbZ6rsDlx0nvu6Mm1Gs5o">类型</th><th data-page-node-id="ulcaYDarZyHOG3gjWtCge6">说明</th></tr></thead>
+        <tbody data-page-node-id="Ea625CcU0IfJPBwcjGLBGE">
+          <tr data-page-node-id="n9bqE1qrEID1EbK8S9YJdy"><td rowspan="3" data-page-node-id="G7BAWRqBicMZSQHVuzy6YO"><code data-page-node-id="5R7oFA0NtisITKCRYaQdV3">note_category</code></td><td data-page-node-id="tHpBQEfeo07eaHQdcqTtzd">name</td><td data-page-node-id="imngfwBx8KJbBM88juLgwQ">VARCHAR(50)</td><td data-page-node-id="6d8FFBBLhrwwhfUADENQBb">分类名</td></tr>
+          <tr data-page-node-id="6ngolEPG91meTJHrcI4MG6"><td data-page-node-id="tpfKgYE5sCDZMIBXK41Qf8">sort</td><td data-page-node-id="HDQQk7vDuCFE9szGAwSEj7">INT</td><td data-page-node-id="XIYGWyOyAgABDzHQiJH6a3">排序</td></tr>
+          <tr data-page-node-id="RqqFI4Ayn2gh8xnXaVq83x"><td data-page-node-id="zOyKebN4xiLbZMewaezE07">user_id</td><td data-page-node-id="lHYHQisLPsHdU3Pd1TJKDw">BIGINT</td><td data-page-node-id="GxckwummgsGpUJDwLMRGTm">归属用户</td></tr>
+          <tr data-page-node-id="7i44iTnyG1sIk9uL1rOUvF"><td rowspan="4" data-page-node-id="JzxF0j8TwO0Z2EiLCjOxOe"><code data-page-node-id="qUVRXhOFVFK1fAnDwJJUzA">note</code></td><td data-page-node-id="4ccrFe06L4zspPtfBkrrZn">category_id</td><td data-page-node-id="GiNxgLharskoE0fOVhDCh9">BIGINT</td><td data-page-node-id="hqJdFXgugCxqt3svfC66f0">分类 ID（可空=未分类）</td></tr>
+          <tr data-page-node-id="IYsvz4XAqQyVlDmQciaMDA"><td data-page-node-id="UyKi988IR8z6iHhzJB0gSx">title</td><td data-page-node-id="H7VdJ2O2yBEO50pucChOKw">VARCHAR(200)</td><td data-page-node-id="U1xKLU4GF8iVVWFFLx8sWT">标题</td></tr>
+          <tr data-page-node-id="44LBHL8xT6HcriH9t6Frcs"><td data-page-node-id="yiSqhFIbNbFOUNLs17KQsO">content</td><td data-page-node-id="amHZjWKVT9XT4CXWJGA6B9">TEXT</td><td data-page-node-id="aUYNUq1hvijtBJ0DCEHQ9O">正文</td></tr>
+          <tr data-page-node-id="Qs3D1jfdWNUEIwTyHGFXFg"><td data-page-node-id="FaqAXtMSFPOn321sxHnFd0">user_id</td><td data-page-node-id="OTUVKnwJMafGTyuKJFMX9y">BIGINT</td><td data-page-node-id="fbgvb2y1EMdjdLE4556dTG">归属用户</td></tr>
+        </tbody>
+      </table></div>
+      <p style="font-size:13px;color:var(--txt2)" data-page-node-id="NbtGrFvxeb4qtyHWMqtVnO">索引：<code data-page-node-id="7ZNAYNAV7DOB2sAjqrGQn1">idx_user_category(user_id, category_id)</code>；搜索先用 <code data-page-node-id="eQXJHbb50incwJk1W3RjX3">LIKE</code>，数据量上来后加 <code data-page-node-id="kC1dTtKUPyAA0jH9CSLwmC">FULLTEXT(content)</code>。</p>
+
+      <h3 data-page-node-id="hrg3SJTwcTDo4lH3aY2X14">5.2 记账模块</h3>
+      <div class="tw" data-page-node-id="h67UEXk5d9wcrJEoUBu2Zq"><table data-page-node-id="HnCxEnslXXuRPndkrgGPyi">
+        <thead data-page-node-id="5GU8Sm8xqnBG5o7HRpTnau"><tr data-page-node-id="v6CiA5UtfWs4mwte03XpVp"><th data-page-node-id="nltQDTKZJInPrl8QQe1JC7">表</th><th data-page-node-id="tmqZ7Hj6Pc4DW4TVxQbrai">字段</th><th data-page-node-id="zpgqdr694c7veNhWEOqulq">类型</th><th data-page-node-id="vffzl5hehlj0VASnHzhSiO">说明</th></tr></thead>
+        <tbody data-page-node-id="08WcZqo9VtUqE2Y3dKASI7">
+          <tr data-page-node-id="4odbflNX1tc2NmAXRERunP"><td rowspan="4" data-page-node-id="CnrUIboUNCMy7aW8MxaSEz"><code data-page-node-id="y9ShdKPneiGPJFNBg61z31">ledger_category</code></td><td data-page-node-id="VaaGD7gHllwpEKPvx7hqR3">name</td><td data-page-node-id="Ys8juBDqM0tAe5PPmoIB5w">VARCHAR(50)</td><td data-page-node-id="rjEFAtdA0PAzH4FP9I3uAy">餐饮/交通/工资…</td></tr>
+          <tr data-page-node-id="xDWWQoE6OpuL7P1MDxhe6m"><td data-page-node-id="ykjongJiExC4SzdkAsJbB4">type</td><td data-page-node-id="qBei7xCzMhQr9oDDVqV0Q5">TINYINT</td><td data-page-node-id="wqBAXlXFD1Pru6q9BApayB">1=支出 2=收入</td></tr>
+          <tr data-page-node-id="e34I6TOV2myQuCDS8sTVLZ"><td data-page-node-id="RuCJktTAxbZVIljR9KsYa3">icon</td><td data-page-node-id="YcHwqs49H3nPAHpKdXgHJi">VARCHAR(50)</td><td data-page-node-id="gpiiFuUsBeA1b8iMy69bLH">图标标识</td></tr>
+          <tr data-page-node-id="qgGwiYdqHVvJOXnDExkDF1"><td data-page-node-id="42BFZQxCIRobOiLTkF42eB">user_id</td><td data-page-node-id="iTm3LqJ7DzkAETVsrKDNMd">BIGINT</td><td data-page-node-id="scWRfaE7ErHCMHyA0Sejyz">归属用户</td></tr>
+          <tr data-page-node-id="G7fbQGlzf5eZCYyz9HgCO6"><td rowspan="6" data-page-node-id="KBs7ikfrzq5g8YLoYQBUlW"><code data-page-node-id="tGCwVXlYJLSpuJaPmNNUm2">ledger_record</code></td><td data-page-node-id="nbHQc5DgKJHMxcA2s9cHXz"><b style="color:var(--orange)" data-page-node-id="UQIHJFErdJFEcOHEdda9Kx">amount</b></td><td data-page-node-id="uhD597tmKKLl9jvBJRWZ7l"><b data-page-node-id="ncBt7PebxC71xmD3zT3FbM">DECIMAL(12,2)</b></td><td data-page-node-id="EN72MJAhCaj2uaOklJXBpp">金额（禁用 FLOAT/DOUBLE）</td></tr>
+          <tr data-page-node-id="OS9V8xrEUVSnAG0Be7liDM"><td data-page-node-id="7igGnxBv2MpEUwFTDC7CnL">type</td><td data-page-node-id="PqsNZ5nRbWmbTlh2YHfyhh">TINYINT</td><td data-page-node-id="TIkJ4eifMc6WWVsyhBG6uY">1=支出 2=收入</td></tr>
+          <tr data-page-node-id="TVDVtsj5acVUrEn27YKUEv"><td data-page-node-id="lVAeEBbrpJPABgiVF8THO2">category_id</td><td data-page-node-id="Fypd9odkmCTfSpSA2EE8V6">BIGINT</td><td data-page-node-id="8HhfvLzBO4yhQ0sLFR3Xyl">分类 ID</td></tr>
+          <tr data-page-node-id="LbLORSqedVYjZvRDnH7EXH"><td data-page-node-id="aKKsAj9o3ZdxMUXudAOfO9">record_time</td><td data-page-node-id="ra4Sw0s66AZZ9d24fBJ6oc">DATETIME</td><td data-page-node-id="IPiYR48CzCj9XXFoKxF1fg">发生时间</td></tr>
+          <tr data-page-node-id="dHxJQjLRT5RgE6GCDzJEfT"><td data-page-node-id="g23OdubjVssy595R3iw7Rt">remark</td><td data-page-node-id="uEx5vQL7WLo0zplJODEJqK">VARCHAR(255)</td><td data-page-node-id="sMofIBcj8fr9H5L6Aftaoq">备注</td></tr>
+          <tr data-page-node-id="yH1y7xjITtTASO2n9d2aDy"><td data-page-node-id="ZqfVtbXtMvlGFQUMBnnenl">user_id</td><td data-page-node-id="HIpF1uX4zw13CMtWel5KCg">BIGINT</td><td data-page-node-id="YKjMHDK5MdAJhFhvK1K51q">归属用户</td></tr>
+        </tbody>
+      </table></div>
+      <p style="font-size:13px;color:var(--txt2)" data-page-node-id="EGfd3IwdLR78keEiHv6K74">索引：<code data-page-node-id="qH5QrN4Z5Dwa2yJPt98FYp">idx_user_time(user_id, record_time)</code>、<code data-page-node-id="SyfXHzUBLrQ7uRe0Zfv6PN">idx_user_category(user_id, category_id)</code>，统计查询直接命中。</p>
+
+      <h3 data-page-node-id="NyTCFACVfIGEsGw1Az3Y38">5.3 穿搭模块</h3>
+      <div class="grid g2" data-page-node-id="iycyVhqoYKUIe5UtfMCTyK">
+        <div class="card" data-page-node-id="ZmBv2uH6KvDhf5FVcRllq1"><h4 data-page-node-id="G6cOhF4EK5a1O9pQuW0gJD">🧥 clothing_item</h4><p data-page-node-id="1zNy6uCx8GEIgqtIRSn3D6">name · category（上装/下装/鞋/外套/配饰）· color · season · style · image_url</p></div>
+        <div class="card" data-page-node-id="3OJDgofegjoCIw3tIm617K"><h4 data-page-node-id="NANHqu6Fp4RZKLw115ucuQ">📸 outfit_record</h4><p data-page-node-id="BmTqrH1nSa0PXbGJ1Yh8ya">occasion · weather（快照）· items_json · advice · source(1=AI/2=规则)</p></div>
+      </div>
+
+      <h3 data-page-node-id="q6KUXYn4fc9YBtRWvyxviU">5.4 异步任务表</h3>
+      <div class="card" data-page-node-id="F9nnCvKl1Y8sy6RopJ4vbX"><h4 data-page-node-id="DyMw2EGFCiFTIV151IyMqR">⚡ async_task</h4><p data-page-node-id="YRPKK3V8RB72xx9bcgiDpP">id(=taskId) · type · status(0排队/1执行中/2成功/3失败) · result_ref · error_msg · finish_time</p></div>
+    </section>
+
+    <!-- ================= 6 ================= -->
+    <section id="s6" data-page-node-id="QFGW0KzkYIVoCebS098jh2">
+      <h2 data-page-node-id="vK65so75mK44GHBbmzX8NY"><span class="num" data-page-node-id="Q0cDmMCPuXei0DwLtXZxaf">6</span>接口设计</h2>
+
+      <h3 data-page-node-id="844wjUMvbPb2kdRdCojsnh">统一规范</h3>
+      <div class="tw" data-page-node-id="rp5bTCeEfwj4SzFb1Xzrmd"><table data-page-node-id="Y3zA5oGm3ag4eZZYOlYFsu">
+        <thead data-page-node-id="du76FwHLqoRJ9JOKZOh9Hi"><tr data-page-node-id="AoOG6CiOJosZPmCwmfX6XG"><th data-page-node-id="BFGI40z5BrikBCTDN2fGeW">项</th><th data-page-node-id="RAOEC0aWoDl1hEit0EtU7q">约定</th></tr></thead>
+        <tbody data-page-node-id="ZT3YBLsES9bB4YLckc2ECg">
+          <tr data-page-node-id="uwNd0r1LKsyaofAMfCJb9u"><td data-page-node-id="pasLTsyaBZ2TWJEme8isQj">风格</td><td data-page-node-id="WShGO4yNWCcAzYjz7iutCv">RESTful，前缀 <code data-page-node-id="COHjrDfV0EkdGUBUU4sKb7">/api</code></td></tr>
+          <tr data-page-node-id="ByBpHBDRIJUV1dwJnXyKCI"><td data-page-node-id="SM5tjm7vCDaO6KYynm0amN">方法</td><td data-page-node-id="S7ZluOltyRw7mVnuN5vMys">GET 查询 / POST 新增 / PUT 修改 / DELETE 删除</td></tr>
+          <tr data-page-node-id="1OTjcFLEQMRIM1q2kjUHn9"><td data-page-node-id="iqfZprMNZj4RR2YH7enUgM">响应体</td><td data-page-node-id="W7NFJiudOIouH5HKIki0Dv"><code data-page-node-id="j6I3k74qGvSUpNEMRbrcVU">{ code, msg, data, timestamp }</code></td></tr>
+          <tr data-page-node-id="fQgDY6sch2QBDHbTYs8pvL"><td data-page-node-id="xvLun43wDjgdGBUiD7TibS">分页</td><td data-page-node-id="4lpWz8OTdCUa6e9zxAulID">入参 <code data-page-node-id="yWpbefl3vszcTFa7DiWFwn">pageNum</code>/<code data-page-node-id="9NHouK3zT9vQIu6yDQiH6S">pageSize</code>；出参 <code data-page-node-id="RQdt2nkujgdhJ6sD5suhxu">{ list, total, ... }</code></td></tr>
+          <tr data-page-node-id="j2Idgs91GXBkMFMAcp6U4l"><td data-page-node-id="WZ8BlOOPcCtNeFVTUMHjAL">鉴权</td><td data-page-node-id="xRRSAA18jDuYcv1ynb4po8">请求头 <code data-page-node-id="Lmd4FOL8NBKQUhjg2eQVZp">Authorization: Bearer &lt;token&gt;</code></td></tr>
+          <tr data-page-node-id="rY9zgEOboLjyECQCAduvkj"><td data-page-node-id="4FEGfrDyLlrMoevKSDKKBI">错误码</td><td data-page-node-id="A25rNHsyy8pOs0Z0FQvW5e">200 成功 / 400 参数错 / 401 未登录 / 403 无权限 / 500 异常</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3 data-page-node-id="jEvA4l6aasY9bi5HnoFgHC">接口清单</h3>
+      <div class="tw" data-page-node-id="XAbU2DCT4Bi5UkcTShIRHi"><table data-page-node-id="Y7kJO1EbNT6BuSoq8C4iEk">
+        <thead data-page-node-id="mrfbHmwafsdhvXYPwnx7f4"><tr data-page-node-id="X4mE5bv0SkAs0TLQ6MZSVB"><th data-page-node-id="4b9HrJcoFzxX4XR5DuQX1p">模块</th><th data-page-node-id="Mm2WSuqy9ju6qEjODFUDdM">方法</th><th data-page-node-id="DhACpECjpmXHETJXboDpv7">路径</th><th data-page-node-id="KbjNSQ1mqECvT38P3FPwgC">说明</th></tr></thead>
+        <tbody data-page-node-id="RSguJ6xk1jInu19e0gMIDh">
+          <tr data-page-node-id="SiXN5PllZkZKkpglbHEh5M"><td data-page-node-id="4QkuJwaiHELwIkg1w3FF4X">鉴权</td><td data-page-node-id="j4XSu2GASxsHNDcUNHe4dH"><span class="verb v-post" data-page-node-id="KHp5iiMu9wy0AWV4ijd6Go">POST</span></td><td data-page-node-id="gyIseji0bMO6aTqkeRshgd"><code data-page-node-id="vRUkF4AmHOeF5pdYTfOGVL">/api/auth/login</code></td><td data-page-node-id="oyd0iuKumqpfqi8Wf3vHxI">登录，返回 token</td></tr>
+          <tr data-page-node-id="ccx54nbElkF2C7faoRPBpe"><td data-page-node-id="Ykf3snDGnwwF1m4CmssSJY">笔记</td><td data-page-node-id="hhRj1gZ70facgy711ulPMN"><span class="verb v-get" data-page-node-id="fRzfJB2RYK8YJhrzuthQcv">GET</span></td><td data-page-node-id="Cm5Nj7r3x9H5BmGISC2Ghl"><code data-page-node-id="jGCVdIouTz5JskUbPczBLd">/api/note/page</code></td><td data-page-node-id="0EqyfxscaggZ1OQVCUXMsA">分页查询</td></tr>
+          <tr data-page-node-id="LGEVom7h8eSTG9xG5snMEi"><td data-page-node-id="MduAHPMnrmT3hff5Fku5FR">笔记</td><td data-page-node-id="h29TwMXLHk8qLgQRfx1Oqe"><span class="verb v-post" data-page-node-id="slVv8GnxbmjQLidlIZ9t91">POST</span></td><td data-page-node-id="fDGDWUv12bmhLjwsT8tRsB"><code data-page-node-id="SNJwV8ZWBefaWahaLoY3sE">/api/note</code></td><td data-page-node-id="0NeDflrAsfRETicI9oijs8">新建</td></tr>
+          <tr data-page-node-id="qoYz9g4G2OqyvQBbi7LjAV"><td data-page-node-id="qvgUmL0BeOX1Im1JVnv69K">笔记</td><td data-page-node-id="ggmci24TUhww6vHBTxC7Uq"><span class="verb v-put" data-page-node-id="tuNUMi5Z7TREUQJakkd75b">PUT</span></td><td data-page-node-id="J4T8exHwPtvQqBEtR45FbD"><code data-page-node-id="ZhpmOTAB4yw82CG2dyqk9a">/api/note/{id}</code></td><td data-page-node-id="uzIhVif6aCvpFPuwsPUeah">编辑</td></tr>
+          <tr data-page-node-id="oHrEBsIA32732s104e1evy"><td data-page-node-id="pbG51xMpBerHk2k4IjoK4D">笔记</td><td data-page-node-id="esph2mBkEESowmYB2fEgHy"><span class="verb v-del" data-page-node-id="0BarAoS6wNnbGRfEG9nVez">DELETE</span></td><td data-page-node-id="xoRaaLH7TpX9qarU31FfJX"><code data-page-node-id="PFk74MZU7qMG3Iy1a5Ghst">/api/note/{id}</code></td><td data-page-node-id="wma5sCqS6iAOuljap8eyIj">删除（逻辑删）</td></tr>
+          <tr data-page-node-id="nf63UR699xRC3h5Nn2thak"><td data-page-node-id="Qja9urs85CdA8pdFclu9in">笔记</td><td data-page-node-id="59FbdBRFn0GOs5F2e3z2aB"><span class="verb v-get" data-page-node-id="o0h80hbH5z687KnwNOIdBp">GET</span></td><td data-page-node-id="DeAW48VnRY5J74zV6mxW2c"><code data-page-node-id="J1EKVDv9o7LszTFb30frQP">/api/note/search</code></td><td data-page-node-id="OAxr53Z2MuhuZJSN9To2xs">关键词搜索</td></tr>
+          <tr data-page-node-id="EeZfzRVRINa4CHKeQQ1k8h"><td data-page-node-id="VFGNHIMAo0dY6faZxKxwhU">记账</td><td data-page-node-id="7aBD826gPSMbM3NOyIic4q"><span class="verb v-post" data-page-node-id="ZIgFaLiZYfYJsLGePJfQhE">POST</span></td><td data-page-node-id="eOBRwr6ACCqO6lTzsqOU3P"><code data-page-node-id="aDb98yWh8IrAWrFvCeUQ80">/api/ledger/record</code></td><td data-page-node-id="YFupGVQXl3o4NSJjZFIo0M">新增流水</td></tr>
+          <tr data-page-node-id="ZiCJlaMhnLXtb01E7JBEWp"><td data-page-node-id="hE195nAGthVEsMxVnpEdGk">记账</td><td data-page-node-id="7By3YvhISJHRab4Gn40Smb"><span class="verb v-get" data-page-node-id="QUihZEgKshiN1xAzgQ6EHU">GET</span></td><td data-page-node-id="4lGBwXiIyymFoQV2noPZU7"><code data-page-node-id="HDQPrxTyVJK8A4iTmYXhgI">/api/ledger/stat/overview</code></td><td data-page-node-id="nHwsOwGYpuGfts41G16azd">收支总览</td></tr>
+          <tr data-page-node-id="7Q4z2srPppaF7xMbexam0I"><td data-page-node-id="PDQJPycSyXqUND241Poa06">记账</td><td data-page-node-id="FZBcMBSgLR8GRmb7tA0wN4"><span class="verb v-get" data-page-node-id="uruqXAB9DmOhWcMGbio671">GET</span></td><td data-page-node-id="52FHuqLkqa84zWeDZNZjFf"><code data-page-node-id="xUUbHAN9Ns6z8EI2BHZKTy">/api/ledger/stat/category</code></td><td data-page-node-id="7L5Xif5yDirbViLqJTSP4x">分类占比</td></tr>
+          <tr data-page-node-id="9x7bb6IGc3FSpsPxp1qwIj"><td data-page-node-id="B4QroBgBm6ZsuZ9x03dCZd">记账</td><td data-page-node-id="Rnh4L45hUx1XJDZgY4EjFw"><span class="verb v-get" data-page-node-id="pfsmfAejtLrv3NTqaFwCtF">GET</span></td><td data-page-node-id="JX7FV4Y6j4zdYoc9i5HCN9"><code data-page-node-id="rUDvCnGbXsne5SdGYFCXDi">/api/ledger/stat/trend</code></td><td data-page-node-id="ICZ3GxkcSb62NPBvFmrVnp">收支趋势</td></tr>
+          <tr data-page-node-id="BSNBB3PqMMzgm3yKz2RWIE"><td data-page-node-id="J857CilSyF0EFkPAvwtMUy">穿搭</td><td data-page-node-id="8oLCUBu2ukERdez8Ryjmi9"><span class="verb v-post" data-page-node-id="ueFxfxei7omdrAHWZPmJvE">POST</span></td><td data-page-node-id="ZNjTKkxbH4TANOUAiKnI4F"><code data-page-node-id="5VHHc49V4lAHXkQNsD4vTj">/api/outfit/recommend</code></td><td data-page-node-id="y72wpdYqC14ZkAx5vneAYY"><b style="color:var(--green)" data-page-node-id="It3tF0EGgjAqLC7uL5IDh4">发起推荐（异步）</b></td></tr>
+          <tr data-page-node-id="6aQIgHw7uVckauZ5jkGUCf"><td data-page-node-id="4Fe3VqGCO0FxFTaKFd4vbX">穿搭</td><td data-page-node-id="CFqVMbXopHqaddsRrmugVe"><span class="verb v-get" data-page-node-id="v8P1KnAfyGOPbeRmzB4kkk">GET</span></td><td data-page-node-id="XKzRiUY9KQ0B1eMAbq3wDR"><code data-page-node-id="aHUgMGFfdzrPxjYsebkxp0">/api/outfit/recommend/result</code></td><td data-page-node-id="HGSE8B5iAm8gjdYpibEliQ">查询结果</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3 data-page-node-id="FLZ2AKpO1czIgErcmsxyRZ">关键接口 ①　笔记搜索</h3>
+      <div class="api" data-page-node-id="HkPU0gZvXpYqf62ZMVYXaW">
+        <div class="hd" data-page-node-id="z4zvJ1wY5wdGkCGpn7oi5r"><span class="verb v-get" data-page-node-id="woYipZVs5K2dfcv7sr5BBX">GET</span><span class="path" data-page-node-id="FraHMvuFZCVgIJvbWEOksi">/api/note/search?keyword=周报&amp;categoryId=3&amp;pageNum=1</span></div>
+        <div class="body" data-page-node-id="6yNnFa9l2uBDDwQHyTgbHH">
+<pre data-page-node-id="sE34XLhBa1AVhCBg8NT5AT"><span class="c" data-page-node-id="6TXhJydEw0shbwBs0lcN70">// 出参</span>
+{
+  <span class="s" data-page-node-id="C528qN8OlBAZBcoHO9EABv">"code"</span>: <span class="t" data-page-node-id="x5mDS1GuLQZiJ2nbUTg5Gm">200</span>, <span class="s" data-page-node-id="3oLJIGlvyEsuHoOBwgKAfm">"msg"</span>: <span class="s" data-page-node-id="R5P4q3Iix7PHQwGD7T8BEz">"success"</span>,
+  <span class="s" data-page-node-id="wqs1M2coaam6DNRy6i9lOe">"data"</span>: {
+    <span class="s" data-page-node-id="AsVysMZV1O8IQEWjBuf0Yw">"total"</span>: <span class="t" data-page-node-id="Lh8yPZ2ilwqCySPx8Kdw3j">12</span>,
+    <span class="s" data-page-node-id="3L8WAuB7YFyzaAFBKnEep8">"list"</span>: [
+      { <span class="s" data-page-node-id="SCrlG6Cher3Qm4GMeFXc4M">"id"</span>: <span class="t" data-page-node-id="Jm7OzDl9vPtNzPywTjxZIn">101</span>, <span class="s" data-page-node-id="Br5hkFPBHwMosUSd3e2yxp">"title"</span>: <span class="s" data-page-node-id="HAaSObFYW285DVWijhuxfv">"本周周报"</span>, <span class="s" data-page-node-id="iY580MS1DOf4d9L77MN79O">"categoryName"</span>: <span class="s" data-page-node-id="J3yBtFYc0QZapOuig0rCC0">"工作"</span>,
+        <span class="s" data-page-node-id="QtZOv8RRIrGXmsqrQ3jVjF">"summary"</span>: <span class="s" data-page-node-id="VDGuur1CDC5SahSB3hj1B8">"本周完成了…"</span>, <span class="s" data-page-node-id="XvaSCzTGF4K5zCXEAeCpum">"updateTime"</span>: <span class="s" data-page-node-id="ezIDPeOCSMJxO5bJrDXDjc">"2026-10-08 09:12:00"</span> }
+    ]
+  }
+}</pre>
+        </div>
+      </div>
+      <p style="font-size:13px;color:var(--txt2)" data-page-node-id="4SEcB8AtxV85IEmoiczzfL">摘要由后端截取正文前 N 字并高亮关键词；数据量大时改用 <code data-page-node-id="pO39uGcJsrbbu3HuIgaibB">MATCH...AGAINST</code> 全文索引。</p>
+
+      <h3 data-page-node-id="L1a2v17DrFbwrfRiCLlAF2">关键接口 ②　记账统计总览</h3>
+      <div class="api" data-page-node-id="5j8YCayZ5aUUOWXBZ3ijCw">
+        <div class="hd" data-page-node-id="JEcbKeIH9cMCQE3gd4Jpkj"><span class="verb v-get" data-page-node-id="DlOmBWW9AaKqZadO81wB8r">GET</span><span class="path" data-page-node-id="MNpeCo3virubMB07s8gD3p">/api/ledger/stat/overview?month=2026-10</span></div>
+        <div class="body" data-page-node-id="MqvnX6GpTkCZ7pLLP5t7BI">
+<pre data-page-node-id="pO6Or7RAJAV5ZttXxm1JAB">{
+  <span class="s" data-page-node-id="CX9fxHwjiOoTaIFIvpaKQw">"code"</span>: <span class="t" data-page-node-id="tEEl2gO7dp82HxJAWfgapV">200</span>,
+  <span class="s" data-page-node-id="FmaG1zLAB2t7c3wawFRlju">"data"</span>: {
+    <span class="s" data-page-node-id="Xt3NYcefbYnt9BsJB4g86t">"month"</span>: <span class="s" data-page-node-id="WuVDXd4JtWKBxf9o7c5dXH">"2026-10"</span>,
+    <span class="s" data-page-node-id="DJgCb5UE80L3HTrXUS2bez">"totalIncome"</span>: <span class="t" data-page-node-id="fgmQXhPqNLedzAUqaXNOqm">8000.00</span>,
+    <span class="s" data-page-node-id="SeyDRCDYWr7dxDNmRslHyZ">"totalExpense"</span>: <span class="t" data-page-node-id="ks6nevyzQuYR19epIZUJVg">4231.50</span>,
+    <span class="s" data-page-node-id="cL2GB1uKh61hBpMCAF1seF">"balance"</span>: <span class="t" data-page-node-id="yCliJBXkAyYvQUJIHdJmD7">3768.50</span>,
+    <span class="s" data-page-node-id="TYFw8kA5iKSEzQWvLoWUFM">"byCategory"</span>: [
+      { <span class="s" data-page-node-id="leqHGCm3gB928Br1kFaUbF">"categoryName"</span>: <span class="s" data-page-node-id="KOZv1NgeHhDXsaCNDQLZOD">"餐饮"</span>, <span class="s" data-page-node-id="EknKLpIhJvwlADEYku2OyK">"amount"</span>: <span class="t" data-page-node-id="hckXGFiYZAcGuy7orRNcwT">1520.00</span>, <span class="s" data-page-node-id="8LAJlmCaNOrXOvETSNuTjc">"percent"</span>: <span class="t" data-page-node-id="BkzgJLu8sL0h2Ol1Ky6o0I">35.9</span> },
+      { <span class="s" data-page-node-id="eAC9j6FTYxyuC3IlTeAQA5">"categoryName"</span>: <span class="s" data-page-node-id="3vT5HyjmBypLnUDln3TId5">"交通"</span>, <span class="s" data-page-node-id="sdvuz4WfcmcJzXclWsLFWr">"amount"</span>: <span class="t" data-page-node-id="qmC7a5mlYlDzmSuGW9bQgs">480.00</span>,  <span class="s" data-page-node-id="ye3SUBm25e1QXYsWpeHeZv">"percent"</span>: <span class="t" data-page-node-id="fvVmDT3BTjFv7mk75A2MsI">11.3</span> }
+    ]
+  }
+}</pre>
+        </div>
+      </div>
+      <p style="font-size:13px;color:var(--txt2)" data-page-node-id="AQWQQLrXGJEVKjDlQ1e1zM">一条 <code data-page-node-id="SYCsFVJHOVOTeCooJsTIXP">GROUP BY category_id, type</code> 聚合搞定，<code data-page-node-id="oUm8E0J6u23f0Kra7cBzW8">percent</code> 后端算，避免前端多次请求。</p>
+
+      <h3 data-page-node-id="6Izt1n8chC1jPOCj1nAhsQ">关键接口 ③　AI 穿搭推荐（异步）<span class="star" data-page-node-id="WaRH3hIrqiYlLJgjhIQOeE">★ 核心</span></h3>
+      <div class="api" data-page-node-id="nFPIB3WlgQbKo8EYVjyKCR">
+        <div class="hd" data-page-node-id="2k95Ar2y3RitzWyptXXhxD"><span class="verb v-post" data-page-node-id="pTmUVyB6RH4S4zLG13fUT1">POST</span><span class="path" data-page-node-id="risQeweAyvPkqpmo7DTQh9">/api/outfit/recommend</span></div>
+        <div class="body" data-page-node-id="mbB6PkAB7rFAHBOncTYImF">
+<pre data-page-node-id="0DLiLCDfALZnibTS73XHTt"><span class="c" data-page-node-id="IimvPu9wQFkCHw9MJDWlSQ">// 入参</span>
+{ <span class="s" data-page-node-id="jVCp6O3B3l1rYd9TAcUGXm">"occasion"</span>: <span class="s" data-page-node-id="B3CNRvNBHgucU7yp4mMPBE">"上班"</span>, <span class="s" data-page-node-id="phKakIYLzYBuRV71uEtc9F">"city"</span>: <span class="s" data-page-node-id="pxB2DTtudT3gRmQOwn1BtI">"武汉"</span>, <span class="s" data-page-node-id="4plYCews2GZafyKx9guhb5">"date"</span>: <span class="s" data-page-node-id="Y5kBb4dNLWM3ixxIyBAddL">"2026-10-08"</span>,
+  <span class="s" data-page-node-id="UJqFrQ33QeoIMFvwFCOEHp">"preferStyle"</span>: <span class="s" data-page-node-id="szARUTCXJuCStSt4zh40HY">"休闲"</span>, <span class="s" data-page-node-id="7xAwP8RXgchjXeINjOhdBf">"useOwnWardrobe"</span>: <span class="t" data-page-node-id="vF6PzPH7AhYolOMBPNm5o3">true</span> }
+
+<span class="c" data-page-node-id="vY7kfJrFmej9fQkRduDv7L">// 出参（立即返回，不等计算完成）</span>
+{ <span class="s" data-page-node-id="GWydrESaEfCnj1itj7Vf93">"code"</span>: <span class="t" data-page-node-id="ymbCfI509BYfiwDX3aLeQf">200</span>, <span class="s" data-page-node-id="AsBpoJ27oQKc7XTcWa4xxq">"msg"</span>: <span class="s" data-page-node-id="VFwP0pAvmonDVmKLQnrKTT">"任务已受理"</span>, <span class="s" data-page-node-id="JiSV6XerWaGvKLtMRvVOky">"data"</span>: { <span class="s" data-page-node-id="cd4s5QZM8vNq7hysqbq3l4">"taskId"</span>: <span class="t" data-page-node-id="arC3I8zc4QLBWa4xGHGalu">5001</span>, <span class="s" data-page-node-id="wfB59PCnPE98BF9aR7hnDG">"status"</span>: <span class="t" data-page-node-id="rO4UoCNNvMUF1z2J7ZYeDA">0</span> } }</pre>
+        </div>
+      </div>
+      <div class="api" data-page-node-id="HRJeBo1LFKTEcAEnJf6Xvy">
+        <div class="hd" data-page-node-id="XuKTUe3FayPpAmF34OpoqX"><span class="verb v-get" data-page-node-id="LPBmQhyWRKNJUew4dLOTpv">GET</span><span class="path" data-page-node-id="BcRVKgCbCZTKW92JMRvOPB">/api/outfit/recommend/result?taskId=5001</span></div>
+        <div class="body" data-page-node-id="N7fS4YEAB1t2dGlrk96Mtd">
+<pre data-page-node-id="9pzKvAPGdTM76SECpmhzyx">{
+  <span class="s" data-page-node-id="S4pJyBig4Ir6YEIEzcrMpU">"code"</span>: <span class="t" data-page-node-id="DNcWfVRn15cQuoA6NQ4Z99">200</span>,
+  <span class="s" data-page-node-id="o4063Z1Bp4wtpyitfrw7za">"data"</span>: {
+    <span class="s" data-page-node-id="80FKBhpV2DKkakvZ18sYCd">"taskId"</span>: <span class="t" data-page-node-id="CiZh6pSmNF9gOGhDy8Gx7P">5001</span>, <span class="s" data-page-node-id="ThsJLyrn0SQttM4LpCrpMY">"status"</span>: <span class="t" data-page-node-id="Q9i0XxEUgwYk6FvTAQBVb5">2</span>,
+    <span class="s" data-page-node-id="9ORowRkFwCSFigA1e69QSy">"weather"</span>: <span class="s" data-page-node-id="4Dqm6Hp2KDorArwmMmOCNX">"武汉 22℃ 多云"</span>,
+    <span class="s" data-page-node-id="wN5fWcWhhfXmLSoewsG5TF">"outfit"</span>: {
+      <span class="s" data-page-node-id="42utGQYY36wcdvxdAiG4EU">"items"</span>: [
+        { <span class="s" data-page-node-id="ECPDtEpOKU6cNpqQauhMWi">"clothingId"</span>: <span class="t" data-page-node-id="Y9h3EV4XY59qQflk64myvQ">7</span>,  <span class="s" data-page-node-id="VdXiBZFWwNOHuWJA6vYy3S">"name"</span>: <span class="s" data-page-node-id="HVhLAlXtXc61wKitQsYO0D">"白色卫衣"</span>, <span class="s" data-page-node-id="EdnfmkPlqZ80zrI9L57DxZ">"category"</span>: <span class="s" data-page-node-id="p8ambU0bgGdaN78dKtTNoK">"上装"</span> },
+        { <span class="s" data-page-node-id="Xk4sdsYBzMkBDJ9DFpU7lU">"clothingId"</span>: <span class="t" data-page-node-id="0nGGHourmNikzr2NnjD8IJ">12</span>, <span class="s" data-page-node-id="vVKC9fn9pIUjnGPWfqCgXb">"name"</span>: <span class="s" data-page-node-id="DnYXqydNgypOPrw8Es6vjq">"牛仔裤"</span>,   <span class="s" data-page-node-id="fe2fHYdR1IXCBztY7GM3UL">"category"</span>: <span class="s" data-page-node-id="3T1qBOq69SEBEMQw5NspGG">"下装"</span> }
+      ],
+      <span class="s" data-page-node-id="v2Y7QSsBBcatPXRsElsCAx">"advice"</span>: <span class="s" data-page-node-id="4A5AoCuryDUgfAQPkLKyWz">"今天 22℃ 多云，建议卫衣 + 牛仔裤…"</span>,
+      <span class="s" data-page-node-id="tDP8Sw9FMKzUxLAPYy4pwu">"source"</span>: <span class="t" data-page-node-id="70uK8l6hyiTbIJgE5W76ut">1</span>
+    }
+  }
+}</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 7 ================= -->
+    <section id="s7" data-page-node-id="1Xevy5kd9PVQImECA34Ghc">
+      <h2 data-page-node-id="lVMrUsv1jAbEDlAgPtxuaE"><span class="num" data-page-node-id="jf3h0PTDd17EBZu72FKe4L">7</span>异步处理设计</h2>
+      <h3 data-page-node-id="BkjBK1ZuWd4mdwQnnPDiql">异步适用场景</h3>
+      <div class="tw" data-page-node-id="1vUfJdKuO1doF3K17jACqC"><table data-page-node-id="OIAreKcd3R0cuzZhl0vJNu">
+        <thead data-page-node-id="bue9kFLqiDuqAVhfEM7ye7"><tr data-page-node-id="0mIj3FVkUzv0McT2aOzypg"><th data-page-node-id="igawyIy4WzHmUCv1XJ9Kpi">场景</th><th data-page-node-id="SIMkQy6enIQKGELROvkaJI">是否异步</th><th data-page-node-id="6QNenQHyjsBen7rAyEw3LD">理由</th></tr></thead>
+        <tbody data-page-node-id="eWU54vWuoBiqx7ot2axvER">
+          <tr data-page-node-id="5kcddRkj2Txm4o8EzdDHiR"><td data-page-node-id="nRvcnOJEB8eNs1lJ7eIr6S">AI 穿搭推荐</td><td style="color:var(--green)" data-page-node-id="2cE5IHvetk9NjmaY933GQD">✅ 必须</td><td data-page-node-id="4DRwQYu3n9yRRvZfrwA4IH">LLM 响应 2–10s，同步会拖死请求线程</td></tr>
+          <tr data-page-node-id="ZRtDhkacFZPmx5u2wtOAnS"><td data-page-node-id="hD0uj3VBULRhzaqPHrpPjN">批量统计 / 报表导出</td><td style="color:var(--green)" data-page-node-id="8pWjKeekxYlXpoE67NaB6x">✅ 建议</td><td data-page-node-id="if2b8R2uJP5RdlkCLcBCE0">数据量大，后台算完再通知</td></tr>
+          <tr data-page-node-id="S8Zq6hoORY1KZaxGakwPi4"><td data-page-node-id="sNLAxpJsAxmOAsc7PPHBo8">笔记/记账单条 CRUD</td><td style="color:var(--red)" data-page-node-id="S7tQNNySLFqJb6eRCHaBJg">❌ 不需要</td><td data-page-node-id="oxJW8MPsjUKe0IKMes98Nu">毫秒级，异步反而增加复杂度</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3 data-page-node-id="ZkKwCgZBrNOHvj0L57pl1O">后端线程池配置（SSM 环境，非 Spring Boot）</h3>
+<pre data-page-node-id="38JalO10nzD2pt3cWEFfdx"><span class="m" data-page-node-id="z4ZFBdXKOf1B7WK5NPocD8">@Configuration</span>
+<span class="m" data-page-node-id="1gbdV5jQADytB81f34nrub">@EnableAsync</span>
+<span class="k" data-page-node-id="NVxLSnIW9KlDGMvrtjysEf">public class</span> <span class="t" data-page-node-id="vukrrOT1iHsqJHtayUkOxp">AsyncConfig</span> {
+    <span class="m" data-page-node-id="LE6Ufqx9k8TwU2U0FQZKgw">@Bean</span>(<span class="s" data-page-node-id="avwwTVoua8Hz847FiMNiSi">"outfitExecutor"</span>)
+    <span class="k" data-page-node-id="QuDgOyEIeuPnourPz45vXi">public</span> <span class="t" data-page-node-id="3y9zoeON3x7u0YReFwmdop">ThreadPoolTaskExecutor</span> outfitExecutor() {
+        <span class="t" data-page-node-id="W3ZJkGd24ceMfUYPfLww0a">ThreadPoolTaskExecutor</span> ex = <span class="k" data-page-node-id="6D3sBbXTI0FDbZn1RuvSWu">new</span> <span class="t" data-page-node-id="iFTC0LkxHWuZHGyr2oTD6R">ThreadPoolTaskExecutor</span>();
+        ex.setCorePoolSize(<span class="t" data-page-node-id="mcaSQzmlNDz4Pl75HIqhHG">4</span>);
+        ex.setMaxPoolSize(<span class="t" data-page-node-id="AMzvvk7QuCPar6wSki9XiG">16</span>);
+        ex.setQueueCapacity(<span class="t" data-page-node-id="uC9lpnhAhSIthXkJzPIsej">100</span>);
+        ex.setThreadNamePrefix(<span class="s" data-page-node-id="ZTwNr3OQ3CW9h3axuOhvKD">"outfit-"</span>);
+        ex.setRejectedExecutionHandler(<span class="k" data-page-node-id="qWgkBFweDWYCIMiMc28E4C">new</span> <span class="t" data-page-node-id="SPTA73jlK7V8nk39auxlPm">CallerRunsPolicy</span>());
+        ex.initialize();
+        <span class="k" data-page-node-id="1rkTIC90E8qfui0iRFuI82">return</span> ex;
+    }
+}</pre>
+
+<pre data-page-node-id="arsgcmjQVS40H5xY6cS6Qv"><span class="m" data-page-node-id="GJfnFjeg1Flhve3OfAGAym">@Async</span>(<span class="s" data-page-node-id="Mwu69EusSnUGvwgGg3aHWD">"outfitExecutor"</span>)
+<span class="k" data-page-node-id="iB4FrzE6KtWUtdZtoTxjbh">public void</span> recommendAsync(<span class="t" data-page-node-id="SE2NDSDb9O55UnIDaYVeKr">Long</span> taskId, <span class="t" data-page-node-id="ms9CHq3n5sUjWIP2nhNlDf">RecommendReq</span> req) {
+    <span class="k" data-page-node-id="4tZon8Y1ojWTrJwmEwAKgn">try</span> {
+        taskService.markRunning(taskId);
+        <span class="c" data-page-node-id="7DFZwK7N6IClwk1TgifoZT">// 天气 → 衣物库 → LLM（含兜底）→ 落库</span>
+        taskService.markSuccess(taskId, recordId);
+    } <span class="k" data-page-node-id="XCdRzasn2ImvSARZcjh7b9">catch</span> (<span class="t" data-page-node-id="9GKlnivwbCywVRuR7CVabz">Exception</span> e) {          <span class="c" data-page-node-id="yq6uDYZVBs0iHX654FK6LY">// 必须捕获，否则任务永远卡在“执行中”</span>
+        taskService.markFail(taskId, e.getMessage());
+    }
+}</pre>
+
+      <div class="note warn" data-page-node-id="VOKQk1BBbstIWXF5uHqYOp"><span class="ni" data-page-node-id="vYiOvGGRsJqo8rjlIcPVKO">🔑</span><p data-page-node-id="pdDs3t2RE70CTgOXJ38Pxm"><b data-page-node-id="xtOtJTv7J0k0YfpWw4EdlJ">两个必踩的坑：</b><br data-page-node-id="JqgQRPNU4EnXJziZyO4NeH">
+      ① <code data-page-node-id="9vc8mTlEDlysugArac1dTQ">@Async</code> 方法必须是<b data-page-node-id="MbF6ENhWytgFf7QDBcHESc">外部调用</b>（同类内部调用不走代理，注解直接失效）；<br data-page-node-id="DUvQiJ6ztpHnh0WKJvy4yH">
+      ② 异常必须在<b data-page-node-id="nPMcODjb1lQcbGwMS4LATt">方法内 try-catch</b>，否则任务状态永远卡在「执行中」。</p></div>
+
+      <h3 data-page-node-id="WjFjdd4FZAgWXXDHzNeRzC">前端异步交互方案</h3>
+      <div class="tw" data-page-node-id="BdSTacqWXzif6HLWYrmygo"><table data-page-node-id="WprWt8Sw73Ydjf7MajDI5B">
+        <thead data-page-node-id="kJH2qORMxLsS92ucNrRCQu"><tr data-page-node-id="GVD0WsolBswXuAxaCSGlnK"><th data-page-node-id="4UFaGNpFXBQbHF5GMprJyp">方案</th><th data-page-node-id="TLCYDsK74XpHXCiVI4ZmCu">适用</th><th data-page-node-id="VFvjx7aCymNT20aSDVfjcv">说明</th></tr></thead>
+        <tbody data-page-node-id="3VNKHXhgShWqeTvYZhHFgo">
+          <tr data-page-node-id="ZcqTlKcBWv1JbzSGBbvQnY"><td data-page-node-id="CjXbI0eHeEUpahlqTqdhjv">轮询（首版推荐）</td><td data-page-node-id="K88UcEIelTI9pFdYOXviY3">简单可靠</td><td data-page-node-id="XxjIsUxyJ8hm3PJSVKqWt6">拿 taskId 后每 1s 查一次，带最大次数限制</td></tr>
+          <tr data-page-node-id="yrZyonpaGcDWsGTO6MiWqs"><td data-page-node-id="np6tMCpoiROmK2JNPJN0IW">SSE</td><td data-page-node-id="rdEJqxbBkhrEDbGgwcBnH1">体验更好</td><td data-page-node-id="yP3Vb2qEyBxf301lRQf0QO">服务端 <code data-page-node-id="Jbn2vCMVkeVbD10YrrJb23">SseEmitter</code> 推送，需处理断连重连</td></tr>
+          <tr data-page-node-id="lrcoRC1i9inrVhClk0oHeG"><td data-page-node-id="AYllZHDKe5SWUxGxMVnUz8">WebSocket</td><td data-page-node-id="XUbfOTQZmLBKT5UFXPgpsu">偏重</td><td data-page-node-id="wnKQrfMV6rRysv6oJsBGsB">对本项目不必要，不建议首版上</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <!-- ================= 8 ================= -->
+    <section id="s8" data-page-node-id="jEV0rgmSD114pG7ICIdUU8">
+      <h2 data-page-node-id="uAk8BbqyuFvF3i1jalANZR"><span class="num" data-page-node-id="CRsGvgVwHFl1LHmrh6B07v">8</span>关键实现注意点</h2>
+
+      <h3 data-page-node-id="2NdOB8KaGpuegIYYMq9ZSQ">8.1 功能落地</h3>
+      <div class="tw" data-page-node-id="8g0JG1RVLvsWoUFkroPgmT"><table data-page-node-id="FjGGvkLXprEEuNUn38x1iQ">
+        <thead data-page-node-id="wjbsWFD7dtUXqsJNw6Jh92"><tr data-page-node-id="AsTqstKSEFruWTykB8NtMc"><th data-page-node-id="cqW4PGn5KjYBWmeB0paby7">#</th><th data-page-node-id="ArIoVft8Xzvr8L9vS8L3GX">注意点</th><th data-page-node-id="lb8QykyIAhKY9YXjApa1Ax">说明</th></tr></thead>
+        <tbody data-page-node-id="aTrELj7PB87qWGO5SPF8DH">
+          <tr data-page-node-id="HagMWVPsXhkrlaylzTMKko"><td data-page-node-id="df5ia0biXxmadnqS0NEx8K">1</td><td data-page-node-id="iP9A8hgdZTlgcJsjnnfU7c"><b style="color:var(--orange)" data-page-node-id="aZHowhBzQ31pTG9RCMPguu">金额用 DECIMAL</b></td><td data-page-node-id="fH0lUyzuc8QdkgDQUOAXrU">字段 <code data-page-node-id="RReCkcNwpNaU2eSrfMXpwX">DECIMAL(12,2)</code>，Java 用 <code data-page-node-id="C9vkTMztsvyuFO1UC1SocI">BigDecimal</code>，禁止 double 参与金额运算</td></tr>
+          <tr data-page-node-id="JuVfEGyD5Dt8gegNHfjpZc"><td data-page-node-id="OcTw7pCRkch0GKJ9193dNl">2</td><td data-page-node-id="Z3s2T7QN7gUifEVBHOvbtD">逻辑删除</td><td data-page-node-id="axHOgpdBvbIQ6qmCrAVEb8">所有删除走 <code data-page-node-id="7FgCDCW0eKCYxWJGF7OFDC">deleted=1</code>，查询统一带 <code data-page-node-id="T0wFAZQ2ZNIb2rJUgWrSbf">deleted=0</code></td></tr>
+          <tr data-page-node-id="HLvLskPcANqKeiMws9Yz0A"><td data-page-node-id="P5yBs1NgIqZ2ReEf1WrfbN">3</td><td data-page-node-id="5Ojl3LAJWrIJG17JrAp9eK">数据隔离</td><td data-page-node-id="LyNhdRv4axDcIKLzJ2jSap">每条 SQL 必须带 <code data-page-node-id="5kdeMAthf5GF88ZDMCy8nN">user_id</code>，防止越权读他人数据</td></tr>
+          <tr data-page-node-id="PU7hbXJ5fiwLySAei6Xbja"><td data-page-node-id="WC9JUP3JAUXupviZEUNC1Y">4</td><td data-page-node-id="C8fHpLCKyHfxhumhjseiDY">分类删除保护</td><td data-page-node-id="6xNkZQQ3DTCEGmk7PqKBeC">分类下有数据时禁止直删，或级联置为「未分类」</td></tr>
+          <tr data-page-node-id="0GEZ65sbES8VHqdjlAeVXE"><td data-page-node-id="jTPf1SR0t55Uy10OfSi7yO">5</td><td data-page-node-id="QclLXGoKbmu1TMsI7cdzpC">时间字段</td><td data-page-node-id="hVk3A5YV7fggTrvTFswNaP">存 DATETIME，统计按 GMT+8，前端统一格式化</td></tr>
+          <tr data-page-node-id="UgSgoyE06OukoEOPvKRepN"><td data-page-node-id="E6NgFyW9wXalIT3FSIRNQa">6</td><td data-page-node-id="rub5T9NMy81RhCR1DF7Zb4">AI 降级</td><td data-page-node-id="U8Yrds3KWDIbBBrncPbpUB">LLM 失败 → 规则引擎（温度 + 场合匹配标签）兜底，<code data-page-node-id="qrEIYIXevQqTz7SsIiVOQ1">source=2</code></td></tr>
+          <tr data-page-node-id="SDg5LCjQ11uey7xGe2Wc9V"><td data-page-node-id="hiqDr7u7hopaoPmzE9qTZc">7</td><td data-page-node-id="NSPbSgeVZxwp5JUMucEUFz">天气缓存</td><td data-page-node-id="Kjg5WSQtAqbSlF3AiCKz9Y">同城同小时缓存（TTL 30–60min），避免频繁打外部 API</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3 data-page-node-id="NBACUCrrGkGT46GB8mguAk">8.2 性能优化</h3>
+      <div class="grid g2" data-page-node-id="Plq4XloV2cwWgaXmA4LsdG">
+        <div class="card" data-page-node-id="5idudZcYdcHAXdUSIpYm7z"><h4 data-page-node-id="CHvMlaiUE2DNdhCT5K9NUv">🗄️ 数据库</h4><p data-page-node-id="i0UvYXBRVoNiQUNWKXY2r4">联合索引；SQL 聚合代替循环查；深分页用「延迟关联/游标」避免 <code data-page-node-id="3UySQFSaCpSQxHgERVVSjO">LIMIT 100000,10</code></p></div>
+        <div class="card" data-page-node-id="2mfLXqzF79aK60tIzTSMzS"><h4 data-page-node-id="dENwW5jzBgTmPVJjeruw2T">⚡ 缓存</h4><p data-page-node-id="kGLx5CbRgwBeGhNzrLFuBe">分类列表、衣物库等低频数据缓存；天气结果缓存</p></div>
+        <div class="card" data-page-node-id="co2CBQck1KCMua1KH2TFPr"><h4 data-page-node-id="G9pm2zBsGBzL0SXLJkNaus">🧵 异步隔离</h4><p data-page-node-id="DixP0OaDet2j9oiscWZBPT">长耗时任务用独立线程池，防止拖垮主业务线程</p></div>
+        <div class="card" data-page-node-id="7A8naXurwGzdtq3FfLEQBg"><h4 data-page-node-id="WvSJntrG4f9EEIXYL948YO">🔌 连接池</h4><p data-page-node-id="zIZ714W6IhsSCnGdzAqqea">HikariCP 合理配置 <code data-page-node-id="sgOOW3CsKlzFVbQNldre8b">maximumPoolSize</code>（≈ CPU核数×2+磁盘数）</p></div>
+        <div class="card" data-page-node-id="7CPBgfZcoPfypq8THBD86x"><h4 data-page-node-id="cG6lBSMaC1wJeaIBCfA1Xr">🖥️ 前端</h4><p data-page-node-id="yBGWFFqGNNMvvFsLQVmQSE">路由懒加载；列表虚拟滚动/分页；请求防抖；ECharts 按需引入</p></div>
+        <div class="card" data-page-node-id="0wMdnN6Y7fi4tBULi8SRCF"><h4 data-page-node-id="LXBhZRXWdRpCET0DavWokV">📦 传输</h4><p data-page-node-id="zf61mg8jwvdlpC8f1s5VO4">开启 Gzip；图片走 CDN/对象存储，不塞进数据库</p></div>
+      </div>
+
+      <h3 data-page-node-id="3dVpg9WaC44rtpO40GGOUf">8.3 前后端协作</h3>
+      <div class="tw" data-page-node-id="JjioD8dOUa9Tk6OQDeruX7"><table data-page-node-id="W122hk7EUeXMVBbJaop7OZ">
+        <thead data-page-node-id="H2QfiEWlOqB4iNCnfb3fQd"><tr data-page-node-id="Tm2ysVpt64TODG6N22uh6L"><th data-page-node-id="ii9XoEDyyuLbRmzzrGc8q4">关注点</th><th data-page-node-id="mQSQgDNDYz3RZeV73mIoK1">约定</th></tr></thead>
+        <tbody data-page-node-id="aZHyCC22OZhsB9jogEgbar">
+          <tr data-page-node-id="oUs5kzbmvw6moz4kMurung"><td data-page-node-id="NpLfB8iDulxAUtBKdSwzvT">契约先行</td><td data-page-node-id="Apmcr95d6aZa75FCEpPDh1">开工前用 Knife4j/Swagger 锁定接口文档，前后端并行开发</td></tr>
+          <tr data-page-node-id="57ao9fbsvEE5qING0MtXBq"><td data-page-node-id="t0h9JeiQEUJrARHEXISi1N">统一响应</td><td data-page-node-id="5xMvqWg1wDpe9F8BfxXcoQ">后端固定 <code data-page-node-id="G6XPU0iIV6wRLb2Xsu1Uv5">code/msg/data/timestamp</code>，前端拦截器统一处理非 200</td></tr>
+          <tr data-page-node-id="kokt0TX6fZLR3DwzPCuF9K"><td data-page-node-id="wvRPqpHrkGh2ACEhX0V0Bz">错误码字典</td><td data-page-node-id="Bc7Z3CztE0TDf0wzkaiGT6">维护错误码表，前端按码做差异化提示</td></tr>
+          <tr data-page-node-id="xaDwzp2SMfAlzt0krz9JZQ"><td data-page-node-id="4ZJuOVuv8F4sBkTbRLS0Gy">跨域</td><td data-page-node-id="YQpzbTOLPp2iM6mq5NHVco">开发期后端配 CORS，生产走 Nginx 同源反代（无需 CORS）</td></tr>
+          <tr data-page-node-id="XtBQEH2ht3NM5Mer4ke4cb"><td data-page-node-id="IZCr0dZoQs9jd5din04N0F">Mock</td><td data-page-node-id="JzxAvyd9QGVKMFl0xfSRDs">后端未就绪时前端用 Mock 数据先跑通页面</td></tr>
+          <tr data-page-node-id="xhTJkyCEmURU4dNFhqdjYI"><td data-page-node-id="MI0UjLxpxaJcFnHmOYGJuK">命名一致</td><td data-page-node-id="u5K5XKTkxkBXbnYVlcOnBZ">MyBatis <code data-page-node-id="QC6Kzt51ABtJCCLwJG3eC5">mapUnderscoreToCamelCase=true</code>，前后端字段风格统一</td></tr>
+          <tr data-page-node-id="M0aalFNmhrG9eVfA9tzAnC"><td data-page-node-id="98ELW0j4YRhgcVpfdfuCk7">版本管理</td><td data-page-node-id="JFkfLEN8ic4Brz3P4E1mVs">Git 分支 <code data-page-node-id="fe5CJv3z9dOHpdmfbrrEnN">main</code>/<code data-page-node-id="QTYH3616gUFAKcCpJ2eYey">dev</code>/<code data-page-node-id="kWBIvjFqfnTaJQNPj7hk0k">feature-*</code>，提交信息规范化</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <!-- ================= 9 ================= -->
+    <section id="s9" data-page-node-id="ASzi5HKDsM3KWqdDP587lf">
+      <h2 data-page-node-id="iCrYneXTeoWgxJ0Z6CN7i8"><span class="num" data-page-node-id="dcYiMIOQ6XXGjcfdMa5NmT">9</span>开发计划与里程碑</h2>
+      <div class="tl" data-page-node-id="IsALmixfyvJZfzahlMt8mh">
+        <div class="tl-item" data-page-node-id="bxAntq05CNgBPyy1lKPxBl"><div class="tt" data-page-node-id="3jiXj1yrTkXdXgykyltGcl">M1 骨架搭建 <span data-page-node-id="fAYlIuPna5eUqdXhtzvEcS">可运行空壳</span></div>
+          <div class="td" data-page-node-id="4dlQl2VV71HmCItBrccv9e">SSM 工程 + 数据库建表 + Vue3 工程 + 登录鉴权 + 统一响应封装</div></div>
+        <div class="tl-item" data-page-node-id="xFYcZDwwDN4Wt0qKVyg7MX"><div class="tt" data-page-node-id="gQOsX116kwPf9DjSRWviIT">M2 笔记模块 <span data-page-node-id="rilHQGsHEwG1rZTO3LGlCC">笔记可用</span></div>
+          <div class="td" data-page-node-id="424AFi39ElhDfD9DQ7v0cG">CRUD + 分类 + 搜索 + 前端页面</div></div>
+        <div class="tl-item" data-page-node-id="JNYEEYSBYGFbES6AaWsDP3"><div class="tt" data-page-node-id="JBmghn2yqU5Qj9oa7YKzT2">M3 记账模块 <span data-page-node-id="9PiJbl5hSltu0b4TNUxMtC">记账可用</span></div>
+          <div class="td" data-page-node-id="OB0d9rki7xHqsdpHrOkd17">流水 CRUD + 统计接口 + 图表看板</div></div>
+        <div class="tl-item" data-page-node-id="xOElAqqaOn0hJMv55PUECM"><div class="tt" data-page-node-id="IggEwJUw0fX7EDznLEmv20">M4 穿搭模块 <span data-page-node-id="WUWEvXjJBD8ja88DyP6vAd">推荐可用</span></div>
+          <div class="td" data-page-node-id="GgzgTLUdjOZD5Ki1s3BP9p">衣物库 + 天气接入 + LLM 接入 + 异步链路 + 兜底</div></div>
+        <div class="tl-item" data-page-node-id="rnGrVvkv3gkNxRKGpNtFFd"><div class="tt" data-page-node-id="s1OSRnGfGrEScNGxtlXBNr">M5 打磨上线 <span data-page-node-id="fj0tBC89RB2KYJvBzpHp3O">可交付</span></div>
+          <div class="td" data-page-node-id="6vpWoCp8bRb3G4OMUedx0Z">性能优化 + 异常兜底 + 部署（Nginx + Tomcat）+ 联调测试</div></div>
+      </div>
+    </section>
+
+    <!-- ================= 10 ================= -->
+    <section id="s10" data-page-node-id="336IBHF28lueoEQhGDJ6kn">
+      <h2 data-page-node-id="qjCPVfnI4tsAYgF3sDhZoC"><span class="num" data-page-node-id="iA28MfH1Tus6TOlFDalNvk">10</span>风险与对策</h2>
+      <div class="tw" data-page-node-id="lSvQ7judsk2J9mYM1ogu17"><table data-page-node-id="mmj1zc0Q68OIz3UXKWFDbK">
+        <thead data-page-node-id="yFNdVm8zbACVCC4T7bvteO"><tr data-page-node-id="q01zIz547Mtc18OKGeMsky"><th data-page-node-id="B5ObBhp7Ehl7xPjl6HXKmJ">风险</th><th data-page-node-id="7TShgTfBs3h6RQpzDle0Bo">影响</th><th data-page-node-id="9jdX9bt95R8nlFBtoLsukV">对策</th></tr></thead>
+        <tbody data-page-node-id="9G2JsJONOmEqJRXHx1hxtU">
+          <tr data-page-node-id="hmCWxxcJ93ESxhNr6DhnjV"><td data-page-node-id="xDvY96E4vgKrhth5nNnD0u">Element UI 与 Vue3 不兼容</td><td data-page-node-id="sYorjLnYdT2KNun6Gt4mDz">前端无法启动</td><td data-page-node-id="WmNvtef5rTteEyfEiSAqcz">改用 Element Plus</td></tr>
+          <tr data-page-node-id="a3KlqiORNT3vbNzIIfM5Aw"><td data-page-node-id="DGjt4BfTkteKW6BHmO32km">LLM / 天气 API 不稳定</td><td data-page-node-id="BWkaTmWVtjwX12um6zs8j3">推荐不可用</td><td data-page-node-id="kTSfGKJQ77oSrBoDYCqwQa">缓存 + 规则引擎双降级</td></tr>
+          <tr data-page-node-id="2KdvQr9NGYxRN8cQtKNBsv"><td data-page-node-id="I5BUco9mIgB48iSeEuHgy0">SSM 下 @Async 配置失误</td><td data-page-node-id="Ewyevirr941ciX8uWmfCY8">任务卡死</td><td data-page-node-id="ZNe0JSlkAJzODb8sS7Azil">独立线程池 + 方法内 try-catch + 超时补偿</td></tr>
+          <tr data-page-node-id="LkLYwCZlwbErflnfFmBbk1"><td data-page-node-id="Kn8anscJHIHhMYzwfaTu7R">深分页性能差</td><td data-page-node-id="PFRW8lbD1Ggbw0oX2lCtcN">列表卡顿</td><td data-page-node-id="02QLu3PMAmzaILcTDcydiE">延迟关联 / 游标分页</td></tr>
+          <tr data-page-node-id="o3tZd2Sr4Ymx20TJxVFeo0"><td data-page-node-id="3CGIAm5giJB99yiWqEZKqW">金额精度问题</td><td data-page-node-id="9FvCW0V0IHVVRtksEJ8HDf">对账错误</td><td data-page-node-id="vOrVrCj2EOuHUlgJMzw7ju">DECIMAL + BigDecimal 全程贯穿</td></tr>
+          <tr data-page-node-id="FNcUknlF3E3g5a22CDTZpC"><td data-page-node-id="ZUfndI3tiYkZTVDvjPK4Cr">外部 API 费用</td><td data-page-node-id="BeUaZQGYYd28V37eYNqVI4">成本失控</td><td data-page-node-id="jSkKztmHPb5fwguGxDekMS">缓存 + 限流 + 额度监控</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <footer data-page-node-id="zEG8Oodc8jP5KiyGAZtita">
+      个人生活管理软件 · 开发方案 V1.0　|　由开发组 PM 输出　|　可据此拆分任务与排期
+    </footer>
+  </main>
+</div>
+
+<script>
+  // 滚动高亮当前章节
+  const links = [...document.querySelectorAll('#nav a')];
+  const secs  = links.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  const onScroll = () => {
+    const y = window.scrollY + 120;
+    let cur = secs[0];
+    for (const s of secs) { if (s.offsetTop <= y) cur = s; }
+    links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + cur.id));
+  };
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+</script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+# ===== 依赖 =====
+node_modules/
+.vite/
+
+# ===== 构建产物 =====
+dist/
+target/
+*.class
+*.war
+*.log
+
+# ===== IDE =====
+.idea/
+*.iml
+.vscode/
+
+# ===== 本机工作数据（不提交） =====
+.tmp/
+.workbuddy/
+generated-images/
+uploads/
+
+# ===== 敏感配置（含真实 key/密码，请复制 .example 填自己的值） =====
+backend/src/main/resources/app.properties
+backend/src/main/resources/jdbc.properties
+
+# ===== 系统 =====
+.DS_Store
+Thumbs.db

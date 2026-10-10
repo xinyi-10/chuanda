@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="7BPLU3UDmxlf80eeoBYA5E">
+<head data-page-node-id="pdAJVPPaPZeGwiNFnuCQrV">
+<meta charset="UTF-8" data-page-node-id="hJsPDAXBhsPvXJxcGRE71O">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="33bWYgNsfjGTFAp2gRDveo">
+<title>个人生活管理软件 —— 落地执行工作流程</title>
+<style>
+  :root {
+    --bg: #0f1115; --panel: #171a21; --panel-2: #1e222b; --border: #2a2f3a;
+    --text: #e6e8ec; --text-dim: #9aa1ad; --accent: #4da3ff;
+    --high: #ff5c5c; --mid: #ffb84d; --low: #4dc98a;
+    --high-bg: rgba(255,92,92,.12); --mid-bg: rgba(255,184,77,.12); --low-bg: rgba(77,201,138,.12);
+    --phase-1: #4da3ff; --phase-2: #a97bff; --phase-3: #4dc98a; --phase-4: #ffb84d;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+    line-height: 1.75; font-size: 15px;
+  }
+  .container { max-width: 1040px; margin: 0 auto; padding: 40px 24px 80px; }
+  h1 { font-size: 28px; margin: 0 0 8px; border-bottom: 2px solid var(--accent); padding-bottom: 14px; }
+  h2 { font-size: 21px; margin: 44px 0 16px; padding-left: 12px; border-left: 4px solid var(--accent); }
+  h3 { font-size: 17px; margin: 26px 0 10px; }
+  .meta { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin: 16px 0; color: var(--text-dim); font-size: 14px; }
+  .meta strong { color: var(--text); }
+  p { margin: 10px 0; }
+  blockquote { margin: 14px 0; padding: 10px 16px; background: var(--panel-2); border-left: 3px solid var(--accent); border-radius: 0 6px 6px 0; color: var(--text-dim); }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 14px; background: var(--panel); }
+  th, td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top; }
+  th { background: var(--panel-2); color: var(--text); font-weight: 600; white-space: nowrap; }
+  code, pre {
+    background: var(--panel-2); font-family: "JetBrains Mono", Consolas, monospace;
+  }
+  code { padding: 1px 6px; border-radius: 4px; font-size: 13px; color: #ffd479; }
+  pre {
+    padding: 16px 18px; border-radius: 8px; border: 1px solid var(--border);
+    overflow-x: auto; font-size: 13px; color: #c9d1d9; line-height: 1.6;
+  }
+  ul { padding-left: 24px; }
+  li { margin: 6px 0; }
+  .phase-tag {
+    display: inline-block; padding: 2px 10px; border-radius: 4px;
+    font-size: 12px; font-weight: 700; letter-spacing: .5px; margin-right: 8px;
+  }
+  .p1 { background: var(--phase-1); color: #0a0e14; }
+  .p2 { background: var(--phase-2); color: #0a0e14; }
+  .p3 { background: var(--phase-3); color: #0a0e14; }
+  .p4 { background: var(--phase-4); color: #0a0e14; }
+  .sev { font-weight: 700; white-space: nowrap; }
+  .sev-high { color: var(--high); background: var(--high-bg); padding: 2px 8px; border-radius: 4px; }
+  .sev-mid { color: var(--mid); background: var(--mid-bg); padding: 2px 8px; border-radius: 4px; }
+  .sev-low { color: var(--low); background: var(--low-bg); padding: 2px 8px; border-radius: 4px; }
+  .id { font-family: Consolas, monospace; color: var(--accent); font-weight: 600; }
+  .cat { color: var(--text-dim); white-space: nowrap; }
+  .check { list-style: none; padding-left: 0; }
+  .check li { padding-left: 26px; position: relative; }
+  .check li::before { content: "☐"; position: absolute; left: 4px; color: var(--accent); }
+  .flow-box {
+    background: var(--panel-2); border: 1px solid var(--border); border-radius: 10px;
+    padding: 18px 22px; margin: 16px 0; text-align: center;
+  }
+  .footer { margin-top: 48px; color: var(--text-dim); font-size: 13px; text-align: center; }
+  @media (max-width: 720px) {
+    .container { padding: 24px 12px 60px; }
+    table { font-size: 12.5px; }
+    th, td { padding: 8px 6px; }
+  }
+</style>
+</head>
+<body data-page-node-id="Q7dBFKMmoAkT1ZdFzLW2vx">
+<div class="container" data-page-node-id="tDWVr9InrM08jjWyjA3ppw">
+
+  <h1 data-page-node-id="pptkg47NDUcErShxGRb2r6">个人生活管理软件 —— 落地执行工作流程（V1.0）</h1>
+  <div class="meta" data-page-node-id="UQBdMd1uWiE7FQFJvc2Suy">
+    <strong data-page-node-id="zP5x31E0oKGhLoZVXwCJo9">依据</strong>：docs/个人生活管理软件-开发方案.md + docs/个人生活管理软件-开发方案-审核报告.md<br data-page-node-id="XVfnyF0rUGC91OUDTO33U3">
+    <strong data-page-node-id="9KQ7azB796gy1k5ASNXGCb">主线顺序</strong>：数据库搭建 → 项目框架搭建 → 编码实现 → 测试与验收<br data-page-node-id="aFOZxBFBmZvhkWLxolgzHY">
+    <strong data-page-node-id="hsDp714oo3XisJPlKF7J61">角色</strong>：xinyi（开发者/全栈）· 灵犀（AI 协作/评审）
+  </div>
+
+  <h2 data-page-node-id="lC25QTyd291wea5hPxreHL">〇、流程总览与全局约定</h2>
+
+  <h3 data-page-node-id="sSDqzAxDGSYmTjNECHnRhf">0.1 主线四阶段</h3>
+  <div class="flow-box" data-page-node-id="UZeNKqUfnb2EQaWxBVhsHo">
+    <span class="phase-tag p1" data-page-node-id="l09OjnaFMOaN54uuKCvj1n">阶段一</span><strong data-page-node-id="scoDCQJcr5lMDNmZyD8ckd">数据库搭建</strong>（前置地基）
+    &nbsp;──►&nbsp;
+    <span class="phase-tag p2" data-page-node-id="dh6rvHWiPlCLl4wspYbEXi">阶段二</span><strong data-page-node-id="5ro78vBA5TCxj9djzUCZTn">项目框架搭建</strong>（工程骨架）
+    &nbsp;──►&nbsp;
+    <span class="phase-tag p3" data-page-node-id="EC9oCrRDKdKhhWh4TTjvB2">阶段三</span><strong data-page-node-id="N45m5UVcZcLVB1hDzpCeQx">编码实现</strong>（业务落地）
+    &nbsp;──►&nbsp;
+    <span class="phase-tag p4" data-page-node-id="3Hd0JexBhiQEE17T3Ca7KV">阶段四</span><strong data-page-node-id="nSDY9B2JCnJBZPOtzkNpAT">测试与验收</strong>（质量闭环）
+  </div>
+
+  <h3 data-page-node-id="3qs3Z5WGlXZ3Ysi4ayDHvk">0.2 并行 / 串行总览</h3>
+  <table data-page-node-id="1wWaG5sLvgVo9cmXSd0HEp">
+    <thead data-page-node-id="bcXkiiJBL0tla7wclKf9uw"><tr data-page-node-id="COWwowNWnxk0ppHGSRRxGZ"><th data-page-node-id="Q0o21T06qA4Gt32NuJeLVH">关系</th><th data-page-node-id="fgviyiq2GtszEf1GxmK3lz">步骤</th></tr></thead>
+    <tbody data-page-node-id="bEXfF8dM6lRGAz6YcQddfx">
+      <tr data-page-node-id="Q9eThPMAGktqd9rbKp1xQ5"><td data-page-node-id="EjvtsOZ5y59a4wkEc10Wd0"><strong data-page-node-id="spQXnJFP8tvFhxr0aKZIkI">严格串行</strong></td><td data-page-node-id="FwAILHkE15QFWUzn0MFQGH">阶段一 → 二 → 三 → 四依次推进；阶段三内部按「鉴权 → 笔记 → 记账 → 穿搭」顺序</td></tr>
+      <tr data-page-node-id="Vkwj7gPQ1Lyz7U8MEDhr6H"><td data-page-node-id="iQrXmFAtGNY4ko0Dmg2qF3"><strong data-page-node-id="ZNqxApwdIC2aBA1elqiMEH">可并行</strong></td><td data-page-node-id="ldjP8EKiMUGCFMIctM8N3P">阶段一内部各建表脚本可同时写；阶段二后端/前端工程可并行；阶段三后端接口与前端页面在契约锁死后并行</td></tr>
+      <tr data-page-node-id="wZnQOKOsG9K5DmssihbNoW"><td data-page-node-id="Fll7JPmr75wKHoGAOMxDyn"><strong data-page-node-id="An7M40Rnkc9nyLx1Eme4u4">触发条件</strong></td><td data-page-node-id="utc10CNaJpDqxsMW4SMglF">每阶段以「验收标准全部通过」为进入下一阶段的唯一开关</td></tr>
+    </tbody>
+  </table>
+
+  <h3 data-page-node-id="uvrxm7Xy0yK9MlDkwSdQYe">0.3 贯穿全程的三件 P0 铁律</h3>
+  <p data-page-node-id="FNyOHXsAnMPXkof3WfBNQG">无论走到哪一阶段，以下三件事<strong data-page-node-id="CadeGW4t4KppPtxJXcMugH">必须从阶段二起就钉死</strong>，不允许后补：</p>
+  <ol data-page-node-id="nIRUPeyhM2lylBjGsuICM5">
+    <li data-page-node-id="SnMiU9Z3J5B3rQA7ApA2lK"><strong data-page-node-id="kjTBCzhMyAjjDWfLIAK1Di">数据隔离</strong>：所有涉及用户数据的 SQL 强制带 <code data-page-node-id="ou1aWrNCHkHYdZd1SG5y9c">user_id</code>（阶段二用 MyBatis 拦截器统一注入）。</li>
+    <li data-page-node-id="Wf0yu1onONZUiLDt0UlcG8"><strong data-page-node-id="vqFajEfptHqVqZR7RnDgEC">金额精度</strong>：金额字段 <code data-page-node-id="vWvhCqQ0ejP7w7H5AZUCdU">DECIMAL(12,2)</code> + Java <code data-page-node-id="zvcIYPJCWJyZ9rCEFfAl5L">BigDecimal</code> + JSON 序列化为字符串，三处一致。</li>
+    <li data-page-node-id="MPwYjSjWsYeW4ytsVFvwnf"><strong data-page-node-id="ESijANPaZtEzuxCHSNTUY4">异步超时补偿</strong>：<code data-page-node-id="zADbvpQgF8lnutwBGLy55Y">@Async</code> 任务必须配超时检测 + 状态机终态，不允许「永久执行中」。</li>
+  </ol>
+
+  <h2 data-page-node-id="ErhAIxuNzrrhbTXADR81us"><span class="phase-tag p1" data-page-node-id="WvEQjfEXraIq0o5K5qZp7C">阶段一</span>数据库搭建（地基）</h2>
+  <p data-page-node-id="82ueZVh0igSitRP8JM2shZ"><strong data-page-node-id="6mNR3CZ4ygq90opYesmw4F">目标</strong>：产出可执行的建表脚本，字段/索引/约束与方案一致，且已吸收审核报告的数据一致性改进（H6/M8/L4/L5）。</p>
+
+  <h3 data-page-node-id="tHZYeDKsHugRS3FSYihXTw">1.1 执行步骤</h3>
+  <table data-page-node-id="yjedg0510LJZEAUQRmWL9Y">
+    <thead data-page-node-id="OFvGdWqJwtYsumHZTMWqQf"><tr data-page-node-id="qN3iGA5OGKcqSmBXb7aEob"><th data-page-node-id="0Q6CA2BHp3qu8f8rg2eS5a">步骤</th><th data-page-node-id="s9ryxz1FR3bCO7FDTAnDwU">关键动作</th><th data-page-node-id="VlEuGecjT32VfTDoWRHp9z">依赖</th><th data-page-node-id="Ay6zXoxT7a8C77dxScEcqG">风险点</th></tr></thead>
+    <tbody data-page-node-id="LND3XRv8z2ZmnIrV8LJaie">
+      <tr data-page-node-id="DgRMvAFgicWwJuzit8Ueql"><td data-page-node-id="B1UDa5qH8VMoPEwAipBhAW">1.1</td><td data-page-node-id="tDaFlMqM7cVXu8Ib8VxJ9r">确认数据库环境：MySQL 8.0 + <code data-page-node-id="VwbzlsNrxAvZnUvNTJy8wn">utf8mb4</code></td><td data-page-node-id="9zsEnx7Siu6j4bXSRhYUZH">无</td><td data-page-node-id="TRED9K6YsCJ4pFDxxC5uAx">版本 &lt;8.0 不支持窗口函数；字符集误用 utf8 致 emoji 乱码</td></tr>
+      <tr data-page-node-id="pbKuBLzgymuH8ARtbwuzFR"><td data-page-node-id="PwZtB2yaH0BCQ7w2m1xuA5">1.2</td><td data-page-node-id="cV2jwFMPHiiFerPjFFVaVQ">编写 <code data-page-node-id="HR2QpLjNwJuW8ZBR90pGrc">schema.sql</code>：建库 + 表 + 索引 + 约束</td><td data-page-node-id="C8aqOYVjBCLFrgBMGsPn2u">1.1</td><td data-page-node-id="cD1DkJsY0ch9Fsm0KOsXSW">漏改下方「字段级修正」清单 → 后期返工</td></tr>
+      <tr data-page-node-id="HJIazCV0GP8E2T3xDfWMpY"><td data-page-node-id="jFtzX6JFCIwvE9TDB5D8KA">1.3</td><td data-page-node-id="iqyqdMHE3WBQfyQjjVBtXa">编写 <code data-page-node-id="7TQmi6yrluFINd0RxKvPwQ">data.sql</code>：默认分类、衣物标签字典</td><td data-page-node-id="mIT1siopD8dgcv2sOliNwI">1.2</td><td data-page-node-id="5lexbuyUEAPp3qgFt9zc1P">分类枚举自由文本（L5）致规则引擎失效</td></tr>
+      <tr data-page-node-id="hZfDBuNekdNMQDdZDbmuGA"><td data-page-node-id="j3i0eYZHYpPPWriz6iqBWP">1.4</td><td data-page-node-id="O4r5a1nS6ITH7nPLqLCOJk">本地执行验证：<code data-page-node-id="yOb0LwbmssSbkSm2OCRa6h">SHOW CREATE TABLE</code> 核对</td><td data-page-node-id="5ZAjHvDxXP0IJ6btDFzGGK">1.3</td><td data-page-node-id="foEG1LlLdlMKifaifu10YJ">直接改已上线库、无备份</td></tr>
+      <tr data-page-node-id="W25Qbofspq3pljEjx01mFL"><td data-page-node-id="z6O4sqoro1zebwj8DT5oEQ">1.5</td><td data-page-node-id="UKpBeCfHKazJ7J3u4BCOxV">记录数据库版本：脚本入 Git，编号 <code data-page-node-id="csNW6zOh2ySX3PjLloZOcV">V1__init.sql</code></td><td data-page-node-id="KfnNiHE0QE5fvUbKNC7BKJ">1.4</td><td data-page-node-id="l6O9ci62YIDW0DxSAjdGh4">无版本管理 → 协作冲突</td></tr>
+    </tbody>
+  </table>
+
+  <h3 data-page-node-id="rAZJ0yIDUqBiGFncx3NrQn">1.2 必须吸收的审核改进点（建表时直接落实）</h3>
+  <table data-page-node-id="Lq9vagYCSekF6nzxsbqdBl">
+    <thead data-page-node-id="umiO4vhgVPoMdvyyz3vyw4"><tr data-page-node-id="18QBN7UoWIP3uoAQIV7EZC"><th data-page-node-id="XjX6tEKcNuHJTudhmCfuLe">编号</th><th data-page-node-id="huv3K8y0b5wKDKDV476Czs">问题</th><th data-page-node-id="zY51xgjbILNJDlPmsQTcDC">落地做法</th></tr></thead>
+    <tbody data-page-node-id="75XCirX4w2MUWx32fXzUiW">
+      <tr data-page-node-id="UWkMMGpL9HrpvGB6YEsAdG"><td class="id" data-page-node-id="Yz1B9o8S7x74dLuP6SdTtC">H6</td><td data-page-node-id="pTDEDKJ89ISzaGBt5VfceY"><code data-page-node-id="qyn54miD34GkYQaCcHHO47">type</code> 双重冗余</td><td data-page-node-id="aKi2bbndDQr2POu9uyQAEJ">流水表只保留 <code data-page-node-id="VLTg8eQfsgackz8DzhdSAs">category_id</code>，<code data-page-node-id="GGMrHLgTG4tHQKNxCIuZ0U">type</code> 由分类派生；应用层校验一致性</td></tr>
+      <tr data-page-node-id="vHgMSsuEHl166zEazRmWKm"><td class="id" data-page-node-id="e301lCmvWgBfNdggaPmnXQ">M8</td><td data-page-node-id="jL2Sna0YS4qhQ7WWL5Fw4D">逻辑删除 + 唯一约束缺失</td><td data-page-node-id="AOBAnnm6DiLR13dqyORgyB">分类名唯一索引用 <code data-page-node-id="C0v61dulnaiqAwTOjz64kS">user_id + name + deleted</code> 复合</td></tr>
+      <tr data-page-node-id="c3jA2T3sGgUquEPj8sfAjv"><td class="id" data-page-node-id="FvIwBgsozrrgYE5lP1xto1">L4</td><td data-page-node-id="I0kgGDVbujfd0Vbzbigdan">异步任务状态机不完整</td><td data-page-node-id="QYc1bapKRUIDCwQbonYEsT"><code data-page-node-id="778i4Czfn7e2KkTHpd4epv">async_task.status</code> 增加 <code data-page-node-id="LSD3eyiKSd8UPav9b8nePU">4=超时</code> <code data-page-node-id="aX6WQNX0jwEuhtFy87QHeo">5=取消</code>；补 <code data-page-node-id="FTkWAdRxmJTB7hj9ImVrAt">timeout_at</code></td></tr>
+      <tr data-page-node-id="t11K5boJ1ze7eGBQhvL8lP"><td class="id" data-page-node-id="HzPUUFLEjMbLxRaeOGkWLm">L5</td><td data-page-node-id="m6vTTEUzqLtn6HouuFKBfV">枚举用 VARCHAR 存自由文本</td><td data-page-node-id="YNEyiSRSqusGFZYtr6tPCl"><code data-page-node-id="XcR5LPYSA7kCi3ZdMabSG2">season/style/category</code> 建字典表或加 <code data-page-node-id="qYK7m0GUxxWCfQ586QUEKw">CHECK</code> 约束</td></tr>
+      <tr data-page-node-id="VlV9Q80fGi5jfAP3QUMyWZ"><td class="id" data-page-node-id="ntRGldHel7jBAIDqMYW6Jv">H5</td><td data-page-node-id="425oSDloQb2fRaUHZ72tPw">金额序列化</td><td data-page-node-id="rW8QfDN8bmqeQOfvDnWGON">表字段 <code data-page-node-id="nF7FVyKHIiYwYMpwFQbSCV">DECIMAL(12,2)</code>（库层）——Java/JSON 层在阶段二处理</td></tr>
+    </tbody>
+  </table>
+
+  <h3 data-page-node-id="VK9kA7NUIQS7RDEHxjFLuk">1.3 验收标准（出口门禁）</h3>
+  <ul class="check" data-page-node-id="mRcepCS1GuGgKp8N4C5keG">
+    <li data-page-node-id="rS8HUXxHy7skFZvPC8IU4W"><code data-page-node-id="IQN3xeFWXRXGkm30bBxSMz">schema.sql</code> 可在干净 MySQL 8.0 一次性执行成功，无报错。</li>
+    <li data-page-node-id="YaxRLsy45CXjDhlGiGkNXh">所有表含 <code data-page-node-id="oUS8jqjtWnGO7eTlDFcePk">user_id / create_time / update_time / deleted</code> 通用字段。</li>
+    <li data-page-node-id="cRyPoF9Fcy5HoVSLYdJssO">金额字段均为 <code data-page-node-id="Wvod47ERud4yBzAyKGNlme">DECIMAL(12,2)</code>，无 <code data-page-node-id="0FmU3E6dbZBI37YoRkuwQa">FLOAT/DOUBLE</code>。</li>
+    <li data-page-node-id="JKXynKQQH2qxt42xbp0uOx">H6/M8/L4/L5 四项修正已体现在脚本中。</li>
+    <li data-page-node-id="yw1KMdQu8QmFnvGq2wfZ9B">种子数据可正常导入，默认分类可直接被前端渲染。</li>
+  </ul>
+  <blockquote data-page-node-id="F3VcWsC2aGiL01mKPF0Eot"><strong data-page-node-id="Hg3w2aJAOggnlAUvTrzQMl">衔接</strong>：验收通过后产出 <code data-page-node-id="KBjNYc4q0AGnF4xEBHh3mc">sql/schema.sql</code> + <code data-page-node-id="WTzTdlQXoioCwcFGkML4EW">sql/data.sql</code>，作为阶段二的数据库连接依据。</blockquote>
+
+  <h2 data-page-node-id="veqoUDVVJ2OjVdEtbmOJDv"><span class="phase-tag p2" data-page-node-id="IBgi46nTzOzndbgIuH3FHD">阶段二</span>项目框架搭建（工程骨架）</h2>
+  <p data-page-node-id="68j2C1e7xeNegDMdDxCZCp"><strong data-page-node-id="Z8mlCMoHCVxjZKLVeYzgwV">目标</strong>：跑通一个「能启动、能连库、能鉴权、统一响应」的空壳，并把三件 P0 铁律的基建全部铺好。</p>
+
+  <h3 data-page-node-id="JwN299q00OuceYZUCoBl78">2.1 执行步骤（后端 + 前端可并行）</h3>
+  <table data-page-node-id="nSa3FdEPPeN84CIr5flwfk">
+    <thead data-page-node-id="qOHoj1QjfEjQFmnY6DBns1"><tr data-page-node-id="7cuH1NvXC1WQ0LCGLyGLim"><th data-page-node-id="7YzaeBtxrwHQazlkX242z8">步骤</th><th data-page-node-id="1V6D4aQMaMDONHMdlXRDAT">关键动作</th><th data-page-node-id="ou21HEIy95ZI5RqVyBJj2d">依赖</th><th data-page-node-id="rNyr0dI9zTymwIQkfmv900">风险点</th></tr></thead>
+    <tbody data-page-node-id="sVErZt4muObUZSuliCbMIN">
+      <tr data-page-node-id="PhFRj0U5MkFNNv65f8lAGN"><td data-page-node-id="uhGvHZeRbL91F5BMvjiobt">2.1</td><td data-page-node-id="DDrHUHYbLRNGAeeOZN26Rx">初始化后端工程（SSM/Maven/WAR）</td><td data-page-node-id="C2gtOIro2Fl18ZeYyQvVQs">1.x 通过</td><td data-page-node-id="JEIwEPfWj4gOl03LNaR4Ba">JDK 版本隐患（见 2.3）</td></tr>
+      <tr data-page-node-id="dyUG0A5cqoqHW85zDGnAmG"><td data-page-node-id="4crweIj4pvdcKpObn9bC7o">2.2</td><td data-page-node-id="Mrc1vjkBpaiKAfFvx9PB1r">初始化前端工程（Vue3 + Vite + Element Plus + Pinia + Axios）</td><td data-page-node-id="a3lgIPoU7bBsZABIkblC1e">1.x 通过</td><td data-page-node-id="NhEkUpQyaFzZFwonoUfoHe">Element UI/Vue3 冲突（已纠正）</td></tr>
+      <tr data-page-node-id="A1fqvlEh4fiIeTGilpcY1D"><td data-page-node-id="g5WQmMCUTXVvsQ2RhPaJtC">2.3</td><td data-page-node-id="5hi6p1nADsZUypyo8rXsoO">配置数据库连接（HikariCP/Druid + 驼峰映射）</td><td data-page-node-id="tOqXZIUMhxWpbTHAIVDrLx">1.5 + 2.1</td><td data-page-node-id="gthMonroDqqDksmZRCQF3c">连接池参数不合理</td></tr>
+      <tr data-page-node-id="8uYIMCFG5k2cQtjDEyzbFI"><td data-page-node-id="rgPzVtpDDDrSGRvh2UuCCa">2.4</td><td data-page-node-id="XkPueop3EBuLb0JmrGPpFl"><strong data-page-node-id="Xwhk2JltO17kU1JCYi6I9k">铺设 P0 基建</strong>（隔离拦截器 + 序列化 + 统一响应 + 全局异常）</td><td data-page-node-id="NwYIzHVX24GfHNgbhaANvO">2.1</td><td data-page-node-id="WTJQiLxJmfku3HJoTDlko6">见下方 P0 基建清单</td></tr>
+      <tr data-page-node-id="FELRLzuAHIvzkKabFyNvCm"><td data-page-node-id="A7EDvYfBkEXii6eZeRXuVY">2.5</td><td data-page-node-id="NPoOywjxmCrvbyA14TmIkl">鉴权链路（登录/注册 + JWT + 拦截器）</td><td data-page-node-id="MfbWf7jibFtBfer9AXDIKk">2.4</td><td data-page-node-id="G2BbaRh3MiyjMvzfXIbH5F">H1 token 机制含糊，需定死</td></tr>
+      <tr data-page-node-id="Fb7fSo8sISfypwanJS4tPW"><td data-page-node-id="a2fhHV5Dt8j6RdiBFn5AvK">2.6</td><td data-page-node-id="9mSAX7jKUuaF65D4xDy6za">异步框架（<code data-page-node-id="WFZADSdWhZdaE7RFXwzWuS">@EnableAsync</code> + 线程池 + 超时补偿）</td><td data-page-node-id="HaCDuzVszBTJrhA932yRvc">2.4</td><td data-page-node-id="yXzzbfnxI0SfzC8qjjxsXX">H4 超时检测不能后补</td></tr>
+      <tr data-page-node-id="aNbsHnI35WyPhcvkXu8RKJ"><td data-page-node-id="xpzPehdKQ7cGQRakTWmmtL">2.7</td><td data-page-node-id="spHf15zasQAZrg2w7tGSgA">接口契约（springdoc / Apifox）</td><td data-page-node-id="N3XTC279Em1duqSAAMs0xv">2.5</td><td data-page-node-id="zQmjRdf6oCjv4Lj3VxbDcL">M5 swagger 兼容坑</td></tr>
+      <tr data-page-node-id="U9hOKeACoje1N050oAAChO"><td data-page-node-id="JlrsyAkznAYZEeOt5hPGqC">2.8</td><td data-page-node-id="2kcP2nBSLhF5sDYStqEA79">联调打通（前端登录 → 接口 → 库全链路）</td><td data-page-node-id="MggtBXCcDrAWFvq4G9Hrae">2.1~2.7</td><td data-page-node-id="iLU7k7gwkwvgFAD3AasflY">跨域配置（L2）</td></tr>
+    </tbody>
+  </table>
+
+  <h3 data-page-node-id="nkoV52fBhLEaW5WeB24EFs">2.2 P0 基建清单（阶段二必须完成，不后移）</h3>
+  <table data-page-node-id="gA7EXtJJGaokpjqAhiYgHv">
+    <thead data-page-node-id="kCbP0pV0YgwFeWMgLyepBC"><tr data-page-node-id="WtnexSK24CErFAXSmEGUYB"><th data-page-node-id="bYcDPysOoivD4iyFU1OWjU">基建</th><th data-page-node-id="Gu6P7FNVwkp0ULmCSAhHjd">对应风险</th><th data-page-node-id="sabvByXMlGcGBTiEoN9YFz">关键实现</th></tr></thead>
+    <tbody data-page-node-id="CqPgTOZyVX5RsJaQxcvc32">
+      <tr data-page-node-id="KsxjYAR93OJmKx8LfBDjOP"><td data-page-node-id="fnJz4Rx4FAivAiSaBf1kKf">数据隔离拦截器</td><td class="id" data-page-node-id="z66wXjBY4KC3kXTkXCelD5">H2</td><td data-page-node-id="Mnli1h15cJM6ekesggxtcg">MyBatis 拦截器自动给「含 user_id 的表」注入 <code data-page-node-id="KLjVQiX3FfJ1xMeBane3Wm">user_id</code> 条件</td></tr>
+      <tr data-page-node-id="YDuhGn7rCuYUlJguFVvPGf"><td data-page-node-id="oRgUSSCFmcyM1r1Ig9keJi">BigDecimal 序列化</td><td class="id" data-page-node-id="mCgBYQeOCDX8fqkGqBFTSM">H5</td><td data-page-node-id="3dVVHWQrlntJbdzAtXmSRA">Jackson 全局配置输出字符串；金额出参禁用 double</td></tr>
+      <tr data-page-node-id="k0pLdCzhnkeJvosdw0wHIo"><td data-page-node-id="CKqmMtrFRDnV9MEEFszEzr">统一响应 + 错误码</td><td class="id" data-page-node-id="Kp0isPZlRSLLS8OIUJ42n1">M4/M7</td><td data-page-node-id="f3OMj8JGf9GRAX9wQqqEQ1">定义 <code data-page-node-id="NYrE2H4WKZPYriJyaa47RD">code/msg/data/timestamp</code>，建立错误码枚举</td></tr>
+      <tr data-page-node-id="AEXmg4UOoFKGKLbgO9Rvfm"><td data-page-node-id="vVCEefXf9Y5s0wfTFB0YqF">超时补偿任务</td><td class="id" data-page-node-id="w0gOk9HHdGeJqumh7vCJtR">H4</td><td data-page-node-id="pHxou9H0eZIVYdWwLS0MnM">定时扫描 <code data-page-node-id="9bjRpsOBpIZLWZBgSyAUZB">status=1 且 now&gt;timeout_at</code> → 置「超时」</td></tr>
+      <tr data-page-node-id="kZRBKKdlDa7NMvThIJCDUs"><td data-page-node-id="F675pSSA9mjR2y5eO6QAb3">Token 双机制</td><td class="id" data-page-node-id="aK4cmnBBocqfADWDfLgkqE">H1</td><td data-page-node-id="PF15GegNcrXjpdGIAYC2JI">access（短期）+ refresh，明确存储与刷新流程</td></tr>
+    </tbody>
+  </table>
+
+  <h3 data-page-node-id="faGvlKOwob04pc0vhvaGqG">2.3 关键环境隐患（JDK）</h3>
+  <ul data-page-node-id="fT2G91qaEyf2Qzpbm7VywI">
+    <li data-page-node-id="zJjvD8NDZ7zVJZmKnprG9T"><strong data-page-node-id="GNJQBIBOE9zD0VktA6LwaS">风险</strong>：IntelliJ IDEA 可能静默用 JDK 23 跑 Maven，而项目配的是 JDK 17，引发运行期异常。</li>
+    <li data-page-node-id="qlXheF0OVtnka6ZavcTQcB"><strong data-page-node-id="O2pfHqYfTYQ8ntwgJibQPZ">动作</strong>：启动时核对 <code data-page-node-id="mQ7kr3qji3GgTEsND0dpZ8">pom.xml</code> 的 <code data-page-node-id="7DpfacyoAtEbQOnjEyY0TF">maven.compiler</code> 与 IDEA 的 Project SDK、Maven runner 三项一致为 JDK 17，并写进团队备忘。</li>
+  </ul>
+
+  <h3 data-page-node-id="zfBr07dBywSwowmnEwXUYh">2.4 验收标准（出口门禁）</h3>
+  <ul class="check" data-page-node-id="TqYsn821YlOSVG59ZftPi8">
+    <li data-page-node-id="yyBgkMnEpzMfA4ZHrUFJJc">后端 <code data-page-node-id="pCclAAwkrydWFIy94OCZ9x">mvn package</code> 成功产出 WAR，Tomcat/Jetty 可启动。</li>
+    <li data-page-node-id="5p65m8TUAvEqTGT0BvCKQL">前端 <code data-page-node-id="tlkCCPoenpL1HoWH5eT3Gk">npm run dev</code> 可启动，页面正常渲染。</li>
+    <li data-page-node-id="Fh5s6NbVv6TBapYt92sUDb">登录 → 签发 token → 访问受保护接口全链路通。</li>
+    <li data-page-node-id="1tOqk1BVSsxarsxaBZoPAT">数据隔离拦截器生效（用越权请求验证会被拦）。</li>
+    <li data-page-node-id="0G9HP11A2sSZj7fTVXq7AH">金额接口返回字符串（非浮点）。</li>
+    <li data-page-node-id="EfsioWRkJ6EJ8cdl5GW9hk">异步超时补偿定时任务已注册并可用。</li>
+  </ul>
+  <blockquote data-page-node-id="8QbY1JSBaWGWjSDZI8uSnn"><strong data-page-node-id="PSgnt4O2YW9fPTJQtqAT5l">衔接</strong>：产出可运行空壳 + 接口契约文档，作为阶段三并行开发的「共同基准」。</blockquote>
+
+  <h2 data-page-node-id="FhhCx6C3sSTwr1BI30SJjM"><span class="phase-tag p3" data-page-node-id="W51HoRrLkvcFJHqOThO5cB">阶段三</span>编码实现（业务落地）</h2>
+  <p data-page-node-id="ZeGwlCVIyNqrMdxn7pAVNz"><strong data-page-node-id="D2qZbctxVZf8YPFEKibYYC">目标</strong>：按「鉴权 → 笔记 → 记账 → 穿搭」顺序实现业务，前后端在接口契约锁死后并行开发。</p>
+
+  <h3 data-page-node-id="FKbNwojteD7fR0XW0WLBOr">3.1 模块执行顺序与依赖</h3>
+  <pre data-page-node-id="HUq8zkYGzugrrlfV9Bw304">3.1 鉴权加固 ──► 3.2 笔记模块 ──► 3.3 记账模块 ──► 3.4 穿搭模块 ──► 3.5 前端页面联调</pre>
+  <table data-page-node-id="IEglieJ81EdbwYOGselaEc">
+    <thead data-page-node-id="6zL8JIFuvcZXW0SoyPSiXp"><tr data-page-node-id="GMsTHSxH2HSAOziiOQKnyk"><th data-page-node-id="ZW4OkR56sMqnKGHDet1UKF">步骤</th><th data-page-node-id="g5eyLpz1q5qQRTr3ZMgl3P">关键动作</th><th data-page-node-id="mO1AnwGCrpep7NKYTSzCND">依赖</th><th data-page-node-id="Imb00Ag1ktkOfcpm2Gtocn">风险点</th></tr></thead>
+    <tbody data-page-node-id="KTJD8xG8q2zwrsCY3G6cq0">
+      <tr data-page-node-id="F1N5QfQstlowrgWvwyCr9m"><td data-page-node-id="4LapyCWf4cznnziKivqFKn">3.1</td><td data-page-node-id="4ZF9Ek0HU0rr3YrJatcNy3">鉴权加固（token 刷新/登出失效）</td><td data-page-node-id="PkeXF5gvD51WGA7LY67x2s">2.5</td><td data-page-node-id="95I51qvcvWXyOaG1f4dzxo">H1 无 refresh 则体验差</td></tr>
+      <tr data-page-node-id="3RoYl6uxif7Y7yDl7b6JSR"><td data-page-node-id="qzRSPoYBmCKdmZzUB93BaU">3.2</td><td data-page-node-id="t6uDatS2S6iJFHo4rpkzDb">笔记模块（CRUD + 分类 + 搜索）</td><td data-page-node-id="AFOPe5RU0wQi29jN06BjAF">2.4 + 2.7</td><td data-page-node-id="ipWqNmq3LPsAZmppwRwiX2">M1 搜索 <code data-page-node-id="G6o3MIb0wrsTegeJIjbOUv">LIKE '%kw%'</code> 性能</td></tr>
+      <tr data-page-node-id="1aGlWSEPDN4ut8GoJn5emG"><td data-page-node-id="o2QevyYGGBLBI7zfOpmB19">3.3</td><td data-page-node-id="Bi59j9geT1Rp9kqeBNv5jH">记账模块（流水 CRUD + 统计）</td><td data-page-node-id="deeeHvHKHgwgp9wJBiba7A">3.2</td><td data-page-node-id="eh6LIsT54H3Z87H9QPSwpJ">H6 type 一致性校验</td></tr>
+      <tr data-page-node-id="ZH384f5ivfNapktHpXkRRB"><td data-page-node-id="A58Pbr1Mi8WP5cCQPSZG1v">3.4</td><td data-page-node-id="BiF6QD3WOHwkyOE4CC7nCW">穿搭模块（衣物库 + 天气 + LLM + 异步 + 兜底）</td><td data-page-node-id="xDv9F6wSlEZPndOw1BkSEe">2.6 + 3.3</td><td data-page-node-id="EYQPHyOag4OusAKfA0NKrQ">H3 prompt 注入 / M6 熔断限流</td></tr>
+      <tr data-page-node-id="tYkFZ6B0iTq0okwTq28Lon"><td data-page-node-id="4N6GPvZQJxM36i0pOr740T">3.5</td><td data-page-node-id="AUsQAlOiNC1FFHgidOJjCp">前端页面（Vue 页面 + Pinia + 图表）</td><td data-page-node-id="dgFzolBtJjH8uQ7TXYJ1Lx">对应后端接口</td><td data-page-node-id="G8j95qBHAXTN5mHj5QbYX6">M2 轮询压力</td></tr>
+    </tbody>
+  </table>
+
+  <h3 data-page-node-id="leLG7SkGEnIrjJ9akfovSh">3.2 编码期必须落实的审核改进点</h3>
+  <table data-page-node-id="LsU1bCtU1O6AxTESlDw0CC">
+    <thead data-page-node-id="mjz8mw1ktOWB2XngFkZzC1"><tr data-page-node-id="KPZQQYZbRsPIWso1JBKBVr"><th data-page-node-id="RFibnM4loGDkUC3uBSSf0F">编号</th><th data-page-node-id="4BlmXgV2G4Zx6uy8MkkzVy">问题</th><th data-page-node-id="CC3H5iDNGLJnC6aT4FOsj2">落地做法</th></tr></thead>
+    <tbody data-page-node-id="NxzGxOGDkZr831bQGin7k2">
+      <tr data-page-node-id="CVeqK3AsiAV3DuI31xaLGM"><td class="id" data-page-node-id="PUOuYzDFBzewB44tSINaUX">H3</td><td data-page-node-id="XzD5e2nul1f17lRVvaPlal">Prompt 注入</td><td data-page-node-id="BLYPx8FA9KwnlCD6jGHTzQ">衣物名/备注拼入 prompt 前转义/角色隔离；输出只取结构化衣物 ID</td></tr>
+      <tr data-page-node-id="mAL5ajQuXjorwZQbwU6Am9"><td class="id" data-page-node-id="CcGAUAOGdHKmvF8CXqheQs">M6</td><td data-page-node-id="blCAVygeuYLbDdpsTFCBRv">外部依赖无熔断限流</td><td data-page-node-id="FNBMCtc1BdYoiAbnjMZDSD">天气/LLM 各配独立线程池 + 信号量限流 + 超时 + 重试（≤2 次）+ 熔断</td></tr>
+      <tr data-page-node-id="FS4wOl1BWpc2s4YAcE83wL"><td class="id" data-page-node-id="UAl5uu16GSHgQ6zb0hN0k0">M1</td><td data-page-node-id="EgEIppd5IwoRUnT4uhao2A">搜索性能</td><td data-page-node-id="jjmwKlnPHfxgjpS2sk6ARq">明确数据量阈值，超过切 FULLTEXT（<code data-page-node-id="t4SZjsirfjeyreUumGSFJr">ngram</code>）；加最小搜索长度</td></tr>
+      <tr data-page-node-id="kFyJRBq5XEQrehXCYYDUnN"><td class="id" data-page-node-id="sRjh3jErK95faPP1eZG6Ed">M3</td><td data-page-node-id="CD8o4z28FVBMBGF8mMgHxm">衣物删除后历史「死 ID」</td><td data-page-node-id="7kHjqDFXPwjlDOCzt7D4T5"><code data-page-node-id="JFi2SsEMi6hQaxY8ddYLTr">items_json</code> 存快照（id+name+category 冗余）</td></tr>
+      <tr data-page-node-id="TVmazynwFE1ggOI17wEzo2"><td class="id" data-page-node-id="M3iYtuF7kahKNc3MAJwTrs">M2</td><td data-page-node-id="1TdbuHaUxTaDOhVdVbwIj7">轮询压力</td><td data-page-node-id="TOyp0rGOcG2MiXhsI8l5GO">轮询加指数退避；结果查询走缓存，避免每 1s 打 DB</td></tr>
+      <tr data-page-node-id="13TnflJ0wuiBsYo6zj3THV"><td class="id" data-page-node-id="OYNLSMKDgmljIE3VXAb3kH">M5</td><td data-page-node-id="XE5JdNwsbQSGx2Rsk3epbN">Swagger 兼容</td><td data-page-node-id="fiZOmluVpD3t9Ze9t4qytL">用 springdoc-openapi 或 Apifox 维护契约</td></tr>
+    </tbody>
+  </table>
+
+  <h3 data-page-node-id="IQMyH5K0FqAMcFhjegfNrM">3.3 并行 / 串行说明</h3>
+  <ul data-page-node-id="EIFET4HU2Oo4HrarEviVLF">
+    <li data-page-node-id="zkt0e6Q15kVpnJ7j7KWQEV"><strong data-page-node-id="Yo5NMawZnIVPsncQFQrHWw">可并行</strong>：3.2 笔记、3.3 记账的前端页面可与后端接口并行（契约已锁）。</li>
+    <li data-page-node-id="y7GD9hJZ4u3M5xKE72OwrO"><strong data-page-node-id="G0JMfaT1BIXRfOAiUBlFAi">必须串行</strong>：3.4 穿搭依赖 2.6 异步框架 + 3.3 的数据隔离经验；3.3 记账依赖 3.2 笔记验证过的数据隔离链路。</li>
+  </ul>
+
+  <h3 data-page-node-id="E3nxLubFWYwL6DG7aB7A99">3.4 验收标准（出口门禁）</h3>
+  <ul class="check" data-page-node-id="uGy7FoN5duAf4sp8AslGGb">
+    <li data-page-node-id="zmR5bnxIrELRGacMRbMxwx">每个模块 CRUD + 查询接口联调通过，统一响应格式正确。</li>
+    <li data-page-node-id="eWXV5WZLtcrBsz6HEVI6EJ">数据隔离在所有新接口生效（越权测试通过）。</li>
+    <li data-page-node-id="W0bizkoHYzEhkixRzs7cQr">金额计算/统计结果精度正确（BigDecimal 全程）。</li>
+    <li data-page-node-id="3H8d9dvitIEBxf8NRIZkbX">穿搭异步链路跑通：正常 + LLM 失败兜底（source=2）+ 超时补偿。</li>
+    <li data-page-node-id="GN4DHFLGVhXk9A6eV1Ldmo">前端页面可完整操作，无阻塞性 bug。</li>
+  </ul>
+  <blockquote data-page-node-id="D9DK648saP7wtZ3v2VYUed"><strong data-page-node-id="QqX3XkJLKXqOmOCk26aaSQ">衔接</strong>：产出完整业务代码，进入阶段四测试与验收。</blockquote>
+
+  <h2 data-page-node-id="qRCugmtTXTdDsD2axkCXZs"><span class="phase-tag p4" data-page-node-id="AoTx0xBcW0lD0AR3DAEPu1">阶段四</span>测试与验收（质量闭环）</h2>
+  <p data-page-node-id="LXxCKoDWJACcQf06FADPsx"><strong data-page-node-id="FkjZUyLLjArDLnjxydS3kU">目标</strong>：用测试覆盖审核报告中缺失的测试策略（L1），并完成安全/性能/一致性专项验收。</p>
+
+  <h3 data-page-node-id="bw6OzHgmRfZTeEltQI5Hsn">4.1 执行步骤</h3>
+  <table data-page-node-id="2nJg0AAM7bhVhgqErFvcGt">
+    <thead data-page-node-id="oO2GEPLA4cx0wahI269wuu"><tr data-page-node-id="D5VBM0D36wbzauKWOytEoq"><th data-page-node-id="oFRVH7PbeHVNhC8o6QdJJK">步骤</th><th data-page-node-id="oJ57ccjDuP9ASLAY8k5u1t">关键动作</th><th data-page-node-id="fZKuCreB7vUpgw1oQdgaOA">依赖</th><th data-page-node-id="E55CEeH70NcBqLftYbC58F">风险点</th></tr></thead>
+    <tbody data-page-node-id="Jhe8GGY3OQFgcfRM8wKpvs">
+      <tr data-page-node-id="aOIpBJZcdnBBrA0kB6uD47"><td data-page-node-id="o9xyBl8ZJlkSBYJfJ3HgY8">4.1</td><td data-page-node-id="akleBj3iA1eiuPTJuzhcyu">单元测试（金额、规则引擎、type 校验）</td><td data-page-node-id="7oUx8DqHofsx3NYxeyVFi4">3.x</td><td data-page-node-id="a2WZ3PNYX0HsWfVyCbgotE">金额用 double 断言</td></tr>
+      <tr data-page-node-id="kVL2AdSXXGqSlwoTLesUUq"><td data-page-node-id="xTi8nRT0O2ZKMbbo29g7XN">4.2</td><td data-page-node-id="NNAYWE8IsqeBle9DwsAhux">集成测试（异步状态机、鉴权全流程）</td><td data-page-node-id="E4jrUObS81XtAKD6EiNQ9P">4.1</td><td data-page-node-id="3KqjcHMZNkBwlkpY0QNkdY">异步测试时序不稳定</td></tr>
+      <tr data-page-node-id="rsBMXeA1RZ7FJYMzL0voTa"><td data-page-node-id="1YSIh3mNVdgFYPynZ9Czky">4.3</td><td data-page-node-id="dGIhhJDXWbqHPrdECiPrBU">安全专项（越权、XSS、prompt 注入、CORS）</td><td data-page-node-id="MGJLmwNiejF24KGeopESXc">3.x</td><td data-page-node-id="1nF6y18G8QznzpXwdyJXpO">越权漏测（最高风险）</td></tr>
+      <tr data-page-node-id="gUOnKtZ0N5mLzbwOFsnyok"><td data-page-node-id="rrAUDQBE2CqrfoBNoPmB5C">4.4</td><td data-page-node-id="d7OCWx8aKiNIK5HrXKe8N7">性能专项（深分页、搜索、轮询压力）</td><td data-page-node-id="xqovglGDLhR72RqlRwGIzY">3.x</td><td data-page-node-id="gqkKUqnLT04zvVC7j9KIZb">深分页 <code data-page-node-id="A60CtusffKlVFIuJ3a0g0c">LIMIT 100000,10</code></td></tr>
+      <tr data-page-node-id="yrmweZ1bUN7nKzDesYESP3"><td data-page-node-id="QcyZ1wfGdw4Pej5zfsdkwe">4.5</td><td data-page-node-id="lHJ022aWMgaBGNFTcwKWA2">验收 + 部署（Nginx + Tomcat）</td><td data-page-node-id="xXw2HrAiEEd9QSqd9t1IEq">4.1~4.4</td><td data-page-node-id="8OzNXUnQ4OzSyrFoF44y5f">L3 多实例与缓存一致性</td></tr>
+    </tbody>
+  </table>
+
+  <h3 data-page-node-id="2KbFNTEhU4V0qCPNgAkhcY">4.2 必测清单（对应审核 L1）</h3>
+  <table data-page-node-id="7k57Gt8eveziosbd1AqwMu">
+    <thead data-page-node-id="6OaqxuYK4F4jJ44tRzchew"><tr data-page-node-id="CP7dxWyWQi65yABvp2aQig"><th data-page-node-id="uqSQai3x9jNm6PHTZ8mYFu">必测项</th><th data-page-node-id="OLuIz1c4T0QTu5hD1NYA6K">对应风险</th></tr></thead>
+    <tbody data-page-node-id="GdpEKjThJHYaT2uN4kZ9Li">
+      <tr data-page-node-id="B4fTkM8skWf5TWHSEiFzmi"><td data-page-node-id="I6ZTurO37k2OBPdEidN81t">金额计算 / 统计聚合</td><td class="id" data-page-node-id="L5c9yDYhURTFm34JH27wFE">H5、L6</td></tr>
+      <tr data-page-node-id="I27bvlA5hhmFhXs510k7bC"><td data-page-node-id="gotXfWQ90EjCyiOJ4o3Pry">规则引擎兜底逻辑</td><td class="id" data-page-node-id="1s9z8xOiqOoixQmIC9OYT6">H4 降级</td></tr>
+      <tr data-page-node-id="YTYmwLhELhFhMQqCmb2CjB"><td data-page-node-id="hOVIKBFMKqmnXSVgDJuVNU">越权访问（跨用户读数据）</td><td class="id" data-page-node-id="fbopOzApmPEQFknz2G8n6w">H2</td></tr>
+      <tr data-page-node-id="WFfYCyAkZCyIdpRXD8IbvM"><td data-page-node-id="exFHrni68uqVgxdBRvbWvp">异步任务状态机（成功/失败/超时/取消）</td><td class="id" data-page-node-id="R5MpXteGsryhu7t701499O">H4、L4</td></tr>
+      <tr data-page-node-id="TQj9VAMc5gazipa3DlHqNA"><td data-page-node-id="2tm98Jrj3Psi645nMKeaFW">逻辑删除后同名分类重建</td><td class="id" data-page-node-id="H2HEnfsI6sc8ci4xHMQUv9">M8</td></tr>
+    </tbody>
+  </table>
+
+  <h3 data-page-node-id="OGGNhBCg7dqUBmmQx1GGhX">4.3 验收标准（出口门禁）</h3>
+  <ul class="check" data-page-node-id="4HE1cKAuxWFkGEqfna9naR">
+    <li data-page-node-id="WfySCNbJjsenFz7bXQP8Hg">单元测试 + 集成测试全部通过。</li>
+    <li data-page-node-id="R1zgoChz3ZLC1GOPyNmcis">越权专项测试通过（无跨用户数据泄露）。</li>
+    <li data-page-node-id="KiV6HVhZ336kr3GrQcxfoR">金额全程精度正确，统计 percent 总和为 100%。</li>
+    <li data-page-node-id="nZJR50BjDgKhilXNMGHMLY">异步任务无「永久执行中」残留。</li>
+    <li data-page-node-id="9eMLClRk9jxjEnBOLJSNTO">部署后 Nginx 反向代理 <code data-page-node-id="Mr4E50SAuJZYA9HN1ujg9l">/api</code> 正常，生产无 CORS 问题。</li>
+  </ul>
+
+  <h2 data-page-node-id="GipZkKwfWuI6zfuHeKBXf5">五、依赖关系总图</h2>
+  <pre data-page-node-id="i6RcXR8f7sosOZVMMvs8Hc">阶段一 数据库
+   │  (schema.sql + data.sql)
+   ▼
+阶段二 框架 ──┬── 后端工程(2.1/2.3/2.4/2.5/2.6)
+   │          └── 前端工程(2.2)   ← 与后端并行
+   │  (产出：可运行空壳 + 接口契约)
+   ▼
+阶段三 编码 ── 3.1鉴权 → 3.2笔记 → 3.3记账 → 3.4穿搭
+   │              └── 3.5前端页面  ← 与后端接口并行（契约锁死后）
+   │  (产出：完整业务代码)
+   ▼
+阶段四 测试与验收
+   (单元 → 集成 → 安全 → 性能 → 部署)</pre>
+
+  <h3 data-page-node-id="bVZ7s8UVhue53TjHOsQmHe">关键依赖汇总</h3>
+  <table data-page-node-id="sZUxPpcAK2GeCVVLSSBnr3">
+    <thead data-page-node-id="6jfGz3neJBA0AtkCMfCFX6"><tr data-page-node-id="teboyX8EtBS2ns9oDiboFh"><th data-page-node-id="fDcJAxJh7HSGMAaGMSqLng">步骤</th><th data-page-node-id="dN4M5JtwDlc9kUCPnFZWZB">阻塞它的事项（必须先完成）</th></tr></thead>
+    <tbody data-page-node-id="BA41OEhCkD82pXSBy1Os7f">
+      <tr data-page-node-id="NI1FyhUDLpMn5Uh6cVxYQc"><td data-page-node-id="OUdU75hUzDOVNBWIDizE3x">阶段二（框架）</td><td data-page-node-id="40xrIVg7ijKLptF42w3XXJ">阶段一（数据库脚本，供连接）</td></tr>
+      <tr data-page-node-id="pGRponCIeFB9Rjaq58xbTR"><td data-page-node-id="tIeH95ANwT4a4cN27atAne">阶段三（编码）</td><td data-page-node-id="5xnPlqD9Vbi2ONAzohDVWr">阶段二（P0 基建 + 契约）</td></tr>
+      <tr data-page-node-id="xp9wHoqgwwa6WGbHeIiIZ8"><td data-page-node-id="bmEEKEqVG2LzHwD0KjlDUW">3.4 穿搭</td><td data-page-node-id="0CqDtLBGRmI2uzIcyJPiMa">2.6 异步框架</td></tr>
+      <tr data-page-node-id="ojzGyNYu6PcEBatA6XYAAY"><td data-page-node-id="hVmD5AU81FFfmn8g9lQUst">3.3 记账</td><td data-page-node-id="w1kvEo8cRZEKm6lfzlhejh">3.2 笔记（复用数据隔离链路）</td></tr>
+      <tr data-page-node-id="RkpzrI7sADnoiBZ4CrtIpZ"><td data-page-node-id="BvrGgOLQUfO3uSjj5Y7Cut">阶段四（测试）</td><td data-page-node-id="mDxPcSMi8sTDU5DZAPFEbL">阶段三（完整代码）</td></tr>
+      <tr data-page-node-id="MjTQNgLfyuVYIrtcFCiWlE"><td data-page-node-id="b4jURd7t3fuhJFDj9BotbL">前端页面 3.5</td><td data-page-node-id="qyCQpliQ9I5jI584vFfXmO">对应后端接口（可并行，契约锁死后）</td></tr>
+    </tbody>
+  </table>
+
+  <h2 data-page-node-id="6rOK9c2QLCXkb7qdOTrStE">六、风险清单汇总（按严重度）</h2>
+  <table data-page-node-id="LYR6gBxmNL4AiPFGfmEu7E">
+    <thead data-page-node-id="ONa8W2w4jOz446vD6esV1Q"><tr data-page-node-id="JWjEM1JMkKTzdPq56zePSt"><th data-page-node-id="ZH8LUNztFHUIeAyUNxbH5W">严重度</th><th data-page-node-id="iBpc3DuDdZHyKZCXxHqdDK">风险</th><th data-page-node-id="bECPe0LSLInGtldYqAvXH3">触发阶段</th><th data-page-node-id="eRkFHEK3nbrQ8AaDIqgkZf">缓解</th></tr></thead>
+    <tbody data-page-node-id="jcdpAPsBH8quOr5wxYK5Ja">
+      <tr data-page-node-id="OMZUj7OiujBqdZ3Eblomrj"><td class="sev sev-high" data-page-node-id="ZOoXX3yMBe7QmUSLBgEwnX">高</td><td data-page-node-id="h1BkHmp0Gu72JRUNLg5HUi">数据越权（漏写 user_id）</td><td data-page-node-id="6xnCgxpBBMAmOmSaswbngU">二、三</td><td data-page-node-id="WHlGlTuuhObzGAWS2dphAj">P0 拦截器强制注入</td></tr>
+      <tr data-page-node-id="TiwAtMcH9VpBcrnpVAkcby"><td class="sev sev-high" data-page-node-id="Z93MTxEUCxU8W2Jb82j2cM">高</td><td data-page-node-id="dGuuGsc3tuwRwvS454LG9w">异步任务永久卡死</td><td data-page-node-id="IJJ9sKuXD9uAzc5dirDlKN">二、三</td><td data-page-node-id="TmO9ugCfL1Ivz4gq7J2CBq">超时补偿定时任务</td></tr>
+      <tr data-page-node-id="GfNs8TiPGaVBRNnHocfu8R"><td class="sev sev-high" data-page-node-id="4rypphzBf2HsiinNX8cxlo">高</td><td data-page-node-id="6JHyQyrHUdGItrnJULb5lZ">金额精度丢失</td><td data-page-node-id="bmlBonCao9HHfDYxFcmMOS">二、三</td><td data-page-node-id="wbDz6XrRHEbAQiGcCxLDxz">BigDecimal + 字符串序列化</td></tr>
+      <tr data-page-node-id="TMCYPJP6pHzyMl2EkAN2fM"><td class="sev sev-high" data-page-node-id="UCMIIqFkEwOcJMK3GJtPG3">高</td><td data-page-node-id="81B11FQ2KGCv4fMX34NbKF">Prompt 注入</td><td data-page-node-id="647YBgh5XFNL3XaxROMOr3">三</td><td data-page-node-id="NJiitq1TtYEpr2KLRCwRX1">输入转义 + 结构化输出</td></tr>
+      <tr data-page-node-id="espQ9pvNu1zo5PD05haKhM"><td class="sev sev-mid" data-page-node-id="9ZlYZrO5UcadvMePVxIsM3">中</td><td data-page-node-id="HnAMNGDZEKHeBlsD2m5Csa">搜索性能劣化</td><td data-page-node-id="yYASTIKAMWOTl1nBlWglAH">三</td><td data-page-node-id="Qc9rqDng55btlq1yf0bIqx">FULLTEXT 阈值切换</td></tr>
+      <tr data-page-node-id="FElDLKkUzeMIHSGyfhPZvx"><td class="sev sev-mid" data-page-node-id="SpzStvjhLmSvSzMJkxHt9q">中</td><td data-page-node-id="mVSForEvJxr1bRBXGFQUCA">外部 API 打爆额度/拖垮线程</td><td data-page-node-id="8eCFz7dYB0TpfbWJiiLJwo">三</td><td data-page-node-id="PCMRlPzOnKACgQBMkG7vHN">熔断 + 限流</td></tr>
+      <tr data-page-node-id="aiCe4O9HCpS6ZYpCIUDpM0"><td class="sev sev-mid" data-page-node-id="KKkeqaoeOE51Dzvybo0Xzw">中</td><td data-page-node-id="KvlsrQplMaT4jUT0a6hXzi">JDK 版本不一致</td><td data-page-node-id="PAW264kTIWuCO8GwzAGp0J">二</td><td data-page-node-id="4pWQGe2hf6PUDmlNeW26en">启动时三处核对 JDK 17</td></tr>
+      <tr data-page-node-id="LsWznm811PnlvjeKSSsUOL"><td class="sev sev-low" data-page-node-id="7FG7bk0ctZl577Ury3W7Md">低</td><td data-page-node-id="vS70zIuxNDgWxg6SWzmybh">多实例缓存不一致</td><td data-page-node-id="ILFCbbc4uC7dVyHoseHjoy">四</td><td data-page-node-id="k2JBe2QKTEuDLMfQ2AM2CN">首版单实例明确</td></tr>
+    </tbody>
+  </table>
+
+  <div class="footer" data-page-node-id="xoglrgrGNpac4PMVueB3m4">流程依据开发方案 + 审核报告整合 · 可按阶段直接拆分任务排期</div>
+
+</div>
+</body>
+</html>

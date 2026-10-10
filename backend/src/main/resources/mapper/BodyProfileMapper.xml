@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.life.dao.BodyProfileDao">
+
+    <resultMap id="BaseResultMap" type="com.life.domain.BodyProfile">
+        <id     column="id"          property="id"/>
+        <result column="user_id"     property="userId"/>
+        <result column="gender"      property="gender"/>
+        <result column="height"      property="height"/>
+        <result column="weight"      property="weight"/>
+        <result column="bust"        property="bust"/>
+        <result column="waist"       property="waist"/>
+        <result column="hip"         property="hip"/>
+        <result column="city"        property="city"/>
+        <result column="style_pref"  property="stylePref"/>
+        <result column="avatar_image_id" property="avatarImageId"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="deleted"     property="deleted"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, user_id, gender, height, weight, bust, waist, hip,
+        city, style_pref, avatar_image_id, create_time, update_time, deleted
+    </sql>
+
+    <select id="selectByUser" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM body_profile
+        WHERE user_id = #{userId} AND deleted = 0
+        LIMIT 1
+    </select>
+
+    <insert id="insert" parameterType="com.life.domain.BodyProfile"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO body_profile
+            (user_id, gender, height, weight, bust, waist, hip, city, style_pref,
+             create_time, update_time, deleted)
+        VALUES
+            (#{userId}, #{gender}, #{height}, #{weight}, #{bust}, #{waist}, #{hip},
+             #{city}, #{stylePref}, NOW(), NOW(), 0)
+    </insert>
+
+    <update id="update" parameterType="com.life.domain.BodyProfile">
+        UPDATE body_profile
+        SET gender      = #{gender},
+            height      = #{height},
+            weight      = #{weight},
+            bust        = #{bust},
+            waist       = #{waist},
+            hip         = #{hip},
+            city        = #{city},
+            style_pref  = #{stylePref},
+            update_time = NOW()
+        WHERE id = #{id} AND user_id = #{userId} AND deleted = 0
+    </update>
+
+    <!-- 单独更新角色形象参考图（保存身体数据时不被覆盖） -->
+    <update id="updateAvatar">
+        UPDATE body_profile
+        SET avatar_image_id = #{avatarImageId},
+            update_time     = NOW()
+        WHERE user_id = #{userId} AND deleted = 0
+    </update>
+
+</mapper>

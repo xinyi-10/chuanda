@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.life.dao.OutfitImageDao">
+
+    <resultMap id="BaseResultMap" type="com.life.domain.OutfitImage">
+        <id     column="id"               property="id"/>
+        <result column="user_id"          property="userId"/>
+        <result column="outfit_record_id" property="outfitRecordId"/>
+        <result column="status"           property="status"/>
+        <result column="image_key"        property="imageKey"/>
+        <result column="prompt"           property="prompt"/>
+        <result column="error_msg"        property="errorMsg"/>
+        <result column="create_time"      property="createTime"/>
+        <result column="finish_time"      property="finishTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, user_id, outfit_record_id, status, image_key, prompt, error_msg, create_time, finish_time
+    </sql>
+
+    <insert id="insert" parameterType="com.life.domain.OutfitImage"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO outfit_image
+            (user_id, outfit_record_id, status, image_key, prompt, error_msg, create_time)
+        VALUES
+            (#{userId}, #{outfitRecordId}, #{status}, #{imageKey}, #{prompt}, #{errorMsg}, NOW())
+    </insert>
+
+    <update id="updateStatus">
+        UPDATE outfit_image
+        SET status = #{status},
+            image_key = #{imageKey},
+            error_msg = #{errorMsg},
+            finish_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM outfit_image
+        WHERE id = #{id} AND user_id = #{userId}
+    </select>
+
+    <select id="listByUser" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM outfit_image
+        WHERE user_id = #{userId}
+        ORDER BY id DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countByUser" resultType="long">
+        SELECT COUNT(*) FROM outfit_image WHERE user_id = #{userId}
+    </select>
+
+    <select id="listTimeout" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM outfit_image
+        WHERE status = 0
+          AND create_time &lt; DATE_SUB(NOW(), INTERVAL #{minutes} MINUTE)
+    </select>
+
+</mapper>

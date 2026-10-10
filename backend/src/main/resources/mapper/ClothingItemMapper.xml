@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.life.dao.ClothingItemDao">
+
+    <resultMap id="BaseResultMap" type="com.life.domain.ClothingItem">
+        <id     column="id"          property="id"/>
+        <result column="user_id"     property="userId"/>
+        <result column="name"        property="name"/>
+        <result column="category"    property="category"/>
+        <result column="color"       property="color"/>
+        <result column="season"      property="season"/>
+        <result column="style"       property="style"/>
+        <result column="image_url"   property="imageUrl"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="deleted"     property="deleted"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, user_id, name, category, color, season, style, image_url,
+        create_time, update_time, deleted
+    </sql>
+
+    <select id="listByUser" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM clothing_item
+        <where>
+            user_id = #{userId} AND deleted = 0
+            <if test="category != null and category != ''">
+                AND category = #{category}
+            </if>
+            <if test="season != null and season != ''">
+                AND (season = #{season} OR season = 'all')
+            </if>
+            <if test="style != null and style != ''">
+                AND style = #{style}
+            </if>
+        </where>
+        ORDER BY id DESC
+    </select>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM clothing_item
+        WHERE id = #{id} AND user_id = #{userId} AND deleted = 0
+    </select>
+
+    <insert id="insert" parameterType="com.life.domain.ClothingItem"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO clothing_item
+            (user_id, name, category, color, season, style, image_url,
+             create_time, update_time, deleted)
+        VALUES
+            (#{userId}, #{name}, #{category}, #{color}, #{season}, #{style}, #{imageUrl},
+             NOW(), NOW(), 0)
+    </insert>
+
+    <update id="update" parameterType="com.life.domain.ClothingItem">
+        UPDATE clothing_item
+        SET name        = #{name},
+            category    = #{category},
+            color       = #{color},
+            season      = #{season},
+            style       = #{style},
+            image_url   = #{imageUrl},
+            update_time = NOW()
+        WHERE id = #{id} AND user_id = #{userId} AND deleted = 0
+    </update>
+
+    <update id="logicDelete">
+        UPDATE clothing_item
+        SET deleted = 1, update_time = NOW()
+        WHERE id = #{id} AND user_id = #{userId}
+    </update>
+
+    <select id="countByUser" resultType="long">
+        SELECT COUNT(*) FROM clothing_item WHERE user_id = #{userId} AND deleted = 0
+    </select>
+
+</mapper>

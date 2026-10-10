@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.life.dao.IncomeConfigDao">
+
+    <resultMap id="BaseResultMap" type="com.life.domain.IncomeConfig">
+        <id     column="id"                property="id"/>
+        <result column="user_id"           property="userId"/>
+        <result column="monthly_amount"    property="monthlyAmount"/>
+        <result column="pay_day"           property="payDay"/>
+        <result column="delay_days"        property="delayDays"/>
+        <result column="modify_count"      property="modifyCount"/>
+        <result column="last_modify_month" property="lastModifyMonth"/>
+        <result column="create_time"       property="createTime"/>
+        <result column="update_time"       property="updateTime"/>
+        <result column="deleted"           property="deleted"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, user_id, monthly_amount, pay_day, delay_days,
+        modify_count, last_modify_month, create_time, update_time, deleted
+    </sql>
+
+    <select id="selectByUser" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM income_config
+        WHERE user_id = #{userId} AND deleted = 0
+        LIMIT 1
+    </select>
+
+    <select id="listAll" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM income_config
+        WHERE deleted = 0
+    </select>
+
+    <insert id="insert" parameterType="com.life.domain.IncomeConfig"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO income_config
+            (user_id, monthly_amount, pay_day, delay_days, modify_count, last_modify_month,
+             create_time, update_time, deleted)
+        VALUES
+            (#{userId}, #{monthlyAmount}, #{payDay}, #{delayDays}, #{modifyCount}, #{lastModifyMonth},
+             NOW(), NOW(), 0)
+    </insert>
+
+    <update id="update" parameterType="com.life.domain.IncomeConfig">
+        UPDATE income_config
+        SET monthly_amount    = #{monthlyAmount},
+            pay_day           = #{payDay},
+            delay_days        = #{delayDays},
+            modify_count      = #{modifyCount},
+            last_modify_month = #{lastModifyMonth},
+            update_time       = NOW()
+        WHERE id = #{id} AND user_id = #{userId} AND deleted = 0
+    </update>
+
+    <update id="resetModifyCount">
+        UPDATE income_config
+        SET modify_count = 0, last_modify_month = #{month}, update_time = NOW()
+        WHERE id = #{id} AND deleted = 0
+    </update>
+
+</mapper>

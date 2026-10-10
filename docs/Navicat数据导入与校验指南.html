@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="lzaGCCsv0YThBMYUFWNDTB">
+<head data-page-node-id="hCkyXIyfz98ei2oasDAax8">
+<meta charset="UTF-8" data-page-node-id="K02L5YMGXhpnjNAVCeD5AP">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="LWCao32Lemi8OswSIPkVEF">
+<title>Navicat 数据导入与校验指南</title>
+<style>
+  :root{
+    --bg:#0d1117; --bg2:#161b22; --bg3:#1c2128; --border:#30363d;
+    --txt:#e6edf3; --txt2:#8b949e; --blue:#58a6ff; --green:#7ee787;
+    --orange:#ffa657; --purple:#d2a8ff; --red:#ff7b72; --cyan:#79c0ff; --yellow:#e3b341;
+    --radius:12px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--txt);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    line-height:1.7;font-size:15px}
+  a{color:var(--blue);text-decoration:none}
+  code{font-family:"JetBrains Mono",Consolas,monospace;font-size:.86em;
+    background:rgba(110,118,129,.25);padding:2px 6px;border-radius:5px;color:var(--cyan)}
+  .layout{display:flex;max-width:1400px;margin:0 auto;gap:32px;padding:0 24px}
+  aside{width:230px;flex-shrink:0;position:sticky;top:0;height:100vh;padding:28px 0;overflow-y:auto}
+  aside::-webkit-scrollbar{width:6px}
+  aside::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+  .brand{display:flex;align-items:center;gap:10px;padding:0 10px}
+  .brand .dot{width:11px;height:11px;border-radius:50%;
+    background:linear-gradient(135deg,var(--green),var(--blue));box-shadow:0 0 12px var(--green)}
+  .brand b{font-size:15px}
+  .brand small{display:block;color:var(--txt2);font-size:11.5px;font-weight:400}
+  nav{margin-top:20px}
+  nav a{display:block;padding:7px 12px;color:var(--txt2);font-size:13.5px;
+    border-left:2px solid transparent;border-radius:0 6px 6px 0;transition:.18s}
+  nav a:hover{color:var(--txt);background:var(--bg2)}
+  nav a.active{color:var(--blue);border-left-color:var(--blue);background:rgba(88,166,255,.08)}
+  main{flex:1;min-width:0;padding:28px 0 100px}
+  section{margin-bottom:48px;scroll-margin-top:20px}
+  h2{font-size:21px;display:flex;align-items:center;gap:12px;margin-bottom:16px;
+    padding-bottom:12px;border-bottom:1px solid var(--border)}
+  h2 .num{font-size:13px;font-weight:700;color:var(--bg);background:var(--green);
+    width:26px;height:26px;border-radius:7px;display:grid;place-items:center;flex-shrink:0}
+  h3{font-size:16px;margin:24px 0 10px;display:flex;align-items:center;gap:8px}
+  h3::before{content:"";width:4px;height:15px;background:var(--blue);border-radius:2px}
+  p{margin-bottom:12px;color:#c9d1d9}
+  ul,ol{margin:0 0 14px 20px;color:#c9d1d9}
+  li{margin-bottom:6px}
+  .hero{background:linear-gradient(150deg,#161b22 0%,#1a2433 55%,#1c2a26 100%);
+    border:1px solid var(--border);border-radius:16px;padding:32px;position:relative;overflow:hidden;margin-bottom:36px}
+  .hero::after{content:"";position:absolute;width:320px;height:320px;right:-90px;top:-130px;
+    background:radial-gradient(circle,rgba(126,231,135,.2),transparent 68%);border-radius:50%}
+  .hero .badge{display:inline-block;font-size:12px;color:var(--green);
+    background:rgba(126,231,135,.1);border:1px solid rgba(126,231,135,.3);
+    padding:3px 11px;border-radius:20px;margin-bottom:14px}
+  .hero h1{font-size:27px;position:relative;z-index:1}
+  .hero h1 span{background:linear-gradient(90deg,var(--green),var(--blue));
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+  .hero .sub{color:var(--txt2);margin-top:10px;font-size:14px;max-width:640px;position:relative;z-index:1}
+  .tw{overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius);margin:14px 0}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:520px}
+  th{background:var(--bg3);text-align:left;padding:11px 14px;font-weight:600;
+    border-bottom:1px solid var(--border);white-space:nowrap}
+  td{padding:10px 14px;border-bottom:1px solid #21262d;color:#c9d1d9;vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  tbody tr:hover{background:rgba(88,166,255,.05)}
+  .grid{display:grid;gap:14px}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
+  .card h4{font-size:14.5px;margin:0 0 8px;font-weight:600;display:flex;align-items:center;gap:8px}
+  .card p{font-size:13px;color:var(--txt2);margin:0 0 6px}
+  .card .pill{display:inline-block;font-size:11px;padding:2px 8px;border-radius:5px;
+    margin:2px 4px 0 0;background:rgba(88,166,255,.12);color:var(--cyan)}
+  .a{border-top:3px solid var(--green)}
+  .b{border-top:3px solid var(--blue)}
+  .c{border-top:3px solid var(--orange)}
+  .d{border-top:3px solid var(--purple)}
+  pre{background:#010409;border:1px solid var(--border);border-radius:var(--radius);
+    padding:15px 17px;overflow-x:auto;font-size:12.5px;line-height:1.65;margin:12px 0;
+    font-family:"JetBrains Mono",Consolas,monospace;color:#c9d1d9}
+  pre::-webkit-scrollbar{height:8px}
+  pre::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+  pre .k{color:var(--red)}pre .s{color:var(--green)}pre .c{color:#6e7681}
+  .note{border-radius:10px;padding:13px 17px;margin:14px 0;font-size:13.5px;
+    border-left:3px solid;display:flex;gap:11px;align-items:flex-start}
+  .note .ni{flex-shrink:0}
+  .note.warn{background:rgba(255,166,87,.08);border-color:var(--orange)}
+  .note.info{background:rgba(88,166,255,.08);border-color:var(--blue)}
+  .note.ok{background:rgba(126,231,135,.08);border-color:var(--green)}
+  .note p{margin:0}
+  .ck{padding-left:0;list-style:none;margin-left:0}
+  .ck li{background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+    padding:12px 16px;margin-bottom:10px;font-size:13.5px}
+  .ck li b{color:var(--green)}
+  footer{text-align:center;color:var(--txt2);font-size:12.5px;padding:28px 0;
+    border-top:1px solid var(--border);margin-top:20px}
+  @media(max-width:900px){aside{display:none}.hero h1{font-size:22px}}
+</style>
+</head>
+<body data-page-node-id="E9zxhD3qXFei6scMBB64qk">
+<div class="layout" data-page-node-id="EWu9FAZPBE2ha0G9gEaLcG">
+  <aside data-page-node-id="Pjr4e9UF59pWK0XnrpaTMY">
+    <div class="brand" data-page-node-id="DhAQ7tMBYPId2fepuZLC3Y"><span class="dot" data-page-node-id="I52IYDe7t0nZ12FfZURAzh"></span>
+      <div data-page-node-id="iQbqhZLxfaX9j5L4Vzu2i3"><b data-page-node-id="PX1xVoPO9cXieIxnTjpFWq">数据导入指南</b><small data-page-node-id="JpLKJKGVRTnrLPqAdcGwka">Navicat → life_manager</small></div></div>
+    <nav id="nav" data-page-node-id="WG9krDoRO6fNqfw6YEPlrT">
+      <a href="#s1" data-page-node-id="vHWC1SpPmeE4qcpKn1xzva">1 · 先明确三件事</a>
+      <a href="#s2" data-page-node-id="d4pDgbvKA6hYhWt5EMJYK5">2 · 支持的文件格式</a>
+      <a href="#s3" data-page-node-id="LwYjUULmf4dmCh36ufuGUM">3 · 三条导入路径</a>
+      <a href="#s4" data-page-node-id="fMcaySafMNbEfaIB9HZjqU">4 · 导入后校验</a>
+      <a href="#s5" data-page-node-id="isAUlarGMQqqpZHO6QoxdU">5 · 常见坑与对策</a>
+      <a href="#s6" data-page-node-id="jSQb6Do7qaguT3N0GoiAoH">6 · 最短路径</a>
+    </nav>
+  </aside>
+
+  <main data-page-node-id="qJwHYYDWdwDkFTCdxuDCOJ">
+    <div class="hero" data-page-node-id="jWWGtCCA9I11EhajMRLXFb">
+      <span class="badge" data-page-node-id="ES8ViP6iMAoAaasikNe85l">● 结论先行</span>
+      <h1 data-page-node-id="1l7buTpUYJt0bKsH1Zw0CP">Navicat 数据导入与校验<br data-page-node-id="D1z4XXFG26s9ZAy9qBnLqx"><span data-page-node-id="TfnKgRiAv8zz261OXOqI6A">操作指南</span></h1>
+      <p class="sub" data-page-node-id="zBfGgEuxWCKM1CUh6h2J0I">首选「SQL 转储 → 运行 SQL 文件」，次选「数据传输」，表数据零散时才用 CSV / Excel。
+      目标库 <code data-page-node-id="QxzBAiPkiG6TO2OFqL5wdm">life_manager</code>（MySQL 8 · utf8mb4）。</p>
+    </div>
+
+    <section id="s1" data-page-node-id="L6CQwFsyVBt2MgUZAjL65g">
+      <h2 data-page-node-id="wbMZs6QhyrB78msFXUR5Bn"><span class="num" data-page-node-id="x7aQ1R7Yqofhw9CO9RPljo">1</span>先明确三件事</h2>
+      <div class="tw" data-page-node-id="MlhjGpCjeMuNGoIVUMJmZ3"><table data-page-node-id="vxF2GiyVLqgibBwxMm0pAM">
+        <thead data-page-node-id="zkrazD7b5hwtDXkemXaG0g"><tr data-page-node-id="12XMDTBCUuP37vd7x7SlMU"><th data-page-node-id="E6QhGZUlRzE8KtrsxU43R3">项</th><th data-page-node-id="AZxULREv3P0O6plyOCtJgW">说明</th></tr></thead>
+        <tbody data-page-node-id="Xmbja3StYrBMeOrFdvR0Zz">
+          <tr data-page-node-id="Ono28D1zmwQN4k1JIm6rtt"><td data-page-node-id="gFpJ6qkbRWDhg8GWdTZCXw">目标库</td><td data-page-node-id="8EgxVIAtMwOjMGEtfrLXG2"><code data-page-node-id="YFlQsBUb2ItaKkupcRxXcv">life_manager</code>（若改名，同步改导入语句与连接配置）</td></tr>
+          <tr data-page-node-id="tJZwqjFP48FGQeuKJ101SH"><td data-page-node-id="KNt4BdYqHF4gMHNGpIguRm">目标字符集</td><td data-page-node-id="KvpqFCNmcNVkoJlWoxXnlS"><b style="color:var(--orange)" data-page-node-id="A4v4i4uULyiYIanaAHyKys">必须 utf8mb4</b>，否则中文 / emoji 乱码（最高频的坑）</td></tr>
+          <tr data-page-node-id="ZCD3950QHFY8yZ3ydc4CNk"><td data-page-node-id="9XDZHgUqCqorLq0k13iUF0">目标表结构</td><td data-page-node-id="zFvT2EEEiVJMbBwtdCy4j4">以 <code data-page-node-id="fjDycmjLOjJn16PdWqbSY8">sql/schema.sql</code> 为准；源字段不一致时先做<b data-page-node-id="I6llj2lxwYFyrfygh78nHW">字段映射</b></td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="s2" data-page-node-id="0mDZZ36pbPv1ikDQpGCDGN">
+      <h2 data-page-node-id="ao0NBX1nLRgY4ffMQUIRMs"><span class="num" data-page-node-id="6uXFxJUGsJrk968Se1He40">2</span>支持的文件格式</h2>
+      <h3 data-page-node-id="klTXEgDp210aYJjzP2cxBQ">Navicat 导入向导支持的格式</h3>
+      <div class="tw" data-page-node-id="pkpvlP6N6YnOVfmsmEPv0v"><table data-page-node-id="EwIDo6bHwzREjSYNRZIC5n">
+        <thead data-page-node-id="YNOefmyRCvD9vdmHFYUWXZ"><tr data-page-node-id="htSPvw0k6DKBapeiAgACwY"><th data-page-node-id="1VnQcd7O4CeH7Ik2bSDYB2">格式</th><th data-page-node-id="m8UyZnsCHS4uwHlCLVOSbm">扩展名</th><th data-page-node-id="v7G3izkDoiHXwCxb5gxNxL">适用场景</th><th data-page-node-id="3hH1PwAonBSeK3QdVzZACz">推荐度</th></tr></thead>
+        <tbody data-page-node-id="0bYYHOXh7D1WWuvAQtIdNH">
+          <tr data-page-node-id="78GcSvmwLRnKOgk24aUhbu"><td data-page-node-id="QUzgG1zolD05eScTsUIcwK">SQL 脚本</td><td data-page-node-id="49aBcjd9m0lieisDHaynmo"><code data-page-node-id="pKnorsYqBZnMxyycYxKhQh">.sql</code></td><td data-page-node-id="ilGfvOdP1oCis1VUO8uRGC">结构 + 数据一体，跨库/跨服务器迁移首选</td><td style="color:var(--green)" data-page-node-id="RzEwxor1p5p1rQpvak9g3c">★★★</td></tr>
+          <tr data-page-node-id="rXkahzpsI8hqxd3aOuHVMS"><td data-page-node-id="JclDE8XAG9XLVvqY1CXIVp">CSV</td><td data-page-node-id="6Qq8hiXhsimoQxadqHyRhw"><code data-page-node-id="6JOBBbIV461M3ZaTxx4fUh">.csv</code></td><td data-page-node-id="zOOpqiFh4t9a0FQ8QeHL2L">单表纯数据，Excel 友好，通用性最好</td><td style="color:var(--blue)" data-page-node-id="FcagNCLekXv4XoKtLlExOo">★★</td></tr>
+          <tr data-page-node-id="KrctOnT2E5BofywptHDYcn"><td data-page-node-id="EovctwQOgltVCV3IjYctAr">Excel</td><td data-page-node-id="tlnGVd3So1uOyXwnDsfQLF"><code data-page-node-id="zGm9gvNguvAdNauuETgz9n">.xlsx/.xls</code></td><td data-page-node-id="x4BDaEC4cxD9R4GHIOOVHv">手工整理过的数据</td><td style="color:var(--blue)" data-page-node-id="dpvpJ0itfV4zkLo9FrTlXa">★★</td></tr>
+          <tr data-page-node-id="5uUEBeV4W7fOfIv08sCEna"><td data-page-node-id="A0LA4WmxBxoDimiviCTr29">分隔文本</td><td data-page-node-id="1HDYScwzvSnOLgmgRvazh0"><code data-page-node-id="NsgnPHPlfzqE1JTHzzt99X">.txt</code></td><td data-page-node-id="L5OmOQjqeQredmCSTKh6SW">自定义分隔符（\t、| 等）</td><td data-page-node-id="5p1WJw1puxCerNUaCGYX1n">★</td></tr>
+          <tr data-page-node-id="Oo3nxyiaR7KFSIPxvkkTeC"><td data-page-node-id="gBjfH8mIoHYDItW6jPwu6i">JSON / XML</td><td data-page-node-id="PfysMftWibSqOi9TP8Ie3D"><code data-page-node-id="ljdcXmfatERSEbXslWJT5A">.json/.xml</code></td><td data-page-node-id="LXzVvCagfTvxreKDxkTYQK">接口或老系统交换格式</td><td data-page-node-id="xqJyyBFPWuNkuLnZvyrzQo">★</td></tr>
+          <tr data-page-node-id="LqlfJcRg9WZoWSEVbcB7wL"><td data-page-node-id="OWBGS7Ah42Dh4S5H6nyxNC">DBF</td><td data-page-node-id="Hcg8IyJVoEI46fuT0AdPBD"><code data-page-node-id="c0qO4WSdDoEG4DncPugSG5">.dbf</code></td><td data-page-node-id="EfwTATdJMbctQTu6YHRZn7">早期 dBase / FoxPro</td><td data-page-node-id="LiGGeqP6SC3ZL0mYhIU0WC">★</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3 data-page-node-id="Www7XFVkPuaDOv1qS50t31">MySQL 命令行原生</h3>
+      <div class="tw" data-page-node-id="yVnnhym0fBIrq56CT2cTGB"><table data-page-node-id="9a9WJrDKZgvo2Oge7tJ3cV">
+        <thead data-page-node-id="PR52ondBWY3KfDXBAZvxMY"><tr data-page-node-id="Qp3QzYF8NTy7DTJVDCzC2X"><th data-page-node-id="kSsRhroxt6z6UIbyGdkOJD">格式</th><th data-page-node-id="AclhgbgBeogAl3aCcxqlkb">方式</th><th data-page-node-id="nHqsDWGbQpBsctzWx05Qwb">说明</th></tr></thead>
+        <tbody data-page-node-id="jKWE6m9Cu2wxHyaSPwL28j">
+          <tr data-page-node-id="gvaOvp58GgkN778G2CGu2v"><td data-page-node-id="BpA21ug1v1eB4lqAo8bATa"><code data-page-node-id="cdnJwA8PnlLrsolDRGTiMq">.sql</code></td><td data-page-node-id="wRrRdbUTcBOhCeeSRpkYkr"><code data-page-node-id="ICXhdsLEG8xbiHQfKOLYC4">mysql &lt; file.sql</code> / <code data-page-node-id="gwnVHo1jibHN0A8GeDP6Mj">source file.sql</code></td><td data-page-node-id="Ev3GQRBZEU2dzqv2IO8CQy">最稳，结构数据一起</td></tr>
+          <tr data-page-node-id="CGBsTJbjBpdCZYtQT8V9fF"><td data-page-node-id="yBjTuS34MuexERLtDYsh4d"><code data-page-node-id="2X6wkaAgHGmPgzgB9howQN">.csv</code></td><td data-page-node-id="9P5hHRErNmafgGRj7aZB1g"><code data-page-node-id="ui3m8Yh7TpqFFdGVhUlShf">LOAD DATA LOCAL INFILE</code></td><td data-page-node-id="xEjxkk1vXTqhkryJAqV0eF">大批量快，注意分隔符/编码</td></tr>
+        </tbody>
+      </table></div>
+      <div class="note ok" data-page-node-id="WfUS3zCxPfmzZ4sGJEF6FG"><span class="ni" data-page-node-id="B64P3F3WMUxPezHmpGdZE9">✔</span><p data-page-node-id="jFLhERXRKuGCa3wI4nrsAx">要「结构 + 数据」一起迁 → 用 <b data-page-node-id="ke5RDvabjw73G4BhIiShCP">.sql</b>；只灌单表数据 → 用 <b data-page-node-id="4hyJeDRRjgci0kDK0kygHp">.csv / Excel</b>。</p></div>
+    </section>
+
+    <section id="s3" data-page-node-id="ZeYSA8ECHUPGtHyCuuTNpK">
+      <h2 data-page-node-id="CMJ0GQ3AIHq3pAV0F5PWwZ"><span class="num" data-page-node-id="7TQllDzPZtggP78Ruh6mf2">3</span>三条导入路径（按数据形态选一条）</h2>
+
+      <div class="grid g3" data-page-node-id="RcTS0Ln3nBaYwfgSLvzvSz">
+        <div class="card a" data-page-node-id="GRY2gAUzUTogN8xxowtBz4"><h4 data-page-node-id="4HHXVdZrRvPFMshqwG0KE8">路径 A · SQL 转储导入</h4>
+          <p data-page-node-id="0xTvvAAg3LdojlG8OFwtkE">结构 + 数据最稳，<b data-page-node-id="kNYlz5TgH1AL0psQYGoR8p">推荐</b></p>
+          <span class="pill" data-page-node-id="Z9Tw6xvvJKSxwydHEu50q3">右键 → 转储 SQL 文件</span><span class="pill" data-page-node-id="UoipjjRYsnPRgQjIf6FW2C">运行 SQL 文件</span></div>
+        <div class="card b" data-page-node-id="etAiVRzdtc1hq2JBEvESr3"><h4 data-page-node-id="iB4nIlQOHF6tnHUdlhWn59">路径 B · 数据传输</h4>
+          <p data-page-node-id="DRwKeTRTESEZGqRCZu8mY7">源/目标都能在 Navicat 连上时用</p>
+          <span class="pill" data-page-node-id="mEFMrnVlKFOphd9bXk579B">工具 → 数据传输</span><span class="pill" data-page-node-id="agdC1w6d1B4KEGvfDi1gdN">数据同步</span></div>
+        <div class="card c" data-page-node-id="eZj55gjAvWiOc3Fei37MHP"><h4 data-page-node-id="BSTg4MJahBqZWcvSERZJSC">路径 C · CSV / Excel 导入</h4>
+          <p data-page-node-id="tpIsr24vZvCpA7X7UIgsvU">只有单表表格数据时用</p>
+          <span class="pill" data-page-node-id="p7TDtqF0H5bBGr7HD8tUdt">右键 → 导入向导</span><span class="pill" data-page-node-id="GB3qG419O8bUX5rBquBJPF">字段映射</span></div>
+      </div>
+
+      <h3 data-page-node-id="HtZPL6on5U4P40wQm9McqV">路径 A 步骤（推荐）</h3>
+      <ol data-page-node-id="d36qSQ3ThDO6k2YzSnhSpB">
+        <li data-page-node-id="dK0DPiNVHJnyn6HZWNcwLk">源连接 → 右键库/表 → <b data-page-node-id="4zFGYXC7sgP2uAXdrEUYkN">转储 SQL 文件</b> → 选 <b data-page-node-id="SSmuoFsAFCmQ5nN9vhZuHJ">结构和数据</b></li>
+        <li data-page-node-id="L4lw4BFD1zfDWmmpFRFdpc">保存 <code data-page-node-id="RutMQ0nqc1yvrpbC668CwJ">.sql</code>，编码选 <b data-page-node-id="SodEywY50YCGXnATatYrpQ">UTF-8</b></li>
+        <li data-page-node-id="HnZqcoFI41AqECPHYrTysw">目标连接 <code data-page-node-id="mCaxwsXrDDf6oJd0OPreH5">life_manager</code> → 右键 → <b data-page-node-id="YvHBJxSnb4EDvFVZ4hFB96">运行 SQL 文件</b> → 选文件 → 执行</li>
+      </ol>
+<pre data-page-node-id="51OxgXw63nKqSrviEL65c7"><span class="c" data-page-node-id="j3bkRb8bGyMG6WXFbdlglm"># 等价命令行（更快）</span>
+mysql -h 127.0.0.1 -P 3306 -u root -p life_manager &lt; <span class="s" data-page-node-id="FpJnDYenMkS6BRHForKXOm">"D:/path/to/dump.sql"</span></pre>
+
+      <h3 data-page-node-id="p1ff0IY5f6AAjn6kB3MGLJ">路径 B 步骤</h3>
+      <ol data-page-node-id="om9tLngcCGx2CYPCFRzHED">
+        <li data-page-node-id="ojbHprqf5mDAPDhVyTfh9D"><b data-page-node-id="DBDqKbqcF38xbKSOh9zn1a">工具 → 数据传输</b></li>
+        <li data-page-node-id="y9L1D8PXiwJH7W785oGxBS">选源连接+库 → 选目标连接+库</li>
+        <li data-page-node-id="GZqLENcSyJQo4HUyD9hG0l">勾选表；高级选项可设「遇错继续 / 遇重复跳过」</li>
+        <li data-page-node-id="P8HnS7TsnZVy1Ijd4F7pkx">点 <b data-page-node-id="1ni3IMNu67pbfNzDBWqZcL">开始</b>；增量场景用 <b data-page-node-id="st0kK6fK3gbmU9xqwz0Lu0">数据同步 / 结构同步</b> 先比对再同步</li>
+      </ol>
+
+      <h3 data-page-node-id="3bzbxhQ2nxzEhxmB0OJhhF">路径 C 步骤</h3>
+      <ol data-page-node-id="20eejFvdE7DhKOo1GodikA">
+        <li data-page-node-id="tG3EfvXDumQLW8WiE03E6l">准备文件：首行列名、UTF-8 编码</li>
+        <li data-page-node-id="ot0tBezlSHpein7n7FT2hp">目标表右键 → <b data-page-node-id="DEVjsjXA5L2kL8ZHvUw00Q">导入向导</b> → 选 csv / xlsx</li>
+        <li data-page-node-id="z6IFiXUtBCpYKeeSx7Smnc">设置分隔符、<b data-page-node-id="CEBbRONJICW3hDeAh6xIJK">首行作为字段名</b>、编码 UTF-8</li>
+        <li data-page-node-id="yFXQ74QXEXXTT994OLpHJ4"><b data-page-node-id="b5cN8S1dgnBNG8jtOasd1w">字段映射</b>逐列核对（最易错的一步）</li>
+        <li data-page-node-id="H2wYYZPBtqX1T0ggybVji9">导入模式：追加 / 更新 / 覆盖 → 开始</li>
+      </ol>
+    </section>
+
+    <section id="s4" data-page-node-id="3KKYK1CSbMlSrlh81jXX0y">
+      <h2 data-page-node-id="vriPZ5aTACZLbrADLmBqjD"><span class="num" data-page-node-id="FmnMTov46TBAGspAvtjB3P">4</span>导入后校验（6 步闭环）</h2>
+      <ul class="ck" data-page-node-id="mdcZvKQbDFNDB1YQ0H7CSs">
+        <li data-page-node-id="IPoS1J0Ifr3iRdF7xGMqlW"><b data-page-node-id="sdEzWU53dmmCsBPPDqkxhf">① 结构校验</b><br data-page-node-id="VTSI7JfYmArh1vrEsPPsvn">
+          <code data-page-node-id="VhNwvFeXl0e6WlIdPQcGel">SHOW TABLES;</code> 应为 9 张；<code data-page-node-id="6gAOBCBctGTBnRW8GM0Y9C">SHOW CREATE TABLE ledger_record\G</code> 核对字段/类型/索引</li>
+        <li data-page-node-id="PXKFggk5k0IhRb9pflEPE5"><b data-page-node-id="N0KWHEu4mkRRUFWF0p4kdG">② 行数比对</b><br data-page-node-id="Dqe59vRg229SQkPAeFCR03">
+          <code data-page-node-id="SADnLg7CTzAW1wCK9wJa0N">SELECT COUNT(*)</code> 源 ↔ 目标逐表对；或用 Navicat <b data-page-node-id="dwChOHdxDZlry2UfF2a4WQ">工具 → 表数据对比</b></li>
+        <li data-page-node-id="aHjacTVyDzzI8EZGzGuZ5y"><b data-page-node-id="oEpPwrmppANhHwZI4JBr6f">③ 编码校验</b><br data-page-node-id="NxCGZY8Gjz3DSGDjT5Bbbk">
+          <code data-page-node-id="EPGMoAcvYZEOjeZ9830lZA">SHOW VARIABLES LIKE 'character_set_database';</code> 应为 utf8mb4；抽中文样本查</li>
+        <li data-page-node-id="CgBFZcqwBzIDPVWE8W29qZ"><b data-page-node-id="EWqW5dcxZ6oSwTGyAdPQLq">④ 业务完整性</b><br data-page-node-id="Xzvs3Nn7uJryemN0P3Pi8n">
+          查孤儿数据（分类被引用但不存在）、金额汇总比对、必填字段非空</li>
+        <li data-page-node-id="c7y923NfJpfthJTKAqbE1L"><b data-page-node-id="5n0wb6DBJ0arTC6GsbIeBj">⑤ 抽样人工比对</b><br data-page-node-id="uzHGfEKLVp8tJMv7W9KN5g">
+          <code data-page-node-id="Q6ImJXRWSazETGEvV3XdF0">SELECT * FROM ledger_record ORDER BY RAND() LIMIT 10;</code> 逐字段核对</li>
+        <li data-page-node-id="j1WLc851lRmCH2bIbwURha"><b data-page-node-id="1LFcyMFbDplJ523PlGipbt">⑥ 应用层验证</b><br data-page-node-id="E44lLWNSrBjLyF4JIEW58i">
+          启动 SSM，调 <code data-page-node-id="AjF5Lw1otx5pRn8EQL127m">/api/ledger/stat/overview</code>，返回值与 SQL 汇总一致即打通</li>
+      </ul>
+
+      <h3 data-page-node-id="GfuJibVKBd45RkDkEypQrA">校验 SQL 片段</h3>
+<pre data-page-node-id="GWiraZkF7NxotdkUFMT6GH"><span class="k" data-page-node-id="hrX8LEXvkqWW9iFqrTiDHr">USE</span> life_manager;
+
+<span class="c" data-page-node-id="5YZ9kE4jy8Gz8vdjI9GA42">-- 行数盘点</span>
+<span class="k" data-page-node-id="V9kafXASVCRg5ONhNJBqVI">SELECT</span> 'note' <span class="k" data-page-node-id="QF1vAPq3ZKiingtlKstqQx">AS</span> tbl, <span class="k" data-page-node-id="AL9y1HAJSaLdxQCGwpgvzB">COUNT</span>(*) cnt <span class="k" data-page-node-id="6GwohcAGlRiXAtRRIUeI4S">FROM</span> note
+<span class="k" data-page-node-id="k7G3CIo1PKuJhQkOQLyGlj">UNION ALL</span> <span class="k" data-page-node-id="neNgFtBmNVytnaY71exwHM">SELECT</span> 'ledger_record', <span class="k" data-page-node-id="y6nwyO3BxbTWaCWnjNka2w">COUNT</span>(*) <span class="k" data-page-node-id="PSBiViQmaq6IUFHEocorBZ">FROM</span> ledger_record
+<span class="k" data-page-node-id="bQ7AXEhrvAbE48RzyMQNWd">UNION ALL</span> <span class="k" data-page-node-id="B7GdntR0EshnK4CSQfm4zR">SELECT</span> 'clothing_item', <span class="k" data-page-node-id="rspWz1lvJVsTVsakUicfFD">COUNT</span>(*) <span class="k" data-page-node-id="6u7cOCEw3EK2NGbBjcmK34">FROM</span> clothing_item;
+
+<span class="c" data-page-node-id="DPgsIYtrqSLDir1p8u60bY">-- 孤儿数据（引用了不存在的分类）</span>
+<span class="k" data-page-node-id="8TUTBI1QjrTCdVefTaW8En">SELECT</span> <span class="k" data-page-node-id="uM3b1G4VQjFEglkE6Wd3xT">COUNT</span>(*) <span class="k" data-page-node-id="x6IIUVsNxho7VEvUDLyEmn">FROM</span> note n
+  <span class="k" data-page-node-id="vF6RdnCJoLCN0a60H9xKAR">LEFT JOIN</span> note_category c <span class="k" data-page-node-id="ktLUpDfjvloZiwxANt4qDf">ON</span> n.category_id = c.id
+  <span class="k" data-page-node-id="3YGxEMSC4Y5FejSVColJdZ">WHERE</span> n.category_id <span class="k" data-page-node-id="acmV4VsPduRm52EPjp9qjy">IS NOT NULL AND</span> c.id <span class="k" data-page-node-id="rpAUi9MHP468tdWFiegDL1">IS NULL AND</span> n.deleted = 0;
+</pre>
+    </section>
+
+    <section id="s5" data-page-node-id="EIM7QAtEMep4DezCHI9uEa">
+      <h2 data-page-node-id="HKtiXEDnyFiiK2EHrvLZin"><span class="num" data-page-node-id="Kv8v3JxXQl04NHB8piB4La">5</span>常见坑与对策</h2>
+      <div class="tw" data-page-node-id="HYUn2OuYnH760oVgMatNQF"><table data-page-node-id="OTIjYhYAKyA2e1epsFiJWI">
+        <thead data-page-node-id="BZ2U4ycHsINJEX4J8yL38s"><tr data-page-node-id="wSB8kUQ6gNEPgBHX1zzOzj"><th data-page-node-id="ItQSy0FJZpGi7OpPpIcbDC">#</th><th data-page-node-id="0Rp4JKSrS2ouVa5tCcFxbL">坑</th><th data-page-node-id="StvMHaPgbPA2x2g6JgcjxO">现象</th><th data-page-node-id="1tNczAxM9bodKPBkNcmN6y">对策</th></tr></thead>
+        <tbody data-page-node-id="AXquSqBiGNqKmdC4km0dKs">
+          <tr data-page-node-id="NTjbc9v62kpubS4XZvWECp"><td data-page-node-id="W4upjhtTSMyrisp5pnvc8H">1</td><td data-page-node-id="407g3wAcFm8zdnEChEsBKF">字符集不对</td><td data-page-node-id="7Hhm4PSB39uqRQv2FSmioU">中文/emoji 乱码或 <code data-page-node-id="wypGRmCEkDQ0kAEJjHAKwH">???</code></td><td data-page-node-id="gFfKBTo9yJAf89xkVAeVdP">建库 utf8mb4；导出导入都选 UTF-8</td></tr>
+          <tr data-page-node-id="XntxSav0Mh7D1qYbbssxJv"><td data-page-node-id="tyUHdBTeSOSxq4Kz92PH5X">2</td><td data-page-node-id="maNrsoxWmPFGZcE2NwArUm">日期格式歧义</td><td data-page-node-id="ixQKnLE3ykdmk7q99gaTb4"><code data-page-node-id="OAi2HEml821gJiFh7QJgBP">2/4/2026</code> 解析错</td><td data-page-node-id="SDvD2PBE8ZqvKcn46koIIj">导入时指定 <code data-page-node-id="LAh2w0t8Ycc0qWAGerMgEy">yyyy-MM-dd HH:mm:ss</code></td></tr>
+          <tr data-page-node-id="oVLCMwd1Eqm31WcIkE1dKF"><td data-page-node-id="7RWAxt3l5txEHhwhqsHQ2Q">3</td><td data-page-node-id="UDkG26GcgGukHRxCM2APab">主键冲突</td><td data-page-node-id="sIRGgYPZfYiUwjWbn1HaAM"><code data-page-node-id="ASsotVA1EEGU9Y5gP5Or79">Duplicate entry</code></td><td data-page-node-id="tfXdmw57vs72HHkk6Dhday">目标先 TRUNCATE，或导出时去掉自增 id</td></tr>
+          <tr data-page-node-id="24hUGRBoVMBmutYhJONBZw"><td data-page-node-id="4qbuVOixFacfHz7VE3o0qB">4</td><td data-page-node-id="dp7liwwKAiaOcc4PGcc6a0">金额失真</td><td data-page-node-id="XZPBRi58ZUnBDLrlZ0RiV9"><code data-page-node-id="RLWXSyta9CKKDoGDLfsMuU">0.1</code> 变 <code data-page-node-id="H7LheUG0kHmujw9sJYAyt2">0.0999999</code></td><td data-page-node-id="FEwOHBPCC4fCSe0oZTEgep">目标列 DECIMAL，源数据避免浮点</td></tr>
+          <tr data-page-node-id="gLr3BHhgdSxEP6Rp4p0VfP"><td data-page-node-id="FWoHlZhnkqfG9MQZp9FqMp">5</td><td data-page-node-id="TDhDrOJYEviSRfMnizoqMw">LOAD DATA 被拒</td><td data-page-node-id="6SJX2BdFBGzTocADC6PWJj"><code data-page-node-id="PW95oodRqGnHXuvJhvILQa">ERROR 1290 secure_file_priv</code></td><td data-page-node-id="7uZzLsuA7DSEGqtkVsbx9L">用 LOCAL INFILE 或改 MySQL 配置</td></tr>
+          <tr data-page-node-id="aSmn3dQdX1dLBHGj6qnIcD"><td data-page-node-id="WIDkrGN62SGF3Wr5z6or9J">6</td><td data-page-node-id="mBvFrzDZhv9WPFfFlaGMCI">时区偏移</td><td data-page-node-id="qMPoiCUV7ZS96OSHRQRI52">时间差 8 小时</td><td data-page-node-id="gZk2VE0oCrrSf5yaDpIaOV">连接串加 <code data-page-node-id="yPOLmA4MWVYgjjBB0IC57i">serverTimezone=Asia/Shanghai</code></td></tr>
+          <tr data-page-node-id="88Y7wV4pXOu0QqTz99Ed0G"><td data-page-node-id="CpjPHPpBJg4ih1SRT44aTZ">7</td><td data-page-node-id="xBBmAKBCZTQjxESOkuHYRP">自增 ID 跳号</td><td data-page-node-id="C969k6puliveknwSQ3FMEo">id 不连续</td><td data-page-node-id="FdW1LvR6wLQvUXEFcLSmG5">正常现象，不影响</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="s6" data-page-node-id="cEFG4R0WABNqEXF8Jd6KSJ">
+      <h2 data-page-node-id="xk9QY2LmN75Rx9N7JvcsU3"><span class="num" data-page-node-id="0uuQqrWane4cWLVBz98Go5">6</span>给你的最短路径</h2>
+<pre data-page-node-id="kQtS0dkCgHR98PAZ8dasFp"><span class="c" data-page-node-id="ScvK3D0565z6nOgcr19w1f"># ① 建库建表</span>
+mysql -u root -p &lt; <span class="s" data-page-node-id="HqViGHjp2UtGbS0gsw53JD">"D:/AI/workbuddy/ChuanDa/sql/schema.sql"</span>
+<span class="c" data-page-node-id="lEQeYBLWEH39xbgwM8A06s"># ② 种子数据（字典 + 默认分类）</span>
+mysql -u root -p life_manager &lt; <span class="s" data-page-node-id="B70D2FhQZWucU6MC5b6CZi">"D:/AI/workbuddy/ChuanDa/sql/data.sql"</span>
+<span class="c" data-page-node-id="1Fu3ZjcYbZhFTbinPbs93q"># ③ 你的 Navicat 数据（先转储为 sql，再执行）</span>
+mysql -u root -p life_manager &lt; <span class="s" data-page-node-id="T5AZpC02PCNrnhH2cuBd7a">"D:/path/to/navicat_dump.sql"</span>
+<span class="c" data-page-node-id="OlE6uFDKsmWDmp6DirBndC"># ④ 校验</span>
+mysql -u root -p life_manager -e <span class="s" data-page-node-id="HK8RXf5lg1GyZt7Dh2r8O9">"SELECT COUNT(*) FROM ledger_record;"</span></pre>
+      <div class="note info" data-page-node-id="isKACOZqDP6jwGzcCiN7tv"><span class="ni" data-page-node-id="UUQoDyiNjGSjeBrTJWmdaI">i</span><p data-page-node-id="RGqk7Z81wGcqwX6rnHWnVV">顺序很重要：<b data-page-node-id="Zvz85JFtKcQT0sQ3kfTWpb">先结构（schema）→ 再种子（data）→ 最后业务数据</b>，避免外键/分类引用对不上。</p></div>
+    </section>
+
+    <footer data-page-node-id="AahCnY0bXguRpiSx4FBCTv">Navicat 数据导入与校验指南 · 对应阶段一「数据库搭建」落地环节</footer>
+  </main>
+</div>
+
+<script>
+  const links = [...document.querySelectorAll('#nav a')];
+  const secs = links.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  const onScroll = () => {
+    const y = window.scrollY + 120; let cur = secs[0];
+    for (const s of secs) if (s.offsetTop <= y) cur = s;
+    links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + cur.id));
+  };
+  window.addEventListener('scroll', onScroll, {passive:true}); onScroll();
+</script>
+</body>
+</html>

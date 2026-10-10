@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.life.dao.TodoDao">
+
+    <resultMap id="BaseResultMap" type="com.life.domain.Todo">
+        <id     column="id"          property="id"/>
+        <result column="user_id"     property="userId"/>
+        <result column="title"       property="title"/>
+        <result column="content"     property="content"/>
+        <result column="deadline"    property="deadline"/>
+        <result column="duration"    property="duration"/>
+        <result column="remain_sec"  property="remainSec"/>
+        <result column="status"      property="status"/>
+        <result column="priority"    property="priority"/>
+        <result column="finish_time" property="finishTime"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="deleted"     property="deleted"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, user_id, title, content, deadline, duration, remain_sec,
+        status, priority, finish_time, create_time, update_time, deleted
+    </sql>
+
+    <!-- 列表：进行中 → 暂停 → 到期 → 完成，再按截止时间升序 -->
+    <select id="listByUser" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM todo
+        WHERE user_id = #{userId} AND deleted = 0
+        <if test="status != null">
+            AND status = #{status}
+        </if>
+        ORDER BY CASE status
+                   WHEN 0 THEN 0
+                   WHEN 1 THEN 1
+                   WHEN 3 THEN 2
+                   ELSE 3
+                 END,
+                 deadline IS NULL, deadline ASC, id DESC
+    </select>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM todo
+        WHERE id = #{id} AND user_id = #{userId} AND deleted = 0
+    </select>
+
+    <insert id="insert" parameterType="com.life.domain.Todo"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO todo
+            (user_id, title, content, deadline, duration, status, priority,
+             create_time, update_time, deleted)
+        VALUES
+            (#{userId}, #{title}, #{content}, #{deadline}, #{duration}, #{status}, #{priority},
+             NOW(), NOW(), 0)
+    </insert>
+
+    <update id="update" parameterType="com.life.domain.Todo">
+        UPDATE todo
+        SET title       = #{title},
+            content     = #{content},
+            priority    = #{priority},
+            deadline    = #{deadline},
+            duration    = #{duration},
+            remain_sec  = NULL,
+            status      = 0,
+            update_time = NOW()
+        WHERE id = #{id} AND user_id = #{userId} AND deleted = 0
+    </update>
+
+    <update id="logicDelete">
+        UPDATE todo
+        SET deleted = 1, update_time = NOW()
+        WHERE id = #{id} AND user_id = #{userId}
+    </update>
+
+    <update id="pause">
+        UPDATE todo
+        SET status = 1, remain_sec = #{remainSec}, update_time = NOW()
+        WHERE id = #{id} AND user_id = #{userId} AND deleted = 0
+    </update>
+
+    <update id="resume">
+        UPDATE todo
+        SET status = 0, deadline = #{deadline}, remain_sec = NULL, update_time = NOW()
+        WHERE id = #{id} AND user_id = #{userId} AND deleted = 0
+    </update>
+
+    <update id="reset">
+        UPDATE todo
+        SET status = 0, deadline = #{deadline}, remain_sec = NULL,
+            finish_time = NULL, update_time = NOW()
+        WHERE id = #{id} AND user_id = #{userId} AND deleted = 0
+    </update>
+
+    <update id="finish">
+        UPDATE todo
+        SET status = 2, finish_time = NOW(), update_time = NOW()
+        WHERE id = #{id} AND user_id = #{userId} AND deleted = 0
+    </update>
+
+    <!-- 定时补偿：全局扫描已过期的进行中待办（无 user 上下文，供调度线程调用） -->
+    <update id="markExpired">
+        UPDATE todo
+        SET status = 3, finish_time = NOW(), update_time = NOW()
+        WHERE deleted = 0 AND status = 0
+          AND deadline IS NOT NULL AND deadline &lt;= NOW()
+    </update>
+
+</mapper>

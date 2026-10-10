@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.life.dao.LedgerCategoryDao">
+
+    <resultMap id="BaseResultMap" type="com.life.domain.LedgerCategory">
+        <id     column="id"          property="id"/>
+        <result column="user_id"     property="userId"/>
+        <result column="name"        property="name"/>
+        <result column="type"        property="type"/>
+        <result column="icon"        property="icon"/>
+        <result column="sort"        property="sort"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="deleted"     property="deleted"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, user_id, name, type, icon, sort, create_time, update_time, deleted
+    </sql>
+
+    <select id="listByUser" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM ledger_category
+        WHERE user_id = #{userId} AND deleted = 0
+        <if test="type != null">
+            AND type = #{type}
+        </if>
+        ORDER BY type ASC, sort ASC, id ASC
+    </select>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM ledger_category
+        WHERE id = #{id} AND user_id = #{userId} AND deleted = 0
+    </select>
+
+    <select id="selectByName" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM ledger_category
+        WHERE user_id = #{userId} AND name = #{name} AND type = #{type} AND deleted = 0
+        LIMIT 1
+    </select>
+
+    <insert id="insert" parameterType="com.life.domain.LedgerCategory"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO ledger_category
+            (user_id, name, type, icon, sort, create_time, update_time, deleted)
+        VALUES
+            (#{userId}, #{name}, #{type}, #{icon}, #{sort}, NOW(), NOW(), 0)
+    </insert>
+
+    <update id="update" parameterType="com.life.domain.LedgerCategory">
+        UPDATE ledger_category
+        SET name = #{name}, icon = #{icon}, sort = #{sort}, update_time = NOW()
+        WHERE id = #{id} AND user_id = #{userId} AND deleted = 0
+    </update>
+
+    <update id="logicDelete">
+        UPDATE ledger_category
+        SET deleted = 1, update_time = NOW()
+        WHERE id = #{id} AND user_id = #{userId}
+    </update>
+
+    <select id="countRecords" resultType="long">
+        SELECT COUNT(*)
+        FROM ledger_record
+        WHERE user_id = #{userId} AND category_id = #{categoryId} AND deleted = 0
+    </select>
+
+    <select id="countByUser" resultType="long">
+        SELECT COUNT(*)
+        FROM ledger_category
+        WHERE user_id = #{userId} AND deleted = 0
+    </select>
+
+</mapper>

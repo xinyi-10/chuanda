@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.life.dao.OutfitRecordDao">
+
+    <resultMap id="BaseResultMap" type="com.life.domain.OutfitRecord">
+        <id     column="id"          property="id"/>
+        <result column="user_id"     property="userId"/>
+        <result column="occasion"    property="occasion"/>
+        <result column="weather"     property="weather"/>
+        <result column="items_json"  property="itemsJson"/>
+        <result column="advice"      property="advice"/>
+        <result column="source"      property="source"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, user_id, occasion, weather, items_json, advice, source, create_time
+    </sql>
+
+    <insert id="insert" parameterType="com.life.domain.OutfitRecord"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO outfit_record
+            (user_id, occasion, weather, items_json, advice, source, create_time)
+        VALUES
+            (#{userId}, #{occasion}, #{weather}, #{itemsJson}, #{advice}, #{source}, NOW())
+    </insert>
+
+    <select id="listByUser" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM outfit_record
+        WHERE user_id = #{userId}
+        ORDER BY id DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="countByUser" resultType="long">
+        SELECT COUNT(*) FROM outfit_record WHERE user_id = #{userId}
+    </select>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM outfit_record
+        WHERE id = #{id} AND user_id = #{userId}
+    </select>
+
+</mapper>
